@@ -1,6 +1,6 @@
 module.exports = {
-  mode: 'jit',
-  darkMode: 'media',
+  mode: "jit",
+  darkMode: "media",
   purge: [
     "./pages/**/*.tsx",
     "./pages/**/*.jsx",
@@ -15,5 +15,5 @@ module.exports = {
     spinner: ["responsive"],
     transitionProperty: ["responsive"]
   },
-  plugins: []
+  plugins: [require("@tailwindcss/forms")]
 }

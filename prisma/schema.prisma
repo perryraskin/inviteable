@@ -2,11 +2,76 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  imageUrl  String?
+  Events    Event[]
+  Guest     Guest[]
+  Comment   Comment[]
+  Thread    Thread[]
+}
+
+model Event {
+  id            Int       @id @default(autoincrement())
+  createdAt     DateTime  @default(now())
+  userId        Int?
+  title         String
+  eventDateTime DateTime?
+  location      String?
+  price         Decimal   @default(0)
+  imageUrl      String?
+  details       String?
+  Host          User?     @relation(fields: [userId], references: [id])
+  Guests        Guest[]
+  Comments      Comment[]
+  Thread        Thread[]
+}
+
+model Guest {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  eventId   Int?
+  userId    Int?
+  isHost    Boolean  @default(false)
+  isGoing   Boolean  @default(false)
+  Event     Event?   @relation(fields: [eventId], references: [id])
+  User      User?    @relation(fields: [userId], references: [id])
+}
+
+model Thread {
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  eventId   Int?
+  userId    Int?
+  body      String?
+  Event     Event?    @relation(fields: [eventId], references: [id])
+  Guest     User?     @relation(fields: [userId], references: [id])
+  Comments   Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  eventId   Int?
+  userId    Int?
+  threadId  Int?
+  isReply   Boolean  @default(false)
+  body      String?
+  Event     Event?   @relation(fields: [eventId], references: [id])
+  Guest     User?    @relation(fields: [userId], references: [id])
+  Thread    Thread?  @relation(fields: [threadId], references: [id])
 }
