@@ -12,66 +12,74 @@ generator client {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  firstName String
-  lastName  String
-  email     String?
-  phone     String?
-  imageUrl  String?
-  Events    Event[]
-  Guest     Guest[]
-  Comment   Comment[]
-  Thread    Thread[]
+  id             Int       @id @default(autoincrement())
+  dateCreated    DateTime  @default(now())
+  firstName      String
+  lastName       String
+  email          String?
+  phone          String?
+  imageUrl       String?
+  EventsHosted   Event[]
+  EventsInvited  Guest[]
+  ThreadsPosted  Thread[]
+  CommentsPosted Comment[]
 }
 
 model Event {
   id            Int       @id @default(autoincrement())
-  createdAt     DateTime  @default(now())
+  dateCreated   DateTime  @default(now())
   userId        Int?
   title         String
   eventDateTime DateTime?
-  location      String?
+  locationName  String?
+  latitude      Decimal?
+  longitude     Decimal?
+  address1      String?
+  address2      String?
+  city          String?
+  state         String?
+  zip           String?
+  country       String?
   price         Decimal   @default(0)
   imageUrl      String?
   details       String?
   Host          User?     @relation(fields: [userId], references: [id])
   Guests        Guest[]
+  Threads       Thread[]
   Comments      Comment[]
-  Thread        Thread[]
 }
 
 model Guest {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  eventId   Int?
-  userId    Int?
-  isHost    Boolean  @default(false)
-  isGoing   Boolean  @default(false)
-  Event     Event?   @relation(fields: [eventId], references: [id])
-  User      User?    @relation(fields: [userId], references: [id])
+  id          Int      @id @default(autoincrement())
+  dateCreated DateTime @default(now())
+  eventId     Int?
+  userId      Int?
+  isHost      Boolean  @default(false)
+  isGoing     Boolean  @default(false)
+  Event       Event?   @relation(fields: [eventId], references: [id])
+  User        User?    @relation(fields: [userId], references: [id])
 }
 
 model Thread {
-  id        Int       @id @default(autoincrement())
-  createdAt DateTime  @default(now())
-  eventId   Int?
-  userId    Int?
-  body      String?
-  Event     Event?    @relation(fields: [eventId], references: [id])
-  Guest     User?     @relation(fields: [userId], references: [id])
-  Comments   Comment[]
+  id          Int       @id @default(autoincrement())
+  dateCreated DateTime  @default(now())
+  eventId     Int?
+  userId      Int?
+  body        String?
+  Event       Event?    @relation(fields: [eventId], references: [id])
+  Author      User?     @relation(fields: [userId], references: [id])
+  Comments    Comment[]
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  eventId   Int?
-  userId    Int?
-  threadId  Int?
-  isReply   Boolean  @default(false)
-  body      String?
-  Event     Event?   @relation(fields: [eventId], references: [id])
-  Guest     User?    @relation(fields: [userId], references: [id])
-  Thread    Thread?  @relation(fields: [threadId], references: [id])
+  id          Int      @id @default(autoincrement())
+  dateCreated DateTime @default(now())
+  eventId     Int?
+  userId      Int?
+  threadId    Int?
+  isReply     Boolean  @default(false)
+  body        String?
+  Event       Event?   @relation(fields: [eventId], references: [id])
+  Author      User?    @relation(fields: [userId], references: [id])
+  Thread      Thread?  @relation(fields: [threadId], references: [id])
 }

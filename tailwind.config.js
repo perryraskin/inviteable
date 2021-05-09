@@ -13,7 +13,8 @@ module.exports = {
     backgroundColor: ["responsive", "hover", "focus", "active"],
     textColor: ["responsive", "hover", "focus", "active"],
     spinner: ["responsive"],
-    transitionProperty: ["responsive"]
+    transitionProperty: ["responsive"],
+    animation: ["responsive", "motion-safe", "motion-reduce"]
   },
   plugins: [require("@tailwindcss/forms")]
 }

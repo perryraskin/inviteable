@@ -1,12 +1,56 @@
-import React from "react"
+import React, { useState } from "react"
 import { NextPage } from "next"
 import Router from "next/router"
 import withLayout from "../hocs/withLayout"
 import utilities from "../utilities"
+import CountrySelect from "./CountrySelect"
+
+import dayjs from "dayjs"
 
 interface Props {}
 
 const EventDetail: NextPage<Props> = ({}) => {
+  const now = dayjs()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [title, setTitle] = useState("")
+  const [eventDate, setEventDate] = useState(now.format("YYYY-MM-DD"))
+  const [eventTime, setEventTime] = useState("00:00")
+  const [locationName, setLocationName] = useState("")
+  const [latitude, setLatitude] = useState(null)
+  const [longitude, setLongitude] = useState(null)
+  const [address1, setAddress1] = useState("")
+  const [address2, setAddress2] = useState("")
+  const [city, setCity] = useState("")
+  const [state, setState] = useState("")
+  const [zip, setZip] = useState("")
+  const [country, setCountry] = useState("US")
+  const [price, setPrice] = useState(0)
+  const [imageUrl, setImageUrl] = useState(null)
+  const [details, setDetails] = useState("")
+
+  function handleSubmit() {
+    const data = {
+      userId: 1,
+      title,
+      eventDateTime: eventDate + " " + eventTime,
+      locationName,
+      latitude,
+      longitude,
+      address1,
+      address2,
+      city,
+      state,
+      zip,
+      country,
+      price,
+      imageUrl,
+      details
+    }
+
+    setIsSubmitting(true)
+    console.log("submit:", data)
+  }
   return (
     <form className="space-y-8 divide-y divide-gray-200">
       <div className="space-y-8 divide-y divide-gray-200">
@@ -26,7 +70,7 @@ const EventDetail: NextPage<Props> = ({}) => {
                 htmlFor="title"
                 className="block text-sm font-medium text-gray-700"
               >
-                Event title
+                Title
               </label>
               <div className="mt-1">
                 <input
@@ -34,6 +78,8 @@ const EventDetail: NextPage<Props> = ({}) => {
                   name="title"
                   type="text"
                   placeholder="Grandma's 90th Birthday Surprise!"
+                  value={title}
+                  onChange={e => setTitle(e.target.value)}
                   className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
@@ -51,6 +97,8 @@ const EventDetail: NextPage<Props> = ({}) => {
                   type="date"
                   name="date"
                   id="date"
+                  value={eventDate}
+                  onChange={e => setEventDate(e.target.value)}
                   className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
@@ -66,9 +114,11 @@ const EventDetail: NextPage<Props> = ({}) => {
               <div className="mt-1">
                 <input
                   type="time"
-                  name="last_name"
-                  id="last_name"
-                  autoComplete="family-name"
+                  name="time"
+                  id="time"
+                  value={eventTime}
+                  onChange={e => setEventTime(e.target.value)}
+                  autoComplete="time"
                   className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
@@ -87,7 +137,140 @@ const EventDetail: NextPage<Props> = ({}) => {
                   name="location"
                   type="text"
                   placeholder="Mom's House"
+                  value={locationName}
+                  onChange={e => setLocationName(e.target.value)}
                   className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+
+            {/* <div className="sm:col-span-2">
+              <label
+                htmlFor="location"
+                className="block text-sm font-medium text-white"
+              >
+                _
+              </label>
+              <div className="mt-1">
+                <button
+                  type="button"
+                  className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Specify an address
+                </button>
+              </div>
+            </div> */}
+
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="address1"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Address
+              </label>
+              <div className="mt-1">
+                <input
+                  type="text"
+                  name="address1"
+                  id="address1"
+                  autoComplete="address"
+                  value={address1}
+                  onChange={e => setAddress1(e.target.value)}
+                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="address2"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Unit or Apartment #
+              </label>
+              <div className="mt-1">
+                <input
+                  type="text"
+                  name="address2"
+                  id="address2"
+                  autoComplete="address2"
+                  value={address2}
+                  onChange={e => setAddress2(e.target.value)}
+                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="city"
+                className="block text-sm font-medium text-gray-700"
+              >
+                City
+              </label>
+              <div className="mt-1">
+                <input
+                  type="text"
+                  name="city"
+                  id="city"
+                  value={city}
+                  onChange={e => setCity(e.target.value)}
+                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="state"
+                className="block text-sm font-medium text-gray-700"
+              >
+                State / Province
+              </label>
+              <div className="mt-1">
+                <input
+                  type="text"
+                  name="state"
+                  id="state"
+                  value={state}
+                  onChange={e => setState(e.target.value)}
+                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="zip"
+                className="block text-sm font-medium text-gray-700"
+              >
+                ZIP / Postal
+              </label>
+              <div className="mt-1">
+                <input
+                  type="text"
+                  name="zip"
+                  id="zip"
+                  autoComplete="postal-code"
+                  value={zip}
+                  onChange={e => setZip(e.target.value)}
+                  className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="country"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Country / Region
+              </label>
+              <div className="mt-1">
+                <CountrySelect
+                  country={country}
+                  setCountry={setCountry}
+                  styles="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
                 />
               </div>
             </div>
@@ -107,8 +290,9 @@ const EventDetail: NextPage<Props> = ({}) => {
                   type="number"
                   name="price"
                   id="price"
-                  value="0.00"
                   autoComplete="price"
+                  value={price}
+                  onChange={e => setPrice(parseFloat(e.target.value))}
                   className="flex-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
                 />
               </div>
@@ -127,16 +311,16 @@ const EventDetail: NextPage<Props> = ({}) => {
                   name="about"
                   rows={3}
                   className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-                  defaultValue={""}
+                  value={details}
+                  onChange={e => setDetails(e.target.value)}
                 />
               </div>
               <p className="mt-2 text-sm text-gray-500">
-                Write a few sentences about what you want guests to know about
-                your event.
+                Here you can let guests know more about your event.
               </p>
             </div>
 
-            <div className="sm:col-span-6">
+            {/* <div className="sm:col-span-6">
               <label
                 htmlFor="cover_photo"
                 className="block text-sm font-medium text-gray-700"
@@ -179,145 +363,7 @@ const EventDetail: NextPage<Props> = ({}) => {
                   </p>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="pt-8">
-          <div>
-            <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Notifications
-            </h3>
-            <p className="mt-1 text-sm text-gray-500">
-              We'll always let you know about important changes, but you pick
-              what else you want to hear about.
-            </p>
-          </div>
-          <div className="mt-6">
-            <fieldset>
-              <legend className="text-base font-medium text-gray-900">
-                By Email
-              </legend>
-              <div className="mt-4 space-y-4">
-                <div className="relative flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="comments"
-                      name="comments"
-                      type="checkbox"
-                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="comments"
-                      className="font-medium text-gray-700"
-                    >
-                      Comments
-                    </label>
-                    <p className="text-gray-500">
-                      Get notified when someones posts a comment on a posting.
-                    </p>
-                  </div>
-                </div>
-                <div className="relative flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="candidates"
-                      name="candidates"
-                      type="checkbox"
-                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="candidates"
-                      className="font-medium text-gray-700"
-                    >
-                      Candidates
-                    </label>
-                    <p className="text-gray-500">
-                      Get notified when a candidate applies for a job.
-                    </p>
-                  </div>
-                </div>
-                <div className="relative flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="offers"
-                      name="offers"
-                      type="checkbox"
-                      className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="offers"
-                      className="font-medium text-gray-700"
-                    >
-                      Offers
-                    </label>
-                    <p className="text-gray-500">
-                      Get notified when a candidate accepts or rejects an offer.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </fieldset>
-            <fieldset className="mt-6">
-              <div>
-                <legend className="text-base font-medium text-gray-900">
-                  Push Notifications
-                </legend>
-                <p className="text-sm text-gray-500">
-                  These are delivered via SMS to your mobile phone.
-                </p>
-              </div>
-              <div className="mt-4 space-y-4">
-                <div className="flex items-center">
-                  <input
-                    id="push_everything"
-                    name="push_notifications"
-                    type="radio"
-                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                  />
-                  <label
-                    htmlFor="push_everything"
-                    className="ml-3 block text-sm font-medium text-gray-700"
-                  >
-                    Everything
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    id="push_email"
-                    name="push_notifications"
-                    type="radio"
-                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                  />
-                  <label
-                    htmlFor="push_email"
-                    className="ml-3 block text-sm font-medium text-gray-700"
-                  >
-                    Same as email
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    id="push_nothing"
-                    name="push_notifications"
-                    type="radio"
-                    className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300"
-                  />
-                  <label
-                    htmlFor="push_nothing"
-                    className="ml-3 block text-sm font-medium text-gray-700"
-                  >
-                    No push notifications
-                  </label>
-                </div>
-              </div>
-            </fieldset>
+            </div> */}
           </div>
         </div>
       </div>
@@ -331,9 +377,32 @@ const EventDetail: NextPage<Props> = ({}) => {
             Cancel
           </button>
           <button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
+            {isSubmitting ? (
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            ) : null}
             Save
           </button>
         </div>

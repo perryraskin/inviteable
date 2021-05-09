@@ -27,11 +27,8 @@ const Layout: NextPage<Props> = ({ children }) => {
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
         />
-        <title>Next.js TailwindCSS Starter</title>
-        <meta
-          name="description"
-          content="A Shopping Cart built with TypeScript, NextJS, React, Apollo Client, Shopify Storefront GraphQL API, and TailwindCSS."
-        />
+        <title>Invitable</title>
+        <meta name="description" content="minimal event planning" />
       </Head>
       <div className="antialiased text-gray-900">
         <div className="h-screen flex overflow-hidden">
@@ -42,7 +39,7 @@ const Layout: NextPage<Props> = ({ children }) => {
             <br />
             <br />
             {children}
-            <Footer />
+            {/* <Footer /> */}
           </div>
         </div>
       </div>

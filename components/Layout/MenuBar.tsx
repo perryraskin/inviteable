@@ -47,11 +47,14 @@ const MenuBar: NextPage<Props> = ({}) => {
         </div>
         <div className="text-xl text-white font-bold tracking-tight ml-2">
           <Link href={`/`}>
-            <a>Next.js TailwindCSS Starter</a>
+            <a>invitable</a>
           </Link>
         </div>
       </div>
-      <div className="flex items-center">
+      <div
+        // className="flex items-center"
+        className="hidden items-center"
+      >
         <a
           href="#"
           className="text-white p-2 rounded-full 
