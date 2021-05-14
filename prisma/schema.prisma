@@ -30,7 +30,8 @@ model Event {
   dateCreated   DateTime  @default(now())
   userId        Int?
   title         String
-  eventDateTime DateTime?
+  dateTimeStart DateTime?
+  dateTimeEnd   DateTime?
   locationName  String?
   latitude      Decimal?
   longitude     Decimal?

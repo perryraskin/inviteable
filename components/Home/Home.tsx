@@ -4,6 +4,7 @@ import Router from "next/router"
 import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
 
+import EventForm from "../EventForm"
 import EventDetail from "../EventDetail"
 import Button from "../Elements/Button"
 import SimpleDropdown from "../SimpleDropdown"

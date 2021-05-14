@@ -30,14 +30,11 @@ const Layout: NextPage<Props> = ({ children }) => {
         <title>Invitable</title>
         <meta name="description" content="minimal event planning" />
       </Head>
-      <div className="antialiased text-gray-900">
+      <div className="antialiased text-gray-900 bg-gray-100">
         <div className="h-screen flex overflow-hidden">
           <div className="flex-1 flex-col relative z-0 overflow-y-auto">
-            <MenuBar />
-            <br />
-            <br />
-            <br />
-            <br />
+            {/* <MenuBar /> */}
+            {/* <br /> */}
             {children}
             {/* <Footer /> */}
           </div>
