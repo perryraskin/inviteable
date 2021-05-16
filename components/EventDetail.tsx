@@ -15,10 +15,14 @@ import {
   TicketIcon,
   GlobeIcon,
   LocationMarkerIcon,
-  LockClosedIcon
+  LockClosedIcon,
+  UserAddIcon
 } from "@heroicons/react/solid"
 
-import AvatarGroupStack from "./AvatarGroupStack"
+// import AvatarGroupStack from "./AvatarGroupStack"
+import DropdownWithIcons from "./DropdownWithIcons"
+
+import { Response } from "../models/interfaces"
 
 interface Props {
   event?: any
@@ -27,6 +31,12 @@ interface Props {
 const EventDetail: NextPage<Props> = ({ event }) => {
   const now = dayjs()
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [response, setResponse] = useState(Response.none)
+
+  async function handleUpdateResponse(response: Response) {
+    setResponse(response)
+  }
 
   return (
     <main className="flex-1 rounded-xl shadow-lg relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white">
@@ -47,7 +57,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                   className="h-24 w-24 rounded-xl shadow-lg border-red-500 bg-white"
                   style={{ borderTopWidth: "26px" }}
                 >
-                  <span className="flex items-center justify-center h-16 font-bold text-6xl">
+                  <span className="flex items-center justify-center h-16 font-semibold text-6xl">
                     9
                   </span>
                 </div>
@@ -64,21 +74,52 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                   </h1>
                 </div>
                 <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                  <button
+                  {/* <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 border border-blue-300 shadow-sm text-sm font-semibold rounded-md text-blue-500 bg-blue-50 hover:bg-gray-50 focus:outline-none"
                   >
                     <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-blue-500" />
                     <span>Going</span>
-                  </button>
+                  </button> */}
+                  <DropdownWithIcons
+                    title="Respond"
+                    useSelectedOptionAsDefault={true}
+                    currentValue={response}
+                    handleChangeValue={handleUpdateResponse}
+                    options={[
+                      {
+                        icon: (
+                          <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
+                        ),
+                        iconActive: (
+                          <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-blue-500" />
+                        ),
+                        activeStyles: "border-blue-300 text-blue-500",
+                        label: "Going",
+                        value: Response.accepted
+                      },
+                      {
+                        icon: (
+                          <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
+                        ),
+                        iconActive: (
+                          <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-red-500" />
+                        ),
+                        activeStyles: "border-red-300 text-red-500",
+                        label: "Not Going",
+                        value: Response.declined
+                      }
+                    ]}
+                  />
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 border border-gray-300 
                     shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
                     focus:outline-none"
                   >
-                    <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                    <span>Not Going</span>
+                    <UserAddIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                    {/* {shareIcon("-ml-1 mr-2 h-5 w-5 text-gray-400")} */}
+                    <span>Invite</span>
                   </button>
                 </div>
               </div>
@@ -127,9 +168,9 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                 <UsersIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                 <span className="align-middle">33 people going</span>
               </p>
-              <p className="mt-2">
+              {/* <p className="mt-2 mb-2">
                 <AvatarGroupStack />
-              </p>
+              </p> */}
               <p className="mt-2">
                 <FlagIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                 <span className="align-middle">
@@ -161,7 +202,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                 src="https://i.imgur.com/oFypSZG.jpg"
               ></img>
               <div className="bg-white rounded-b-lg shadow absolute bottom-0 z-10 w-full text-center font-semibold p-4">
-                Central Park
+                Central Park, Manhattan, NY
               </div>
             </div>
           </div>
@@ -217,7 +258,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
         <div className="max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
           <h2 className="text-sm font-medium text-gray-500">Guests</h2>
           <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-pink-500">
+            <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
               <div className="flex-shrink-0">
                 <img
                   className="h-10 w-10 rounded-full"
@@ -229,13 +270,13 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                 <a href="#" className="focus:outline-none">
                   <span className="absolute inset-0" aria-hidden="true" />
                   <p className="text-sm font-medium text-gray-900">
-                    Leslie Alexander
+                    Alicia Johnson
                   </p>
                   <p className="text-sm text-gray-500 truncate">Host</p>
                 </a>
               </div>
             </div>
-            <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-pink-500">
+            <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
               <div className="flex-shrink-0">
                 <img
                   className="h-10 w-10 rounded-full"
@@ -253,7 +294,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                 </a>
               </div>
             </div>
-            <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-pink-500">
+            <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
               <div className="flex-shrink-0">
                 <img
                   className="h-10 w-10 rounded-full"
@@ -271,7 +312,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                 </a>
               </div>
             </div>
-            <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-pink-500">
+            <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
               <div className="flex-shrink-0">
                 <img
                   className="h-10 w-10 rounded-full"
@@ -297,3 +338,54 @@ const EventDetail: NextPage<Props> = ({ event }) => {
 }
 
 export default EventDetail
+
+function shareIcon(styles) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      className={styles}
+    >
+      <g
+        id="🔍-Product-Icons"
+        stroke="none"
+        strokeWidth={1}
+        fill="none"
+        fillRule="evenodd"
+      >
+        <g
+          id="ic_fluent_share_ios_48_filled"
+          fill="currentColor"
+          fillRule="nonzero"
+        >
+          <path d="M37.75,20.25 C38.6681734,20.25 39.4211923,20.9571103 39.4941988,21.8564728 L39.5,22 L39.5,36.25 C39.5,39.3517853 37.0439828,41.879937 33.9705557,41.9958479 L33.75,42 L14.25,42 C11.1482147,42 8.62006299,39.5439828 8.50415208,36.4705557 L8.5,36.25 L8.5,22 C8.5,21.0335017 9.28350169,20.25 10.25,20.25 C11.1681734,20.25 11.9211923,20.9571103 11.9941988,21.8564728 L12,22 L12,36.25 C12,37.440864 12.9251616,38.4156449 14.0959512,38.4948092 L14.25,38.5 L33.75,38.5 C34.940864,38.5 35.9156449,37.5748384 35.9948092,36.4040488 L36,36.25 L36,22 C36,21.0335017 36.7835017,20.25 37.75,20.25 Z M23.4989075,6.26787884 L23.6477793,6.25297693 L23.6477793,6.25297693 L23.8225053,6.25140103 L23.8225053,6.25140103 L23.9770074,6.26441014 L23.9770074,6.26441014 L24.1549097,6.29667263 L24.1549097,6.29667263 L24.223898,6.31492315 L24.223898,6.31492315 C24.4192207,6.36884271 24.6069182,6.4577966 24.7773762,6.58126437 L24.8968901,6.67628678 L24.8968901,6.67628678 L24.989825,6.76256313 L32.7679996,14.5407377 C33.4514171,15.2241552 33.4514171,16.3321939 32.7679996,17.0156115 C32.1247831,17.6588279 31.1054316,17.6966642 30.4179639,17.1291203 L30.2931259,17.0156115 L25.5,12.222 L25.5,31.5 C25.5,32.4181734 24.7928897,33.1711923 23.8935272,33.2441988 L23.75,33.25 C22.8318266,33.25 22.0788077,32.5428897 22.0058012,31.6435272 L22,31.5 L22,12.226 L17.2116504,17.0156115 C16.5684339,17.6588279 15.5490824,17.6966642 14.8616148,17.1291203 L14.7367767,17.0156115 C14.0935602,16.372395 14.055724,15.3530435 14.6232679,14.6655758 L14.7367767,14.5407377 L22.488804,6.78678454 C22.5446792,6.72871358 22.6045271,6.67449255 22.6679103,6.62455868 L22.7812362,6.54379243 L22.7812362,6.54379243 C22.8189499,6.51724 22.858413,6.49312256 22.8988638,6.47056335 L22.9176605,6.46138558 C23.0947495,6.36422067 23.2909216,6.29776289 23.4989075,6.26787884 Z" />
+        </g>
+      </g>
+    </svg>
+  )
+}
+
+function shareIconFilled(styles) {
+  return (
+    <svg
+      className={styles}
+      style={{
+        // width: "1em",
+        // height: "1em",
+        // verticalAlign: "middle",
+        // overflow: "hidden",
+        fill: "currentColor"
+      }}
+      viewBox="0 0 1024 1024"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M204.8 1023.931733a204.8 204.8 0 0 1-204.8-204.8v-614.4a204.8 204.8 0 0 1 204.8-204.8h136.533333a68.266667 68.266667 0 1 1 0 136.533334H204.8a68.266667 68.266667 0 0 0-68.266667 68.266666v614.4a68.266667 68.266667 0 0 0 68.266667 68.266667h614.4a68.266667 68.266667 0 0 0 68.266667-68.266667v-136.533333a68.266667 68.266667 0 0 1 136.533333 0v136.533333a204.8 204.8 0 0 1-204.8 204.8z m88.2688-292.864a68.266667 68.266667 0 0 1 0-96.6656l497.8688-497.595733H614.4a68.266667 68.266667 0 0 1 0-136.533333h341.333333a68.266667 68.266667 0 0 1 68.266667 68.266666v341.333334a68.266667 68.266667 0 0 1-136.533333 0V233.198933l-497.8688 498.346667a68.744533 68.744533 0 0 1-96.529067 0z"
+        fill="#8F9BB3"
+      />
+    </svg>
+  )
+}

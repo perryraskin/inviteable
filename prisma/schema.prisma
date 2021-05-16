@@ -44,6 +44,7 @@ model Event {
   price         Decimal   @default(0)
   imageUrl      String?
   details       String?
+  isPrivate     Boolean   @default(true)
   Host          User?     @relation(fields: [userId], references: [id])
   Guests        Guest[]
   Threads       Thread[]
@@ -56,7 +57,7 @@ model Guest {
   eventId     Int?
   userId      Int?
   isHost      Boolean  @default(false)
-  isGoing     Boolean  @default(false)
+  response    Int?     @default(0)
   Event       Event?   @relation(fields: [eventId], references: [id])
   User        User?    @relation(fields: [userId], references: [id])
 }

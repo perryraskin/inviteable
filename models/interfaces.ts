@@ -17,7 +17,14 @@ export interface Event {
   price: Number
   imageUrl: string
   details: string
+  isPrivate: boolean
   Host: User
+}
+
+export enum Response {
+  none,
+  accepted,
+  declined
 }
 
 export interface User {}
