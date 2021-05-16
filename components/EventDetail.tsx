@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { NextPage } from "next"
 import Router from "next/router"
 import withLayout from "../hocs/withLayout"
@@ -11,6 +11,7 @@ import {
   UsersIcon,
   CalendarIcon,
   FlagIcon,
+  StarIcon,
   ClockIcon,
   TicketIcon,
   GlobeIcon,
@@ -21,6 +22,7 @@ import {
 
 // import AvatarGroupStack from "./AvatarGroupStack"
 import DropdownWithIcons from "./DropdownWithIcons"
+import ShareSheet from "./ShareSheet"
 
 import { Response } from "../models/interfaces"
 
@@ -31,11 +33,30 @@ interface Props {
 const EventDetail: NextPage<Props> = ({ event }) => {
   const now = dayjs()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isShareSheetOpen, setIsShareSheetOpen] = useState(false)
+  const eventUrl = "https://inviteable.app/event/1"
 
+  const [eventTitle, setEventTitle] = useState("Grandma's 90th Birthday!")
   const [response, setResponse] = useState(Response.none)
 
   async function handleUpdateResponse(response: Response) {
     setResponse(response)
+  }
+
+  function handleClickShare() {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: eventTitle,
+          url: eventUrl
+        })
+        .then(() => {
+          console.log("Thanks for sharing!")
+        })
+        .catch(console.error)
+    } else {
+      setIsShareSheetOpen(true)
+    }
   }
 
   return (
@@ -47,6 +68,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
             <img
               className="h-32 w-full object-cover lg:h-48"
               src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3150&q=80"
+              // src="https://source.unsplash.com/1600x900/?celebration"
               alt=""
             />
           </div>
@@ -116,6 +138,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                     className="inline-flex justify-center px-4 py-2 border border-gray-300 
                     shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
                     focus:outline-none"
+                    onClick={handleClickShare}
                   >
                     <UserAddIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
                     {/* {shareIcon("-ml-1 mr-2 h-5 w-5 text-gray-400")} */}
@@ -136,6 +159,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
             </div>
           </div>
         </div>
+        <ShareSheet open={isShareSheetOpen} setOpen={setIsShareSheetOpen} />
         {/* Tabs */}
         <div className="mt-6 sm:mt-2 2xl:mt-5">
           <div className="border-b border-gray-200">
@@ -172,9 +196,10 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                 <AvatarGroupStack />
               </p> */}
               <p className="mt-2">
-                <FlagIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                <StarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                 <span className="align-middle">
-                  Event by <span className="font-semibold">Alicia Johnson</span>
+                  Hosted by{" "}
+                  <span className="font-semibold">Alicia Johnson</span>
                 </span>
               </p>
               <p className="mt-2">
@@ -184,24 +209,26 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                 </span>
               </p>
               <p className="mt-2">
+                <CalendarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                <span className="align-middle">Monday, March 9, 2020</span>
+              </p>
+              <p className="mt-2">
                 <ClockIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                <span className="align-middle">
-                  Monday, March 9, 2020 at 8:45AM EDT
-                </span>
+                <span className="align-middle">8:45AM EDT</span>
               </p>
               <p className="mt-2">
                 <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                 <span className="align-middle">
-                  Private • Only people who are invited
+                  Private <span className="text-sm">(invited guests only)</span>
                 </span>
               </p>
             </div>
-            <div className="mt-2 sm:mt-0 rounded-lg relative">
+            <div className="mt-2 sm:mt-0 rounded-lg relative shadow">
               <img
                 className="rounded-lg"
                 src="https://i.imgur.com/oFypSZG.jpg"
               ></img>
-              <div className="bg-white rounded-b-lg shadow absolute bottom-0 z-10 w-full text-center font-semibold p-4">
+              <div className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full text-center font-semibold p-4">
                 Central Park, Manhattan, NY
               </div>
             </div>
@@ -211,7 +238,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
             <div className="sm:col-span-2">
-              <dt className="text-sm font-medium text-gray-500">Details</dt>
+              <dt className="text-lg font-bold text-gray-900">Details</dt>
               <dd className="mt-1 max-w-prose text-sm text-gray-900 space-y-5">
                 <p>
                   We are so excited to celebrate together with the entire
@@ -230,7 +257,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
         </div>
         {/* Host list */}
         <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
-          <h2 className="text-sm font-medium text-gray-500">Hosts</h2>
+          <h2 className="text-lg font-bold text-gray-900">Hosts</h2>
           <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
               <div className="flex-shrink-0">
@@ -255,8 +282,8 @@ const EventDetail: NextPage<Props> = ({ event }) => {
           </div>
         </div>
         {/* Guest list */}
-        <div className="max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
-          <h2 className="text-sm font-medium text-gray-500">Guests</h2>
+        <div className="-mt-2 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
+          <h2 className="text-lg font-bold text-gray-900">Guests</h2>
           <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
               <div className="flex-shrink-0">
@@ -386,6 +413,50 @@ function shareIconFilled(styles) {
         d="M204.8 1023.931733a204.8 204.8 0 0 1-204.8-204.8v-614.4a204.8 204.8 0 0 1 204.8-204.8h136.533333a68.266667 68.266667 0 1 1 0 136.533334H204.8a68.266667 68.266667 0 0 0-68.266667 68.266666v614.4a68.266667 68.266667 0 0 0 68.266667 68.266667h614.4a68.266667 68.266667 0 0 0 68.266667-68.266667v-136.533333a68.266667 68.266667 0 0 1 136.533333 0v136.533333a204.8 204.8 0 0 1-204.8 204.8z m88.2688-292.864a68.266667 68.266667 0 0 1 0-96.6656l497.8688-497.595733H614.4a68.266667 68.266667 0 0 1 0-136.533333h341.333333a68.266667 68.266667 0 0 1 68.266667 68.266666v341.333334a68.266667 68.266667 0 0 1-136.533333 0V233.198933l-497.8688 498.346667a68.744533 68.744533 0 0 1-96.529067 0z"
         fill="#8F9BB3"
       />
+    </svg>
+  )
+}
+
+function eventIcon(styles) {
+  return (
+    <svg
+      className={styles}
+      style={{
+        fill: "currentColor"
+      }}
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
+      x="0px"
+      y="0px"
+      viewBox="0 0 1000 1000"
+      enableBackground="new 0 0 1000 1000"
+      xmlSpace="preserve"
+    >
+      <metadata>Svg Vector Icons : http://www.onlinewebfonts.com/icon</metadata>
+      <g>
+        <g>
+          <g>
+            <path d="M385.7,643.2l-15.3,90.7c-2.1,12.4,3,24.9,13.2,32.3c10.2,7.4,23.7,8.4,34.8,2.6l81.6-42.6l81.6,42.6c4.8,2.5,10.1,3.8,15.3,3.8c6.9,0,13.7-2.2,19.5-6.3c10.2-7.4,15.3-19.9,13.2-32.3l-15.3-90.7l65.7-64.4c9-8.8,12.2-21.9,8.3-33.9c-3.9-11.9-14.2-20.7-26.7-22.5l-91-13.5l-41-82.4c-5.6-11.2-17.1-18.4-29.6-18.4c-12.5,0-24,7.1-29.7,18.4l-41,82.4l-91,13.5c-12.5,1.8-22.8,10.6-26.6,22.5c-3.9,11.9-0.7,25.1,8.3,33.9L385.7,643.2z" />
+            <path d="M891.1,108.1H786.9V50.2c0-26.5-21.5-48-48-48h-7.6c-26.5,0-48,21.5-48,48v57.8H315.5V50.2c0-26.5-21.5-48-48-48h-7.6c-26.5,0-48,21.5-48,48v57.8h-103c-54.5,0-98.9,44.3-98.9,98.9v692c0,54.5,44.4,98.9,98.9,98.9h782.3c54.5,0,98.9-44.4,98.9-98.9v-692C990,152.4,945.6,108.1,891.1,108.1z M878.2,886H121.8V347.3h756.5V886z" />
+          </g>
+        </g>
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+        <g />
+      </g>
     </svg>
   )
 }

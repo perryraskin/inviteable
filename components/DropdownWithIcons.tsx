@@ -2,16 +2,7 @@
 import { NextPage } from "next"
 import { Fragment } from "react"
 import { Menu, Transition } from "@headlessui/react"
-import {
-  ArchiveIcon,
-  ArrowCircleRightIcon,
-  ChevronDownIcon,
-  DuplicateIcon,
-  HeartIcon,
-  PencilAltIcon,
-  TrashIcon,
-  UserAddIcon
-} from "@heroicons/react/solid"
+import { ChevronDownIcon } from "@heroicons/react/solid"
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ")
@@ -101,7 +92,7 @@ const DropdownWithIcons: NextPage<Props> = ({
                 {options.map((option: Option) => {
                   const active = option.value === currentValue
                   return (
-                    <Menu.Item>
+                    <Menu.Item key={option.value}>
                       <button
                         className={classNames(
                           active
