@@ -3,6 +3,7 @@ import Head from "next/head"
 import App from "next/app"
 
 import "../styles/tailwind.css"
+import "mapbox-gl/dist/mapbox-gl.css"
 
 class MyApp extends App {
   render() {

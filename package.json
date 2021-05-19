@@ -31,7 +31,9 @@
     "dotenv": "^8.2.0",
     "dotenv-webpack": "^2.0.0",
     "express": "^4.17.1",
+    "google-map-react": "^2.1.9",
     "lodash": "^4.17.20",
+    "mapbox-gl": "^2.2.0",
     "next": "^10.0.3",
     "node-fetch": "^2.6.1",
     "postcss": "^8.2.1",
@@ -41,6 +43,7 @@
     "react-avatar": "^3.10.0",
     "react-dom": "^16.14.0",
     "react-location-picker": "^1.5.0",
+    "react-mapbox-gl": "^5.1.1",
     "tailwindcss": "^2.1.1"
   },
   "devDependencies": {

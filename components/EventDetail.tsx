@@ -23,6 +23,7 @@ import {
 // import AvatarGroupStack from "./AvatarGroupStack"
 import DropdownWithIcons from "./DropdownWithIcons"
 import ShareSheet from "./ShareSheet"
+import MapBox from "./MapBox"
 
 import { Response } from "../models/interfaces"
 
@@ -223,12 +224,19 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                 </span>
               </p>
             </div>
-            <div className="mt-2 sm:mt-0 rounded-lg relative shadow">
-              <img
+            <div
+              id="map"
+              className="h-72 sm:h-full mt-2 sm:mt-0 rounded-lg relative shadow"
+            >
+              {/* <img
                 className="rounded-lg"
                 src="https://i.imgur.com/oFypSZG.jpg"
-              ></img>
-              <div className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full text-center font-semibold p-4">
+              ></img> */}
+              <MapBox lat={40.7812} long={-73.9665} />
+              <div
+                className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full 
+              text-base sm:text-sm text-center font-sans font-semibold p-4 sm:p-3"
+              >
                 Central Park, Manhattan, NY
               </div>
             </div>
