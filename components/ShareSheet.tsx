@@ -16,7 +16,7 @@ const ShareSheet: NextPage<Props> = ({
   eventTitle,
   inviteUrl
 }) => {
-  let navigator: any
+  // let navigator: any
 
   const [shareSheetAvailable, setShareSheetAvailable] = useState(false)
 
@@ -44,7 +44,7 @@ const ShareSheet: NextPage<Props> = ({
   }
 
   useEffect(() => {
-    navigator = window.navigator
+    // navigator = window.navigator
     if (navigator && navigator.share) setShareSheetAvailable(true)
     else setShareSheetAvailable(false)
   }, [])
