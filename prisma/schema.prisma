@@ -45,6 +45,8 @@ model Event {
   imageUrl      String?
   details       String?
   isPrivate     Boolean   @default(true)
+  inviteCode    String?
+  inviteUrl     String?
   Host          User?     @relation(fields: [userId], references: [id])
   Guests        Guest[]
   Threads       Thread[]

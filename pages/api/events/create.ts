@@ -10,7 +10,8 @@ export default async function(req, res) {
     const {
       userId,
       title,
-      eventDateTime,
+      dateTimeStart,
+      dateTimeEnd,
       locationName,
       latitude,
       longitude,
@@ -33,7 +34,8 @@ export default async function(req, res) {
           }
         },
         title,
-        eventDateTime: new Date(eventDateTime),
+        dateTimeStart: new Date(dateTimeStart),
+        dateTimeEnd: new Date(dateTimeEnd),
         locationName,
         latitude,
         longitude,

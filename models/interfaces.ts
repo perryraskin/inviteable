@@ -18,6 +18,8 @@ export interface Event {
   imageUrl: string
   details: string
   isPrivate: boolean
+  inviteCode: string
+  inviteUrl: string
   Host: User
 }
 
