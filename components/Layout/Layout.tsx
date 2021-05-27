@@ -20,10 +20,6 @@ const Layout: NextPage<Props> = ({ children }) => {
         />
         <meta name="theme-color" content="#556cd6" />
         <link
-          rel="icon"
-          href="https://nextjs.org/static/favicon/favicon-32x32.png"
-        />
-        <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
         />

@@ -1,3 +1,5 @@
+const colors = require("tailwindcss/colors")
+
 module.exports = {
   mode: "jit",
   darkMode: "media",
@@ -9,6 +11,17 @@ module.exports = {
     "./public/index.html",
     "./styles/tailwind.css"
   ],
+  theme: {
+    extend: {
+      colors: {
+        rose: colors.rose,
+        teal: colors.teal,
+        amber: colors.amber,
+        lightBlue: colors.lightBlue,
+        cyan: colors.cyan
+      }
+    }
+  },
   variants: {
     backgroundColor: ["responsive", "hover", "focus", "active"],
     textColor: ["responsive", "hover", "focus", "active"],

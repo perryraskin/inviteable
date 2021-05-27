@@ -24,9 +24,9 @@ export interface Event {
 }
 
 export enum Response {
-  none,
-  accepted,
-  declined
+  None,
+  Accepted,
+  Declined
 }
 
 export interface User {}
