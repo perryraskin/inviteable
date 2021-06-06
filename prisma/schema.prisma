@@ -32,25 +32,35 @@ model Event {
   title         String
   dateTimeStart DateTime?
   dateTimeEnd   DateTime?
-  locationName  String?
-  latitude      Decimal?
-  longitude     Decimal?
-  address1      String?
-  address2      String?
-  city          String?
-  state         String?
-  zip           String?
-  country       String?
   price         Decimal   @default(0)
   imageUrl      String?
   details       String?
   isPrivate     Boolean   @default(true)
+  showGuestList Boolean   @default(true)
+  allowComments Boolean   @default(true)
   inviteCode    String?
   inviteUrl     String?
   Host          User?     @relation(fields: [userId], references: [id])
   Guests        Guest[]
   Threads       Thread[]
   Comments      Comment[]
+  Address       Address[]
+}
+
+model Address {
+  id           Int      @id @default(autoincrement())
+  dateCreated  DateTime @default(now())
+  eventId      Int?
+  locationName String?
+  latitude     Decimal?
+  longitude    Decimal?
+  address1     String?
+  address2     String?
+  city         String?
+  state        String?
+  zip          String?
+  country      String?
+  Event        Event?   @relation(fields: [eventId], references: [id])
 }
 
 model Guest {

@@ -37,34 +37,46 @@ class MyApp extends App {
           <meta name="msapplication-TileColor" content="#ef4444" />
           <meta name="theme-color" content="#ef4444" />
           {/* General tags */}
-          <meta key="description" property="description" content="invitable" />
-          <title key="title">invitable</title>
+          <meta
+            key="description"
+            property="description"
+            content="Events of any kind, with privacy in mind"
+          />
+          <title key="title">inviteable</title>
           {/* OpenGraph tags */}
           <meta
             key="og:url"
             property="og:url"
-            content="https://github.com/perryraskin/event-planner"
+            content="https://inviteable.app"
           />
-          <meta key="og:title" property="og:title" content="invitable" />
+          <meta key="og:title" property="og:title" content="inviteable" />
           <meta
             key="og:description"
             property="og:description"
-            content="invitable"
+            content="Events of any kind, with privacy in mind"
           />
-          {/* <meta key="og:image" property="og:image" content="" /> */}
+          <meta
+            key="og:image"
+            property="og:image"
+            content="https://res.cloudinary.com/raskin-me/image/upload/v1622149313/inviteable/inviteable-logo-2-alt-2_l0n7mc.png"
+          />
           <meta key="og:type" property="og:type" content="website" />
           {/* Twitter Card tags */}
           <meta
             key="twitter:title"
             property="twitter:title"
-            content="invitable"
+            content="inviteable"
           />
           <meta
             key="twitter:description"
             property="twitter:description"
-            content="invitable"
+            content="Events of any kind, with privacy in mind"
           />
-          {/* <meta key="twitter:image" property="twitter:image" content="" /> */}
+          <meta
+            key="twitter:image"
+            property="twitter:image"
+            content="https://res.cloudinary.com/raskin-me/image/upload/v1622149122/inviteable/inviteable-favicon-2_zf03d5.png"
+          />
           <meta key="twitter:card" property="twitter:card" content="summary" />
         </Head>
         <Component {...pageProps} />

@@ -23,7 +23,7 @@ const Layout: NextPage<Props> = ({ children }) => {
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
         />
-        <title>Invitable</title>
+        <title>inviteable</title>
         <meta name="description" content="minimal event planning" />
       </Head>
       <div className="antialiased text-gray-900 bg-gray-100">

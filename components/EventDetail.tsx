@@ -54,7 +54,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         ></meta>
         {/* General tags */}
-        <meta key="description" property="description" content="invitable" />
+        <meta key="description" property="description" content="inviteable" />
         <title key="title">{eventTitle}</title>
         {/* OpenGraph tags */}
         <meta
@@ -66,7 +66,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
         <meta
           key="og:description"
           property="og:description"
-          content="invitable"
+          content="inviteable"
         />
         <meta
           key="og:image"
@@ -83,7 +83,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
         <meta
           key="twitter:description"
           property="twitter:description"
-          content="invitable"
+          content="inviteable"
         />
         <meta
           key="twitter:image"

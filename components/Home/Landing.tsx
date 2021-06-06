@@ -116,7 +116,7 @@ export default function Landing() {
             <div>
               <div className="md:text-left text-center">
                 <img
-                  className="h-20 inline"
+                  className="h-20 md:h-28 inline"
                   //   src="https://res.cloudinary.com/raskin-me/image/upload/v1622137991/inviteable/inviteable-logo-2-alt_e5ll9g.png"
                   src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
                   alt="Inviteable"
@@ -143,7 +143,7 @@ export default function Landing() {
                   </h1>
                   <p className="mt-6 text-xl text-gray-500">
                     Full control when hosting an event and peace of mind when
-                    attending as a guest
+                    responding as a guest
                   </p>
                 </div>
                 <form
@@ -301,9 +301,10 @@ export default function Landing() {
                     Get notified when we&rsquo;re launching.
                   </h2>
                   <p className="mt-6 mx-auto max-w-2xl text-lg text-red-100">
-                    While the app <i>is</i> up & running, I've got loads of more
-                    features on the roadmap. To follow the journey, feel free to
-                    subscribe for updates by leaving your email below.
+                    Technically "we" is just me, Perry. While the app <i>is</i>{" "}
+                    up & running, I've got loads of more features on the
+                    roadmap. To follow the journey, feel free to subscribe for
+                    updates by leaving your email below.
                   </p>
                 </div>
                 <form

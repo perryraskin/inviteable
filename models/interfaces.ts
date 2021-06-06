@@ -5,6 +5,19 @@ export interface Event {
   title: string
   dateTimeStart: Date
   dateTimeEnd: Date
+  Address: Address
+  price: Number
+  imageUrl: string
+  details: string
+  isPrivate: boolean
+  showGuestList: boolean
+  allowComments: boolean
+  inviteCode: string
+  inviteUrl: string
+  Host: User
+}
+
+export interface Address {
   locationName: string
   latitude: Number
   longitude: Number
@@ -14,13 +27,6 @@ export interface Event {
   state: string
   zip: string
   country: string
-  price: Number
-  imageUrl: string
-  details: string
-  isPrivate: boolean
-  inviteCode: string
-  inviteUrl: string
-  Host: User
 }
 
 export enum Response {
