@@ -1,4 +1,8 @@
+import React from "react"
+import { Router, useRouter } from "next/router"
 import { ChevronRightIcon, StarIcon } from "@heroicons/react/solid"
+
+import { spinner } from "../Elements/Icons"
 
 const stats = [
   { label: "Founded", value: "2021" },
@@ -107,6 +111,35 @@ const footerNavigation = {
 }
 
 export default function Landing() {
+  const router = useRouter()
+  const [isSubmittingForm, setIsSubmittingForm] = React.useState(false)
+  const [eventTitle, setEventTitle] = React.useState("")
+
+  async function createEvent() {
+    const data = { event: { title: eventTitle } }
+    if (!isSubmittingForm) {
+      setIsSubmittingForm(true)
+
+      let apiUrl = "/api/events/create"
+      let fetchMethod = "POST"
+      const res = await fetch(apiUrl, {
+        method: fetchMethod,
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      if (res) {
+        console.log(res)
+        res.json().then(res => {
+          console.log(res)
+          const { eventResponse } = res
+          if (eventResponse) router.push(`/event/${eventResponse.id}`)
+          setIsSubmittingForm(false)
+        })
+      }
+    }
+  }
   return (
     <div className="bg-white">
       <main>
@@ -159,13 +192,17 @@ export default function Landing() {
                       type="email"
                       className="block w-full border border-gray-300 rounded-md px-5 py-3 text-base text-gray-900 placeholder-gray-500 shadow-sm focus:border-red-500 focus:ring-red-500"
                       placeholder="Enter event title"
+                      value={eventTitle}
+                      onChange={e => setEventTitle(e.target.value)}
                     />
                   </div>
                   <div className="mt-4 sm:mt-0 sm:ml-3">
                     <button
-                      type="submit"
-                      className="block w-full rounded-md border border-transparent px-5 py-3 bg-red-500 text-base font-medium text-white shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:px-10"
+                      type="button"
+                      className="inline-flex w-full rounded-md border border-transparent px-5 py-3 bg-red-500 text-base font-medium text-white shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:px-10"
+                      onClick={createEvent}
                     >
+                      {spinner(isSubmittingForm)}
                       Start for FREE!
                     </button>
                   </div>

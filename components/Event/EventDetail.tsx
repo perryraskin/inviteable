@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react"
 import { NextPage } from "next"
 import Head from "next/head"
 import Router from "next/router"
-import withLayout from "../hocs/withLayout"
-import utilities from "../utilities"
+import withLayout from "../../hocs/withLayout"
+import utilities from "../../utilities"
 
 import dayjs from "dayjs"
 import {
@@ -23,11 +23,11 @@ import {
 } from "@heroicons/react/solid"
 
 // import AvatarGroupStack from "./AvatarGroupStack"
-import DropdownWithIcons from "./DropdownWithIcons"
-import ShareSheet from "./ShareSheet"
-import MapBox from "./MapBox"
+import DropdownWithIcons from "../DropdownWithIcons"
+import ShareSheet from "../ShareSheet"
+import MapBox from "../MapBox"
 
-import { Event, Response } from "../models/interfaces"
+import { Event, Response } from "../../models/interfaces"
 
 interface Props {
   event?: Event
@@ -39,8 +39,8 @@ const EventDetail: NextPage<Props> = ({ event }) => {
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false)
   const inviteUrl = "https://inviteable.app/event/1"
 
-  const [eventTitle, setEventTitle] = useState("Grandma's 90th Birthday!")
-  const [response, setResponse] = useState(Response.none)
+  const [eventTitle, setEventTitle] = useState(event.title)
+  const [response, setResponse] = useState(Response.None)
 
   async function handleUpdateResponse(response: Response) {
     setResponse(response)
@@ -93,6 +93,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
         <meta key="twitter:card" property="twitter:card" content="summary" />
       </Head>
       <main className="flex-1 rounded-xl shadow-lg relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white">
+        {/* BANNER TO LOG IN */}
         <article>
           {/* Profile header */}
           <div>
@@ -124,7 +125,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                   </div>
                   <div className="sm:hidden 2xl:block mt-1 min-w-0 flex-1">
                     <h1 className="text-2xl font-bold text-gray-900 truncate">
-                      Grandma's 90th Birthday!
+                      {eventTitle}
                     </h1>
                   </div>
                   <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
@@ -187,7 +188,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
               </div>
               <div className="hidden sm:block 2xl:hidden mt-1 min-w-0 flex-1">
                 <h1 className="text-2xl font-bold text-gray-900 truncate">
-                  Grandma's 90th Birthday!
+                  {eventTitle}
                 </h1>
               </div>
             </div>
