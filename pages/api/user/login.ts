@@ -64,17 +64,6 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           issuer
         }
       })
-    } else {
-      const updatedUser = await prisma.user.update({
-        where: {
-          id: existingUser.id
-        },
-        data: {
-          firstName,
-          lastName,
-          imageUrl
-        }
-      })
     }
 
     /* encrypted cookie details */
