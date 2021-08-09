@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from "react"
 import { Magic } from "magic-sdk"
+import { OAuthExtension } from "@magic-ext/oauth"
 import withLayout from "../hocs/withLayout"
 
 /* initializing context API values */
@@ -19,8 +20,24 @@ const Store = ({ children }) => {
 
       /* We initialize Magic in `useEffect` so it has access to the global `window` object inside the browser */
       const magicKey = "pk_live_24AF7DDE311ABC7B"
-      let m = new Magic(magicKey)
+      let m = new Magic(magicKey, {
+        extensions: [new OAuthExtension()]
+      })
       await setMagic(m)
+
+      // if (window.location.pathname === "/callback") {
+      //   console.log(window.location.pathname)
+      //   try {
+      //     const result = await magic.oauth.getRedirectResult()
+      //     console.log(result)
+      //     const profile = JSON.stringify(result.oauth.userInfo, undefined, 2)
+
+      //     console.log("profile:", profile)
+      //   } catch (error) {
+      //     // window.location.href = window.location.origin
+      //     console.error(error.message)
+      //   }
+      // }
 
       /* On page refresh, send a request to /api/user to see if there's a valid user session */
       let res = await fetch(`/api/user`)

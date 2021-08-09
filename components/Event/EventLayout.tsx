@@ -20,7 +20,7 @@ interface Props {
   eventid: string
 }
 
-const HomeLayout: NextPage<Props> = ({ eventid }) => {
+const EventLayout: NextPage<Props> = ({ eventid }) => {
   const [loggedIn, setLoggedIn] = React.useContext(LoggedInContext)
   const [isLoading, setIsLoading] = React.useContext(LoadingContext)
   const [currentEvent, setCurrentEvent] = React.useState(null)
@@ -61,4 +61,4 @@ const HomeLayout: NextPage<Props> = ({ eventid }) => {
   }
 }
 
-export default withLayout(HomeLayout)
+export default withLayout(EventLayout)

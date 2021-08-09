@@ -1,6 +1,7 @@
 import React from "react"
 import { Router, useRouter } from "next/router"
 import { ChevronRightIcon, StarIcon } from "@heroicons/react/solid"
+import { MagicContext, LoggedInContext, LoadingContext } from "../Store"
 
 import { spinner } from "../Elements/Icons"
 
@@ -114,6 +115,10 @@ export default function Landing() {
   const router = useRouter()
   const [isSubmittingForm, setIsSubmittingForm] = React.useState(false)
   const [eventTitle, setEventTitle] = React.useState("")
+  const [loggedIn, setLoggedIn] = React.useContext(LoggedInContext)
+  const [isLoading, setIsLoading] = React.useContext(LoadingContext)
+  const [email, setEmail] = React.useState("")
+  const [magic] = React.useContext(MagicContext)
 
   async function createEvent() {
     const data = { event: { title: eventTitle } }
@@ -140,6 +145,15 @@ export default function Landing() {
       }
     }
   }
+
+  const handleLogin = async () => {
+    // Start the Google OAuth 2.0 flow!
+    const didToken = await magic.oauth.loginWithRedirect({
+      provider: "google",
+      redirectURI: `${window.location.origin}/callback`
+    })
+  }
+
   return (
     <div className="bg-white">
       <main>
@@ -156,27 +170,31 @@ export default function Landing() {
                 />
               </div>
               <div className="mt-10">
-                {/* <div>
-                  <a href="#" className="inline-flex space-x-4">
+                <div>
+                  <a
+                    href="#"
+                    onClick={handleLogin}
+                    className="inline-flex space-x-4"
+                  >
                     <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
-                      What's new
+                      Have an account?
                     </span>
                     <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
-                      <span>Just shipped version 0.1.0</span>
+                      <span>Sign in</span>
                       <ChevronRightIcon
                         className="h-5 w-5"
                         aria-hidden="true"
                       />
                     </span>
                   </a>
-                </div> */}
+                </div>
                 <div className="mt-6 sm:max-w-xl md:text-left text-center">
                   <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
                     Events of any kind, with privacy in mind
                   </h1>
                   <p className="mt-6 text-xl text-gray-500">
-                    Full control when hosting an event and peace of mind when
-                    responding as a guest
+                    Complete control when hosting an event and peace of mind
+                    when responding as a guest
                   </p>
                 </div>
                 <form

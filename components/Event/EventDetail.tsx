@@ -93,7 +93,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
         <meta key="twitter:card" property="twitter:card" content="summary" />
       </Head>
       <main className="flex-1 rounded-xl shadow-lg relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white">
-        {/* BANNER TO LOG IN */}
+        {/* BANNER: LOG IN TO CLAIM EVENT */}
         <article>
           {/* Profile header */}
           <div>
