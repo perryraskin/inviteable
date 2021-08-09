@@ -25,7 +25,11 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   // await runMiddleware(req, res, cors)
 
   const prisma = new PrismaClient({ log: ["query"] })
-
+  const body = JSON.parse(req.body)
+  const firstName = body.firstName
+  const lastName = body.lastName
+  const imageUrl = body.imageUrl
+  console.log(firstName, lastName, imageUrl)
   try {
     /* strip token from Authorization header */
     let DIDT = magic.utils.parseAuthorizationHeader(req.headers.authorization)
@@ -53,10 +57,22 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       const { email, issuer } = userMetadata
       const newUser = await prisma.user.create({
         data: {
-          firstName: "",
-          lastName: "",
+          firstName,
+          lastName,
+          imageUrl,
           email,
           issuer
+        }
+      })
+    } else {
+      const updatedUser = await prisma.user.update({
+        where: {
+          id: existingUser.id
+        },
+        data: {
+          firstName,
+          lastName,
+          imageUrl
         }
       })
     }

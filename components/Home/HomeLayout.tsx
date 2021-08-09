@@ -26,10 +26,10 @@ const HomeLayout: NextPage<Props> = ({}) => {
     let DIDT = null
     try {
       const result = await magic.oauth.getRedirectResult()
-      const profile = JSON.stringify(result.oauth.userInfo, undefined, 2)
+      const profile = result.oauth.userInfo
       // console.log("profile:", profile)
 
-      if (profile) handleLogin(magic)
+      if (profile) handleLogin(magic, profile)
     } catch (error) {
       window.location.href = window.location.origin
       // console.error(error)
@@ -49,7 +49,12 @@ const HomeLayout: NextPage<Props> = ({}) => {
   //   console.log("loggedIn:", loggedIn)
   // }, [])
 
-  async function handleLogin(magic: any) {
+  async function handleLogin(magic: any, profile: any) {
+    const userInfo = {
+      firstName: profile.givenName,
+      lastName: profile.familyName,
+      imageUrl: profile.picture
+    }
     try {
       const idToken = await magic.user.getIdToken()
       /* Pass the Decentralized ID token in the Authorization header to the database */
@@ -57,7 +62,8 @@ const HomeLayout: NextPage<Props> = ({}) => {
         method: "POST",
         headers: new Headers({
           Authorization: "Bearer " + idToken
-        })
+        }),
+        body: JSON.stringify(userInfo)
       })
 
       let data = await res.json()
@@ -84,7 +90,7 @@ const HomeLayout: NextPage<Props> = ({}) => {
         ></img>
       </Section>
     )
-  } else if (loggedIn) {
+  } else if (false) {
     return (
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">

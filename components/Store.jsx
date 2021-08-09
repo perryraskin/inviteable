@@ -25,20 +25,6 @@ const Store = ({ children }) => {
       })
       await setMagic(m)
 
-      // if (window.location.pathname === "/callback") {
-      //   console.log(window.location.pathname)
-      //   try {
-      //     const result = await magic.oauth.getRedirectResult()
-      //     console.log(result)
-      //     const profile = JSON.stringify(result.oauth.userInfo, undefined, 2)
-
-      //     console.log("profile:", profile)
-      //   } catch (error) {
-      //     // window.location.href = window.location.origin
-      //     console.error(error.message)
-      //   }
-      // }
-
       /* On page refresh, send a request to /api/user to see if there's a valid user session */
       let res = await fetch(`/api/user`)
       let data = await res.json()
