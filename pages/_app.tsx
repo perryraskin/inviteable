@@ -75,7 +75,7 @@ class MyApp extends App {
           <meta
             key="twitter:image"
             property="twitter:image"
-            content="https://res.cloudinary.com/raskin-me/image/upload/v1622149122/inviteable/inviteable-favicon-2_zf03d5.png"
+            content="https://res.cloudinary.com/raskin-me/image/upload/v1646583680/inviteable/inviteable-favicon-3_ao9dsi.png"
           />
           <meta key="twitter:card" property="twitter:card" content="summary" />
         </Head>
