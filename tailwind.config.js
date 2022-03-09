@@ -1,9 +1,7 @@
 const colors = require("tailwindcss/colors")
 
 module.exports = {
-  mode: "jit",
-  darkMode: "media",
-  purge: [
+  content: [
     "./pages/**/*.tsx",
     "./pages/**/*.jsx",
     "./components/**/*.tsx",
@@ -17,17 +15,10 @@ module.exports = {
         rose: colors.rose,
         teal: colors.teal,
         amber: colors.amber,
-        lightBlue: colors.lightBlue,
+        lightBlue: colors.sky,
         cyan: colors.cyan
       }
     }
-  },
-  variants: {
-    backgroundColor: ["responsive", "hover", "focus", "active"],
-    textColor: ["responsive", "hover", "focus", "active"],
-    spinner: ["responsive"],
-    transitionProperty: ["responsive"],
-    animation: ["responsive", "motion-safe", "motion-reduce"]
   },
   plugins: [require("@tailwindcss/forms")]
 }
