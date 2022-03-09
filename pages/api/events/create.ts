@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { PrismaClient, User } from "@prisma/client"
+import prisma from "../../../middleware/prismaClient"
 import auth from "../../../middleware/auth"
 
 export default async function(req, res) {
@@ -7,7 +7,6 @@ export default async function(req, res) {
   // const user = userAuth as User
 
   req = req as NextApiRequest
-  const prisma = new PrismaClient({ log: ["query"] })
   const { event } = req.body
   const { userId, title } = event
   try {

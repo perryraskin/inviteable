@@ -9,12 +9,19 @@ export interface Event {
   price: Number
   imageUrl: string
   details: string
-  isPrivate: boolean
-  showGuestList: boolean
-  allowComments: boolean
   inviteCode: string
   inviteUrl: string
   Host: User
+  Settings: EventSettings
+}
+
+export interface EventSettings {
+  id: Number
+  dateCreated: Date
+  eventId: Number
+  isPrivate: boolean
+  showGuestList: boolean
+  allowComments: boolean
 }
 
 export interface Address {

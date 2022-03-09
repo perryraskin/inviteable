@@ -26,10 +26,10 @@ const EventLayout: NextPage<Props> = ({ eventid }) => {
   const [currentEvent, setCurrentEvent] = React.useState(null)
 
   React.useEffect(() => {
-    fetchEventRequest()
+    getEvent()
   }, [])
 
-  async function fetchEventRequest() {
+  async function getEvent() {
     const res = await fetch(`/api/event/${eventid}`)
     const data = await res.json()
     console.log(data)

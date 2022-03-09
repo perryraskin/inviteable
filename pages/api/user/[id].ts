@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { PrismaClient, User } from "@prisma/client"
+import prisma from "../../../middleware/prismaClient"
 import auth from "../../../middleware/auth"
 import { includes } from "lodash"
 
@@ -7,7 +7,6 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   const userAuth = await auth(req, res)
   //const user = userAuth as User
 
-  const prisma = new PrismaClient({ log: ["query"] })
   const {
     query: { id }
   } = req

@@ -27,25 +27,33 @@ model User {
 }
 
 model Event {
-  id            Int       @id @default(autoincrement())
-  dateCreated   DateTime  @default(now())
+  id            Int            @id @default(autoincrement())
+  dateCreated   DateTime       @default(now())
   userId        Int?
   title         String
   dateTimeStart DateTime?
   dateTimeEnd   DateTime?
-  price         Decimal   @default(0)
+  price         Decimal        @default(0) @db.Decimal(10, 2)
   imageUrl      String?
   details       String?
-  isPrivate     Boolean   @default(true)
-  showGuestList Boolean   @default(true)
-  allowComments Boolean   @default(true)
   inviteCode    String?
   inviteUrl     String?
-  Host          User?     @relation(fields: [userId], references: [id])
+  Host          User?          @relation(fields: [userId], references: [id])
   Guests        Guest[]
   Threads       Thread[]
   Comments      Comment[]
   Address       Address[]
+  Settings      EventSettings?
+}
+
+model EventSettings {
+  id            Int      @id @default(autoincrement())
+  dateCreated   DateTime @default(now())
+  eventId       Int      @unique
+  isPrivate     Boolean  @default(true)
+  showGuestList Boolean  @default(true)
+  allowComments Boolean  @default(true)
+  Event         Event    @relation(fields: [eventId], references: [id])
 }
 
 model Address {

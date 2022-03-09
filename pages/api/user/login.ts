@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { PrismaClient } from "@prisma/client"
+import prisma from "../../../middleware/prismaClient"
 import { magic } from "../../../utilities/magic"
 import { encryptCookie, cookie } from "../../../utilities/cookie"
 import { serialize } from "cookie"
@@ -24,7 +24,6 @@ import { serialize } from "cookie"
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   // await runMiddleware(req, res, cors)
 
-  const prisma = new PrismaClient({ log: ["query"] })
   const body = JSON.parse(req.body)
   const firstName = body.firstName
   const lastName = body.lastName
