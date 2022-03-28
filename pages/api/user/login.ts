@@ -3,23 +3,6 @@ import prisma from "../../../middleware/prismaClient"
 import { magic } from "../../../utilities/magic"
 import { encryptCookie, cookie } from "../../../utilities/cookie"
 import { serialize } from "cookie"
-// import Cors from "cors"
-
-// const cors = Cors({
-//   methods: ["GET", "HEAD"],
-// })
-
-// function runMiddleware(req, res, fn) {
-//   return new Promise((resolve, reject) => {
-//     fn(req, res, (result) => {
-//       if (result instanceof Error) {
-//         return reject(result)
-//       }
-
-//       return resolve(result)
-//     })
-//   })
-// }
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   // await runMiddleware(req, res, cors)
@@ -42,7 +25,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
 
     /* get user data from Magic */
     const userMetadata = await magic.users.getMetadataByIssuer(claim.iss)
-    console.log("userMetadata", userMetadata)
+    // console.log("userMetadata", userMetadata)
+    const { email, issuer, publicAddress } = userMetadata
 
     /* check if user is already in */
     const existingUser = await prisma.user.findUnique({
@@ -51,6 +35,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       }
     })
 
+    let userId = 0
     /* Create new user if doesn't exist */
     if (!existingUser) {
       const { email, issuer } = userMetadata
@@ -63,10 +48,23 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           issuer
         }
       })
+    } else {
+      userId = existingUser.id
     }
 
+    const userInfo = {
+      id: userId,
+      firstName,
+      lastName,
+      imageUrl,
+      email,
+      issuer,
+      publicAddress
+    }
+
+    console.log("userInfo", userInfo)
     /* encrypted cookie details */
-    const token = await encryptCookie(userMetadata)
+    const token = await encryptCookie(userInfo)
 
     /* set cookie */
     await res.setHeader("Set-Cookie", serialize("auth", token, cookie))

@@ -1,4 +1,5 @@
 import React from "react"
+import Link from "next/link"
 import { Router, useRouter } from "next/router"
 import { ChevronRightIcon, StarIcon } from "@heroicons/react/solid"
 import { MagicContext, LoggedInContext, LoadingContext } from "../Store"
@@ -120,12 +121,17 @@ export default function Landing() {
   const [email, setEmail] = React.useState("")
   const [magic] = React.useContext(MagicContext)
 
+  // React.useEffect(() => {
+  //   console.log(loggedIn)
+  // }, [loggedIn])
+
   async function createEvent() {
-    const data = { event: { title: eventTitle } }
+    const data = { event: { userId: loggedIn?.id, title: eventTitle } }
+    // console.log(data)
     if (!isSubmittingForm) {
       setIsSubmittingForm(true)
 
-      let apiUrl = "/api/events/create"
+      let apiUrl = "/api/events"
       let fetchMethod = "POST"
       const res = await fetch(apiUrl, {
         method: fetchMethod,
@@ -139,7 +145,7 @@ export default function Landing() {
         res.json().then(res => {
           console.log(res)
           const { eventResponse } = res
-          if (eventResponse) router.push(`/event/${eventResponse.id}`)
+          if (eventResponse) router.push(`/events/${eventResponse.id}`)
           setIsSubmittingForm(false)
         })
       }
@@ -164,29 +170,30 @@ export default function Landing() {
               <div className="md:text-left text-center">
                 <img
                   className="h-20 md:h-28 inline"
-                  //   src="https://res.cloudinary.com/raskin-me/image/upload/v1622137991/inviteable/inviteable-logo-2-alt_e5ll9g.png"
                   src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
                   alt="Inviteable"
                 />
               </div>
               <div className="mt-10">
                 <div>
-                  <a
-                    href="#"
-                    onClick={handleLogin}
-                    className="inline-flex space-x-4"
-                  >
-                    <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
-                      Have an account?
-                    </span>
-                    <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
-                      <span>Sign in</span>
-                      <ChevronRightIcon
-                        className="h-5 w-5"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </a>
+                  <Link href={loggedIn ? "/events" : "#"}>
+                    <a
+                      onClick={loggedIn ? null : handleLogin}
+                      className="inline-flex space-x-4"
+                    >
+                      <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
+                        {loggedIn ? "Welcome back!" : "Have an account?"}
+                      </span>
+                      <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
+                        <span>{loggedIn ? "My Events" : "Sign in"}</span>
+                        <ChevronRightIcon
+                          style={{ marginTop: "2px" }}
+                          className="h-5 w-5"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </a>
+                  </Link>
                 </div>
                 <div className="mt-6 sm:max-w-xl md:text-left text-center">
                   <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
@@ -197,17 +204,14 @@ export default function Landing() {
                     when responding as a guest
                   </p>
                 </div>
-                <form
-                  action="#"
-                  className="mt-12 sm:max-w-lg sm:w-full sm:flex"
-                >
+                <div className="mt-12 sm:max-w-lg sm:w-full sm:flex">
                   <div className="min-w-0 flex-1">
-                    <label htmlFor="hero_email" className="sr-only">
+                    <label htmlFor="event_title" className="sr-only">
                       Event title
                     </label>
                     <input
-                      id="hero_email"
-                      type="email"
+                      id="event_title"
+                      type="text"
                       className="block w-full border border-gray-300 rounded-md px-5 py-3 text-base text-gray-900 placeholder-gray-500 shadow-sm focus:border-red-500 focus:ring-red-500"
                       placeholder="Enter event title"
                       value={eventTitle}
@@ -217,14 +221,14 @@ export default function Landing() {
                   <div className="mt-4 sm:mt-0 sm:ml-3">
                     <button
                       type="button"
-                      className="inline-flex w-full rounded-md border border-transparent px-5 py-3 bg-red-500 text-base font-medium text-white shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:px-10"
+                      className="flex w-full rounded-md border border-transparent px-5 py-3 bg-red-500 text-base font-medium text-white shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:px-10"
                       onClick={createEvent}
                     >
                       {spinner(isSubmittingForm)}
-                      Start for FREE!
+                      Start for free!
                     </button>
                   </div>
-                </form>
+                </div>
                 <p className="text-center md:text-left mt-4 text-gray-500">
                   Alternatively, check out a{" "}
                   <a

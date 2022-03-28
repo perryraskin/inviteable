@@ -33,11 +33,12 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       else {
         const userAuth = await auth(req, res)
         const user = userAuth as User
+        console.log(user)
 
         const isGuest = event.Guests
           ? event.Guests.some(g => g.userId === user.id)
           : false
-        console.log(event.Host, user)
+        // console.log(event.Host, user)
         if (event.Host.issuer !== user.issuer && !isGuest) {
           res.status(401)
           res.json({ authorized: false })
@@ -49,8 +50,6 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     } catch (err) {
       res.status(500)
       res.json({ authorized: false, error: err.message })
-    } finally {
-      await prisma.$disconnect()
     }
   }
   // UPDATE
@@ -129,8 +128,6 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       } catch (err) {
         res.status(500)
         res.json({ authorized: false, error: err.message })
-      } finally {
-        await prisma.$disconnect()
       }
     }
   }

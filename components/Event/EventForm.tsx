@@ -51,7 +51,7 @@ const EventForm: NextPage<Props> = ({ event }) => {
     }
 
     setIsSubmitting(true)
-    let apiUrl = "/api/events/create"
+    let apiUrl = "/api/events"
     let fetchMethod = "POST"
     // if (event) {
     //   apiUrl = `/api/event/${event.id}`
@@ -69,7 +69,7 @@ const EventForm: NextPage<Props> = ({ event }) => {
       console.log(res)
       res.json().then(res => {
         const { eventResponse } = res
-        // if (eventResponse) router.push(`/event/${eventResponse.id}`)
+        // if (eventResponse) router.push(`/events/${eventResponse.id}`)
       })
     }
   }

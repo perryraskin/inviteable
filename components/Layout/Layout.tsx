@@ -18,7 +18,6 @@ const Layout: NextPage<Props> = ({ children }) => {
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
         />
-        <meta name="theme-color" content="#556cd6" />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"

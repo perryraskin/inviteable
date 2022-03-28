@@ -35,7 +35,7 @@ const Store = ({ children }) => {
       /* If db returns {authorized: false}, there is no valid session, so log user out of their session with Magic if it exists */
       !loggedIn && magic && magic.user.logout()
 
-      await setLoggedIn(loggedIn.email)
+      await setLoggedIn(loggedIn)
       setIsLoading(false)
     })()
   }, [])

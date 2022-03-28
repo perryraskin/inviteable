@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { NextPage } from "next"
+import Link from "next/link"
 import Head from "next/head"
 import Router from "next/router"
 import withLayout from "../../hocs/withLayout"
@@ -37,7 +38,6 @@ const EventDetail: NextPage<Props> = ({ event }) => {
   const now = dayjs()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false)
-  const inviteUrl = "https://inviteable.app/event/1"
 
   const [eventTitle, setEventTitle] = useState(event.title)
   const [response, setResponse] = useState(Response.None)
@@ -60,7 +60,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
         <meta
           key="og:url"
           property="og:url"
-          content={`https://inviteable.app/event/${event ? event.id : 0}`}
+          content={`https://inviteable.app/events/${event ? event.id : 0}`}
         />
         <meta key="og:title" property="og:title" content={eventTitle} />
         <meta
@@ -92,6 +92,17 @@ const EventDetail: NextPage<Props> = ({ event }) => {
         />
         <meta key="twitter:card" property="twitter:card" content="summary" />
       </Head>
+      <div className="text-center">
+        <Link href="/">
+          <a>
+            <img
+              className="mb-6 h-12 inline"
+              src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
+              alt="Inviteable"
+            />
+          </a>
+        </Link>
+      </div>
       <main className="flex-1 rounded-xl shadow-lg relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white">
         {/* BANNER: LOG IN TO CLAIM EVENT */}
         <article>
@@ -118,12 +129,12 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                   </div>
                 </div>
                 <div className="mt-6 sm:mt-14 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
-                  <div className="sm:hidden 2xl:block mt-6 min-w-0 flex-1">
+                  <div className="sm:hidden mt-6 min-w-0 flex-1">
                     <h3 className="text-sm font-bold uppercase text-red-500 truncate">
                       Monday, March 9, 2020 at 8:45 PM EDT
                     </h3>
                   </div>
-                  <div className="sm:hidden 2xl:block mt-1 min-w-0 flex-1">
+                  <div className="sm:hidden mt-1 min-w-0 flex-1">
                     <h1 className="text-2xl font-bold text-gray-900 truncate">
                       {eventTitle}
                     </h1>
@@ -181,12 +192,12 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                   </div>
                 </div>
               </div>
-              <div className="hidden sm:block 2xl:hidden mt-6 min-w-0 flex-1">
+              <div className="hidden sm:block mt-6 min-w-0 flex-1">
                 <h3 className="text-sm font-bold uppercase text-red-500 truncate">
                   Monday, March 9, 2020 at 8:45 PM EDT
                 </h3>
               </div>
-              <div className="hidden sm:block 2xl:hidden mt-1 min-w-0 flex-1">
+              <div className="hidden sm:block mt-1 min-w-0 flex-1">
                 <h1 className="text-2xl font-bold text-gray-900 truncate">
                   {eventTitle}
                 </h1>
@@ -197,7 +208,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
             open={isShareSheetOpen}
             setOpen={setIsShareSheetOpen}
             eventTitle={eventTitle}
-            inviteUrl={inviteUrl}
+            inviteUrl={event.inviteUrl}
           />
           {/* Tabs */}
           <div className="mt-6 sm:mt-2 2xl:mt-5">
@@ -320,9 +331,10 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                     <p className="text-sm font-medium text-gray-900">
                       Alicia Johnson
                     </p>
-                    <p className="text-sm text-gray-500 truncate">
-                      Event Planner
-                    </p>
+                    {/* <StarIcon className="mr-1 h-5 w-5 text-indigo-700 inline" /> */}
+                    <span className="text-sm text-indigo-700 truncate font-medium align-middle">
+                      Host
+                    </span>
                   </a>
                 </div>
               </div>
@@ -332,24 +344,6 @@ const EventDetail: NextPage<Props> = ({ event }) => {
           <div className="-mt-2 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
             <h2 className="text-lg font-bold text-gray-900">Guests</h2>
             <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixqx=Uz47TJ6CUV&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <a href="#" className="focus:outline-none">
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    <p className="text-sm font-medium text-gray-900">
-                      Alicia Johnson
-                    </p>
-                    <p className="text-sm text-gray-500 truncate">Host</p>
-                  </a>
-                </div>
-              </div>
               <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
                 <div className="flex-shrink-0">
                   <img
@@ -364,7 +358,10 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                     <p className="text-sm font-medium text-gray-900">
                       Michael Foster
                     </p>
-                    <p className="text-sm text-gray-500 truncate">Going</p>
+                    {/* <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" /> */}
+                    <span className="text-sm text-blue-500 truncate font-medium align-middle">
+                      Going
+                    </span>
                   </a>
                 </div>
               </div>
@@ -382,7 +379,10 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                     <p className="text-sm font-medium text-gray-900">
                       Dries Vincent
                     </p>
-                    <p className="text-sm text-gray-500 truncate">Going</p>
+                    {/* <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" /> */}
+                    <span className="text-sm text-blue-500 truncate font-medium align-middle">
+                      Going
+                    </span>
                   </a>
                 </div>
               </div>
@@ -400,7 +400,31 @@ const EventDetail: NextPage<Props> = ({ event }) => {
                     <p className="text-sm font-medium text-gray-900">
                       Lindsay Walton
                     </p>
-                    <p className="text-sm text-gray-500 truncate">Not Going</p>
+                    {/* <XCircleIcon className="mr-1 h-5 w-5 text-red-500 inline" /> */}
+                    <span className="text-sm text-red-500 truncate font-medium align-middle">
+                      Not Going
+                    </span>
+                  </a>
+                </div>
+              </div>
+              <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
+                <div className="flex-shrink-0">
+                  <img
+                    className="h-10 w-10 rounded-full"
+                    src="https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60"
+                    alt=""
+                  />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <a href="#" className="focus:outline-none">
+                    <span className="absolute inset-0" aria-hidden="true" />
+                    <p className="text-sm font-medium text-gray-900">
+                      Esther Howard
+                    </p>
+                    {/* <QuestionMarkCircleIcon className="mr-1 h-5 w-5 text-gray-500 inline" /> */}
+                    <span className="text-sm text-gray-500 truncate font-medium align-middle">
+                      No Response
+                    </span>
                   </a>
                 </div>
               </div>
