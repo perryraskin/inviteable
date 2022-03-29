@@ -25,8 +25,19 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         }
       })
 
+      // only return title and image for URL preview
+      if (ssr) {
+        res.status(200)
+        res.json({
+          authorized: true,
+          event: {
+            title: event.title,
+            image: event.imageUrl
+          }
+        })
+      }
       // if no userId, event has not been claimed (and has only a title)
-      if (!event.userId || ssr) {
+      else if (!event.userId) {
         res.status(200)
         res.json({ authorized: true, event })
       }

@@ -42,6 +42,11 @@ const EventDetailPage: NextPage<Props> = ({
             }
           ]
         }}
+        twitter={{
+          handle: "@perryraskin",
+          site: "@perryraskin",
+          cardType: "summary_large_image"
+        }}
       />
       <EventLayout eventId={eventid} inviteCode={inviteCode} claim={claim} />
     </>
@@ -54,9 +59,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const { eventid } = params
   const { inviteCode, claim } = query
 
-  const res = await fetch(
-    `${origin}/api/event/${eventid}?inviteCode=${inviteCode}&ssr=true`
-  )
+  const res = await fetch(`${origin}/api/event/${eventid}&ssr=true`)
   const data = await res.json()
   const { authorized, event } = data
 
