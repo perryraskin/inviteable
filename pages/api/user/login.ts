@@ -48,6 +48,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           issuer
         }
       })
+      userId = newUser.id
     } else {
       userId = existingUser.id
     }

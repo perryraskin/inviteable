@@ -32,9 +32,10 @@ import { Event, Response } from "../../models/interfaces"
 
 interface Props {
   event?: Event
+  inviteCode?: string
 }
 
-const EventDetail: NextPage<Props> = ({ event }) => {
+const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
   const now = dayjs()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false)
@@ -208,7 +209,7 @@ const EventDetail: NextPage<Props> = ({ event }) => {
             open={isShareSheetOpen}
             setOpen={setIsShareSheetOpen}
             eventTitle={eventTitle}
-            inviteUrl={event.inviteUrl}
+            inviteUrl={event.Invites[0]?.url}
           />
           {/* Tabs */}
           <div className="mt-6 sm:mt-2 2xl:mt-5">

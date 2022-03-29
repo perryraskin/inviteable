@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../middleware/prismaClient"
 import auth from "../../middleware/auth"
 import { v4 as uuidv4 } from "uuid"
+import { Response } from "../../models/interfaces"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   // const userAuth = await auth(req, res)
@@ -13,6 +14,9 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     body: { event }
   } = req
   const { userId, title } = event
+  const userIdString = (userId as unknown) as string
+  const userIdInt = parseInt(userIdString)
+
   const inviteCode = uuidv4()
 
   try {
@@ -27,26 +31,20 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
 
         let eventData = {
           data: {
-            Host: {
-              connect: {
-                id: userId
-              }
-            },
+            userId: userIdInt,
             title,
             dateTimeStart: new Date(),
-            dateTimeEnd: new Date(),
-            inviteCode
+            dateTimeEnd: new Date()
           }
         }
 
         if (!userId) {
           eventData = {
             data: {
-              Host: undefined,
+              userId: undefined,
               title,
               dateTimeStart: new Date(),
-              dateTimeEnd: new Date(),
-              inviteCode
+              dateTimeEnd: new Date()
             }
           }
         }
@@ -65,17 +63,33 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
 
         const inviteUrl = await createShortUrl(eventResponse, inviteCode)
 
-        const eventUpdateResponse = await prisma.event.update({
-          where: {
-            id: eventResponse.id
-          },
+        const eventInviteResponse = await prisma.eventInvite.create({
           data: {
-            inviteUrl
+            eventId: eventResponse.id,
+            code: inviteCode,
+            url: inviteUrl
           }
         })
 
+        let guestResponse
+        if (userId) {
+          guestResponse = await prisma.guest.create({
+            data: {
+              userId: userIdInt,
+              eventId: eventResponse.id,
+              isHost: true,
+              response: Response.Accepted
+            }
+          })
+        }
+
         res.status(201)
-        res.json({ eventResponse, addressResponse, eventUpdateResponse })
+        res.json({
+          eventResponse,
+          addressResponse,
+          eventInviteResponse,
+          guestResponse
+        })
         break
       default:
       // res.setHeader("Allow", ["GET", "POST"])

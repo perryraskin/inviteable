@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useContext } from "react"
 import { NextPage } from "next"
-import HomeLayout from "../components/Home/HomeLayout"
+import CallbackComponent from "../components/Callback"
 
 interface Props {}
 
 const Callback: NextPage<Props> = ({}) => {
-  return <HomeLayout />
+  return <CallbackComponent />
 }
 
 export default Callback

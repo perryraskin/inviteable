@@ -5,7 +5,7 @@ import auth from "../../../middleware/auth"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   const {
-    query: { id }
+    query: { id, inviteCode }
   } = req
 
   const eventId = id as unknown
@@ -20,7 +20,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           Host: true,
           Address: true,
           Guests: true,
-          Settings: true
+          Settings: true,
+          Invites: true
         }
       })
 
@@ -33,18 +34,48 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       else {
         const userAuth = await auth(req, res)
         const user = userAuth as User
-        console.log(user)
+        // console.log(user)
 
         const isGuest = event.Guests
-          ? event.Guests.some(g => g.userId === user.id)
+          ? event.Guests.some(g => g.userId === user.id && g.isHost === false)
           : false
+
+        const isHost =
+          event.userId === user.id ||
+          (event.Guests
+            ? event.Guests.some(g => g.userId === user.id && g.isHost === true)
+            : false)
         // console.log(event.Host, user)
-        if (event.Host.issuer !== user.issuer && !isGuest) {
-          res.status(401)
-          res.json({ authorized: false })
-        } else {
+        if (isHost || isGuest) {
+          console.log(isHost, isGuest)
           res.status(200)
           res.json({ authorized: true, event })
+        } else if (
+          user.id > 0 &&
+          inviteCode &&
+          inviteCode === event.Invites[0].code
+        ) {
+          console.log(inviteCode, event.Invites[0].code)
+          let guest = await prisma.guest.findFirst({
+            where: {
+              eventId: parseInt(eventIdString),
+              userId: user.id
+            }
+          })
+          if (!guest) {
+            guest = await prisma.guest.create({
+              data: {
+                userId: user.id,
+                eventId: parseInt(eventIdString)
+              }
+            })
+          }
+          res.status(200)
+          res.json({ authorized: true, event, guest })
+        } else {
+          // console.log("Not authorized to view event")
+          res.status(401)
+          res.json({ authorized: false })
         }
       }
     } catch (err) {
@@ -127,7 +158,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         res.json({ authorized: true, eventResponse, addressResponse })
       } catch (err) {
         res.status(500)
-        res.json({ authorized: false, error: err.message })
+        res.json({ error: err.message })
       }
     }
   }

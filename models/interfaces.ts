@@ -23,10 +23,19 @@ export interface Event {
   price: Number
   imageUrl: string
   details: string
-  inviteCode: string
-  inviteUrl: string
   Host: User
   Settings: EventSettings
+  Invites: EventInvite[]
+}
+
+export interface EventInvite {
+  id: Number
+  dateCreated: Date
+  eventId: Number
+  Event: Event
+  code: string
+  url: string
+  redeemed: Boolean
 }
 
 export interface EventSettings {

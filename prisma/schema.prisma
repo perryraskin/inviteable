@@ -36,14 +36,23 @@ model Event {
   price         Decimal        @default(0) @db.Decimal(10, 2)
   imageUrl      String?
   details       String?
-  inviteCode    String?
-  inviteUrl     String?
   Host          User?          @relation(fields: [userId], references: [id])
   Guests        Guest[]
   Threads       Thread[]
   Comments      Comment[]
   Address       Address[]
   Settings      EventSettings?
+  Invites       EventInvite[]
+}
+
+model EventInvite {
+  id          Int      @id @default(autoincrement())
+  dateCreated DateTime @default(now())
+  eventId     Int?
+  code        String?
+  url         String?
+  Event       Event?   @relation(fields: [eventId], references: [id])
+  redeemed    Boolean  @default(false)
 }
 
 model EventSettings {
