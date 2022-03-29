@@ -19,23 +19,45 @@ import { Event } from "../../models/interfaces"
 interface Props {
   eventId: string
   inviteCode?: string
+  claim?: boolean
 }
 
-const EventLayout: NextPage<Props> = ({ eventId, inviteCode }) => {
+const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
   const [magic] = React.useContext(MagicContext)
   const [loggedIn, setLoggedIn] = React.useContext(LoggedInContext)
   const [isLoading, setIsLoading] = React.useContext(LoadingContext)
   const [currentEvent, setCurrentEvent] = React.useState(null)
   const [responseCompleted, setResponseCompleted] = React.useState(false)
+  const [isClaiming, setIsClaiming] = React.useState(false)
 
-  // React.useEffect(() => {
-  //   console.log(loggedIn)
-  // }, [loggedIn])
+  React.useEffect(() => {
+    if (loggedIn && claim) {
+      setIsClaiming(true)
+      fetch(`/api/event/${eventId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          event: {
+            userId: loggedIn.id
+          }
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log(data)
+          if (!data.error) {
+            window.location.href = `${window.location.origin}/events/${eventId}`
+          }
+        })
+    }
+  }, [loggedIn])
 
   React.useEffect(() => {
     if (inviteCode) {
       localStorage.setItem(
-        "inviteUrl",
+        "authRedirectUrl",
         `${window.location.origin}/events/${eventId}?inviteCode=${inviteCode}`
       )
     }
@@ -97,7 +119,7 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode }) => {
         </div>
       </div>
     )
-  } else if (isLoading || !currentEvent) {
+  } else if (isLoading || !currentEvent || isClaiming) {
     return (
       <Section>
         <img

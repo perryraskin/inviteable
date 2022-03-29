@@ -69,11 +69,11 @@ const Callback: NextPage<Props> = ({}) => {
       let user = data.authorized ? data.user : false
       if (user) {
         setLoggedIn(user.email)
-        // get inviteUrl from localstorage
-        let inviteUrl = localStorage.getItem("inviteUrl")
-        if (inviteUrl) {
-          localStorage.removeItem("inviteUrl")
-          window.location.href = inviteUrl
+        // get authRedirectUrl from localstorage
+        let authRedirectUrl = localStorage.getItem("authRedirectUrl")
+        if (authRedirectUrl) {
+          localStorage.removeItem("authRedirectUrl")
+          window.location.href = authRedirectUrl
         } else {
           Router.push("/")
         }

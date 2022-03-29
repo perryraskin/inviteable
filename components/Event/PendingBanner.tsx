@@ -29,8 +29,8 @@ export default function PendingBanner({ user, eventId }) {
         })
     } else {
       localStorage.setItem(
-        "inviteUrl",
-        `${window.location.origin}/events/${eventId}`
+        "authRedirectUrl",
+        `${window.location.origin}/events/${eventId}?claim=true`
       )
       // Start the Google OAuth 2.0 flow!
       const didToken = await magic.oauth.loginWithRedirect({
