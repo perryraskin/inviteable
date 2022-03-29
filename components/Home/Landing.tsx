@@ -146,7 +146,6 @@ export default function Landing() {
           console.log(res)
           const { eventResponse } = res
           if (eventResponse) router.push(`/events/${eventResponse.id}`)
-          setIsSubmittingForm(false)
         })
       }
     }
