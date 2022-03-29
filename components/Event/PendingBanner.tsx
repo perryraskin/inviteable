@@ -52,7 +52,7 @@ export default function PendingBanner({ user, eventId }) {
                 />
               </span>
               <p className="ml-3 font-medium text-white">
-                <span className="inline text-sm sm:text-base">
+                <span className="inline">
                   Claim this event to add details and invite guests.
                 </span>
               </p>
@@ -71,8 +71,8 @@ export default function PendingBanner({ user, eventId }) {
                 type="button"
                 className="-mr-1 flex p-2 rounded-md hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-white"
               >
-                <span className="sr-only">Dismiss</span>
-                <XIcon className="h-6 w-6 text-white" aria-hidden="true" />
+                {/* <span className="sr-only">Dismiss</span>
+                <XIcon className="h-6 w-6 text-white" aria-hidden="true" /> */}
               </button>
             </div>
           </div>
