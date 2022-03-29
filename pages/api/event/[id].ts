@@ -5,7 +5,7 @@ import auth from "../../../middleware/auth"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   const {
-    query: { id, inviteCode }
+    query: { id, inviteCode, ssr }
   } = req
 
   const eventId = id as unknown
@@ -26,7 +26,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       })
 
       // if no userId, event has not been claimed (and has only a title)
-      if (!event.userId) {
+      if (!event.userId || ssr) {
         res.status(200)
         res.json({ authorized: true, event })
       }

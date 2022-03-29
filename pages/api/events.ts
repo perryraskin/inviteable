@@ -114,7 +114,8 @@ async function createShortUrl(event, inviteCode) {
       destination: `https://www.inviteable.app/events/${event.id}?inviteCode=${inviteCode}`,
       domain: {
         id: process.env.REBRANDLY_DOMAIN_ID
-      }
+      },
+      title: `${event.title}`
     })
   })
 

@@ -48,50 +48,6 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
 
   return (
     <>
-      <Head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-        ></meta>
-        {/* General tags */}
-        <meta key="description" property="description" content="inviteable" />
-        <title key="title">{eventTitle}</title>
-        {/* OpenGraph tags */}
-        <meta
-          key="og:url"
-          property="og:url"
-          content={`https://inviteable.app/events/${event ? event.id : 0}`}
-        />
-        <meta key="og:title" property="og:title" content={eventTitle} />
-        <meta
-          key="og:description"
-          property="og:description"
-          content="inviteable"
-        />
-        <meta
-          key="og:image"
-          property="og:image"
-          content="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3150&q=80"
-        />
-        <meta key="og:type" property="og:type" content="website" />
-        {/* Twitter Card tags */}
-        <meta
-          key="twitter:title"
-          property="twitter:title"
-          content={eventTitle}
-        />
-        <meta
-          key="twitter:description"
-          property="twitter:description"
-          content="inviteable"
-        />
-        <meta
-          key="twitter:image"
-          property="twitter:image"
-          content="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3150&q=80"
-        />
-        <meta key="twitter:card" property="twitter:card" content="summary" />
-      </Head>
       <div className="text-center">
         <Link href="/">
           <a>
@@ -209,7 +165,7 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
             open={isShareSheetOpen}
             setOpen={setIsShareSheetOpen}
             eventTitle={eventTitle}
-            inviteUrl={event.Invites[0]?.url}
+            inviteUrl={`${window.location.origin}/events/${event.id}?inviteCode=${event.Invites[0]?.code}`}
           />
           {/* Tabs */}
           <div className="mt-6 sm:mt-2 2xl:mt-5">
