@@ -47,7 +47,6 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             : false)
         // console.log(event.Host, user)
         if (isHost || isGuest) {
-          console.log(isHost, isGuest)
           res.status(200)
           res.json({ authorized: true, event })
         } else if (
@@ -88,25 +87,43 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     const userAuth = await auth(req, res)
     const user = userAuth as User
 
-    const eventRef = await prisma.event.findUnique({
+    const event = await prisma.event.findUnique({
       where: {
         id: parseInt(eventIdString)
       },
       include: {
         Address: true,
-        Host: true
+        Host: true,
+        Guests: true
       }
     })
 
-    if (eventRef.Host.issuer !== user.issuer) {
+    const isHost =
+      event.userId === user.id ||
+      (event.Guests
+        ? event.Guests.some(g => g.userId === user.id && g.isHost === true)
+        : false)
+    if (event.userId && !isHost) {
       res.status(401)
       res.json({ authorized: false })
+    }
+    // Claim the un-claimed event
+    else if (!event.userId) {
+      const eventResponse = await prisma.event.update({
+        where: {
+          id: parseInt(eventIdString)
+        },
+        data: {
+          userId: user.id
+        }
+      })
+
+      res.json({ authorized: true, eventResponse })
     }
     // Only update if authenticated
     else {
       const { event } = req.body
       const {
-        userId,
         title,
         dateTimeStart,
         dateTimeEnd,
@@ -140,7 +157,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
 
         const addressResponse = await prisma.address.update({
           where: {
-            id: eventRef.Address[0].id
+            id: event.Address[0].id
           },
           data: {
             locationName,

@@ -9,12 +9,12 @@ const Icons: NextPage<IconsProps> = ({}) => {
 
 export default Icons
 
-export const spinner = (doSpin: boolean) => {
+export const spinner = (doSpin: boolean, color = "text-white") => {
   return (
     <svg
       className={`${
         doSpin ? "animate-spin" : "hidden"
-      } -ml-1 mr-3 h-5 w-5 text-white`}
+      } -ml-1 mr-3 h-5 w-5 ${color}`}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

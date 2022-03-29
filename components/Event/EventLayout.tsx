@@ -12,7 +12,7 @@ import { MagicContext, LoggedInContext, LoadingContext } from "../Store"
 import Landing from "../Home/Landing"
 import EventDetail from "./EventDetail"
 import Section from "../Layout/Section"
-// import Login from "../Forms/Login"
+import PendingBanner from "./PendingBanner"
 
 import { Event } from "../../models/interfaces"
 
@@ -27,6 +27,10 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode }) => {
   const [isLoading, setIsLoading] = React.useContext(LoadingContext)
   const [currentEvent, setCurrentEvent] = React.useState(null)
   const [responseCompleted, setResponseCompleted] = React.useState(false)
+
+  // React.useEffect(() => {
+  //   console.log(loggedIn)
+  // }, [loggedIn])
 
   React.useEffect(() => {
     if (inviteCode) {
@@ -51,7 +55,7 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode }) => {
     }
   }
 
-  const handleLogin = async () => {
+  async function handleLogin() {
     // Start the Google OAuth 2.0 flow!
     const didToken = await magic.oauth.loginWithRedirect({
       provider: "google",
@@ -107,6 +111,9 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode }) => {
     return (
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
+          {!currentEvent.userId && (
+            <PendingBanner user={loggedIn} eventId={currentEvent.id} />
+          )}
           <EventDetail event={currentEvent} inviteCode={inviteCode} />
         </div>
       </div>

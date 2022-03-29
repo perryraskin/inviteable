@@ -1,6 +1,7 @@
 import React from "react"
 import Head from "next/head"
 import App from "next/app"
+import Script from "next/script"
 
 import "../styles/tailwind.css"
 import "mapbox-gl/dist/mapbox-gl.css"
@@ -79,6 +80,17 @@ class MyApp extends App {
           />
           <meta key="twitter:card" property="twitter:card" content="summary" />
         </Head>
+        {process.env.NODE_ENV == "production" ? (
+          // Analytics Script
+          <Script
+            src="https://api.pirsch.io/pirsch.js"
+            id="pirschjs"
+            data-code="j367R1dAJFBl2vlor7pXa2e3KYn3QbkR"
+            strategy="afterInteractive"
+          />
+        ) : (
+          ""
+        )}
         <Component {...pageProps} />
       </>
     )

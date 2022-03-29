@@ -29,14 +29,6 @@ const HomeLayout: NextPage<Props> = ({}) => {
         ></img>
       </Section>
     )
-  } else if (false) {
-    return (
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">
-          <p>Logged in! This page will display your events :D</p>
-        </div>
-      </div>
-    )
   } else
     return (
       <React.Fragment>

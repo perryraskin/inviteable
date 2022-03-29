@@ -3,7 +3,6 @@ import { NextPage } from "next"
 import Link from "next/link"
 import Head from "next/head"
 import Router from "next/router"
-import withLayout from "../../hocs/withLayout"
 import utilities from "../../utilities"
 
 import dayjs from "dayjs"
@@ -104,6 +103,7 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
           </a>
         </Link>
       </div>
+
       <main className="flex-1 rounded-xl shadow-lg relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white">
         {/* BANNER: LOG IN TO CLAIM EVENT */}
         <article>
