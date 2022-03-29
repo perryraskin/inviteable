@@ -68,8 +68,7 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
             <div>
               <img
                 className="h-32 w-full object-cover lg:h-48"
-                src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3150&q=80"
-                // src="https://source.unsplash.com/1600x900/?celebration"
+                src={event.imageUrl}
                 alt=""
               />
             </div>

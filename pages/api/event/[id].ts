@@ -32,7 +32,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           authorized: true,
           event: {
             title: event.title,
-            image: event.imageUrl
+            imageUrl: event.imageUrl
           }
         })
       }

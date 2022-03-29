@@ -72,6 +72,14 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
         claim: claim === "true" || false
       }
     }
+  } else if (eventid) {
+    return {
+      props: {
+        eventid,
+        inviteCode: inviteCode || null,
+        claim: claim === "true" || false
+      }
+    }
   } else {
     return {
       props: {
