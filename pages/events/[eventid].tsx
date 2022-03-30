@@ -27,24 +27,23 @@ const EventDetailPage: NextPage<Props> = ({
     <>
       <NextSeo
         title={event?.title}
-        description={"inviteable"}
+        description={"You're invited to an event on inviteable.com"}
         openGraph={{
           site_name: event?.title,
           title: event?.title,
-          description: "inviteable",
+          description: "You're invited to an event on inviteable.com",
           images: [
             {
-              url:
-                "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3150&q=80",
+              url: event?.imageUrl,
               width: 800,
               height: 600,
-              alt: "inviteable"
+              alt: "You're invited to an event on inviteable.com"
             }
           ]
         }}
         twitter={{
-          handle: "@perryraskin",
-          site: "@perryraskin",
+          handle: "@inviteable_",
+          site: "@inviteable_",
           cardType: "summary_large_image"
         }}
       />
