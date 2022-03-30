@@ -72,7 +72,7 @@ const Callback: NextPage<Props> = ({}) => {
         // get authRedirectUrl from localstorage
         let authRedirectUrl = localStorage.getItem("authRedirectUrl")
         if (authRedirectUrl) {
-          localStorage.removeItem("authRedirectUrl")
+          // localStorage.removeItem("authRedirectUrl")
           window.location.href = authRedirectUrl
         } else {
           Router.push("/")
