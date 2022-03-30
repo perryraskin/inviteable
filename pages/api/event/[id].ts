@@ -9,6 +9,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     query: { id, inviteCode, ssr }
   } = req
 
+  // console.log("ssr:", ssr)
   const eventId = id as unknown
   const eventIdString = eventId as string
   if (req.method === "GET") {
