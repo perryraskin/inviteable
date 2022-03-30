@@ -27,17 +27,17 @@ const EventDetailPage: NextPage<Props> = ({
     <>
       <NextSeo
         title={event?.title}
-        description={"You're invited to an event on inviteable.com"}
+        description={"You're invited to an event on inviteable.app"}
         openGraph={{
           site_name: event?.title,
           title: event?.title,
-          description: "You're invited to an event on inviteable.com",
+          description: "You're invited to an event on inviteable.app",
           images: [
             {
               url: event?.imageUrl,
               width: 800,
               height: 600,
-              alt: "You're invited to an event on inviteable.com"
+              alt: "You're invited to an event on inviteable.app"
             }
           ]
         }}
