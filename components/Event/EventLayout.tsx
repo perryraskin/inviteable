@@ -30,7 +30,22 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
   const [responseCompleted, setResponseCompleted] = React.useState(false)
   const [isClaiming, setIsClaiming] = React.useState(false)
 
+  /**
+   * Log user out of of the session with our app (clears the `auth` cookie)
+   * Log the user out of their session with Magic
+   */
+  const handleLogout = async () => {
+    fetch(`/api/user/logout`, {
+      method: "GET"
+    })
+    setLoggedIn(false)
+    await magic.user.logout()
+    // magic.user.logout().then(res => (window.location.href = "/"))
+  }
+
   React.useEffect(() => {
+    // handleLogout()
+    console.log("loggedIn user:", loggedIn)
     if (loggedIn && claim) {
       setIsClaiming(true)
       fetch(`/api/event/${eventId}`, {
@@ -60,8 +75,13 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
         "authRedirectUrl",
         `${window.location.origin}/events/${eventId}?inviteCode=${inviteCode}`
       )
+    } else {
+      localStorage.setItem(
+        "authRedirectUrl",
+        `${window.location.origin}/events/${eventId}`
+      )
     }
-    getEvent()
+    if (!claim) getEvent()
   }, [])
 
   async function getEvent() {
@@ -136,7 +156,11 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
           {!currentEvent.userId && (
             <PendingBanner user={loggedIn} eventId={currentEvent.id} />
           )}
-          <EventDetail event={currentEvent} inviteCode={inviteCode} />
+          <EventDetail
+            user={loggedIn}
+            event={currentEvent}
+            inviteCode={inviteCode}
+          />
         </div>
       </div>
     )

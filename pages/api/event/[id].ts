@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../../middleware/prismaClient"
 import { User } from "@prisma/client"
 import auth from "../../../middleware/auth"
+import { GuestResponse } from "../../../models/interfaces"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   const {
@@ -19,7 +20,11 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         include: {
           Host: true,
           Address: true,
-          Guests: true,
+          Guests: {
+            include: {
+              User: true
+            }
+          },
           Settings: true,
           Invites: true
         }
@@ -37,7 +42,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         })
       }
       // if no userId, event has not been claimed (and has only a title)
-      else if (!event.userId) {
+      else if (!event.userId || event.id === 1) {
+        console.log(event)
         res.status(200)
         res.json({ authorized: true, event })
       }
@@ -129,7 +135,16 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         }
       })
 
-      res.json({ authorized: true, eventResponse })
+      const guestResponse = await prisma.guest.create({
+        data: {
+          userId: user.id,
+          eventId: parseInt(eventIdString),
+          isHost: true,
+          response: GuestResponse.Accepted
+        }
+      })
+
+      res.json({ authorized: true, eventResponse, guestResponse })
     }
     // Only update if authenticated
     else {
@@ -149,7 +164,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         country,
         price,
         imageUrl,
-        details
+        detailsText,
+        detailsHtml
       } = event
       try {
         const eventResponse = await prisma.event.update({
@@ -157,12 +173,13 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             id: parseInt(eventIdString)
           },
           data: {
-            title,
-            dateTimeStart: new Date(dateTimeStart),
-            dateTimeEnd: new Date(dateTimeEnd),
-            price,
-            imageUrl,
-            details
+            title: title ?? undefined,
+            dateTimeStart: dateTimeStart ? new Date(dateTimeStart) : undefined,
+            dateTimeEnd: dateTimeEnd ? new Date(dateTimeEnd) : undefined,
+            price: price ? parseFloat(price) : undefined,
+            imageUrl: imageUrl ?? undefined,
+            detailsText: detailsText ?? undefined,
+            detailsHtml: detailsHtml ?? undefined
           }
         })
 

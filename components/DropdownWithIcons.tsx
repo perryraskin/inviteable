@@ -44,6 +44,7 @@ const DropdownWithIcons: NextPage<Props> = ({
                 if (active) {
                   return (
                     <Menu.Button
+                      key={option.value}
                       className={`inline-flex justify-center w-full rounded-md 
                         border shadow-sm px-4 py-2 text-sm font-medium 
                         hover:bg-gray-50 focus:outline-none
@@ -87,7 +88,9 @@ const DropdownWithIcons: NextPage<Props> = ({
           >
             <Menu.Items
               static
-              className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none"
+              className="origin-top-right absolute right-0 mt-2 w-full 
+              sm:w-56 rounded-md shadow-lg bg-white ring-1 ring-black 
+              ring-opacity-5 divide-y divide-gray-100 focus:outline-none"
             >
               <div className="py-1">
                 {options.map((option: Option) => {

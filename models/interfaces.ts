@@ -4,34 +4,36 @@ export interface User {
   lastName: string
   imageUrl: string
   email: string
-  issuer: string
-  phone: string
-  EventsHosted: Event[]
-  EventsInvited: Guest[]
-  ThreadsPosted: any[]
-  CommentsPosted: any[]
+  issuer?: string
+  phone?: string
+  EventsHosted?: Event[]
+  EventsInvited?: Guest[]
+  ThreadsPosted?: any[]
+  CommentsPosted?: any[]
 }
 
 export interface Event {
-  id: Number
+  id: number
   dateCreated: Date
-  userId: Number
+  userId: number
   title: string
   dateTimeStart: Date
   dateTimeEnd: Date
   Address: Address
-  price: Number
+  price: number
   imageUrl: string
-  details: string
+  detailsText: string
+  detailsHtml: string
   Host: User
+  Guests: Guest[]
   Settings: EventSettings
   Invites: EventInvite[]
 }
 
 export interface EventInvite {
-  id: Number
+  id: number
   dateCreated: Date
-  eventId: Number
+  eventId: number
   Event: Event
   code: string
   url: string
@@ -39,29 +41,29 @@ export interface EventInvite {
 }
 
 export interface EventSettings {
-  id: Number
+  id: number
   dateCreated: Date
-  eventId: Number
+  eventId: number
   isPrivate: boolean
   showGuestList: boolean
   allowComments: boolean
 }
 
 export interface Guest {
-  id: Number
+  id: number
   dateCreated: Date
-  eventId: Number
-  userId: Number
-  User: User
-  Event: Event
+  eventId?: number
+  userId?: number
+  User?: User
+  Event?: Event
   isHost: boolean
-  response: Response
+  response: GuestResponse
 }
 
 export interface Address {
   locationName: string
-  latitude: Number
-  longitude: Number
+  latitude: number
+  longitude: number
   address1: string
   address2: string
   city: string
@@ -70,7 +72,7 @@ export interface Address {
   country: string
 }
 
-export enum Response {
+export enum GuestResponse {
   None,
   Accepted,
   Declined

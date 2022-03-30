@@ -35,7 +35,8 @@ model Event {
   dateTimeEnd   DateTime?
   price         Decimal        @default(0) @db.Decimal(10, 2)
   imageUrl      String?
-  details       String?
+  detailsText   String?
+  detailsHtml   String?
   Host          User?          @relation(fields: [userId], references: [id])
   Guests        Guest[]
   Threads       Thread[]

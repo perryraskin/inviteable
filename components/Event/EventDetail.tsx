@@ -3,8 +3,8 @@ import { NextPage } from "next"
 import Link from "next/link"
 import Head from "next/head"
 import Router from "next/router"
-import utilities from "../../utilities"
-
+import { useEditor, EditorContent } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
 import dayjs from "dayjs"
 import {
   CheckCircleIcon,
@@ -27,24 +27,62 @@ import DropdownWithIcons from "../DropdownWithIcons"
 import ShareSheet from "../ShareSheet"
 import MapBox from "../MapBox"
 
-import { Event, Response } from "../../models/interfaces"
+import { Event, GuestResponse, User, Guest } from "../../models/interfaces"
 
 interface Props {
+  user: User
   event?: Event
   inviteCode?: string
 }
 
-const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
+const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
   const now = dayjs()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false)
 
   const [eventTitle, setEventTitle] = useState(event.title)
-  const [response, setResponse] = useState(Response.None)
 
-  async function handleUpdateResponse(response: Response) {
-    setResponse(response)
+  const currentGuest = event.Guests.find(guest => guest.userId === user.id)
+  const [response, setResponse] = useState(currentGuest?.response)
+
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: ""
+  })
+
+  async function handleUpdateResponse(updatedResponse: GuestResponse) {
+    setResponse(updatedResponse)
+    fetch(`/api/guest/${currentGuest.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        response: updatedResponse
+      })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          console.log(data)
+        }
+      })
   }
+
+  const hosts = event.Guests.filter((guest: Guest) => guest.isHost)
+  const guests =
+    event.id === 1
+      ? demoGuests
+      : event.Guests.filter((guest: Guest) => !guest.isHost)
+  const guestsAccepted = event.Guests.filter(
+    (guest: Guest) => guest.response === GuestResponse.Accepted
+  )
+  const guestsDeclined = event.Guests.filter(
+    (guest: Guest) => guest.response === GuestResponse.Declined
+  )
+  const guestsNotResponded = event.Guests.filter(
+    (guest: Guest) => guest.response === GuestResponse.None
+  )
 
   return (
     <>
@@ -61,14 +99,16 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
       </div>
 
       <main className="flex-1 rounded-xl shadow-lg relative z-0 overflow-y-auto focus:outline-none xl:order-last bg-white">
-        {/* BANNER: LOG IN TO CLAIM EVENT */}
         <article>
           {/* Profile header */}
           <div>
             <div>
               <img
                 className="h-32 w-full object-cover lg:h-48"
-                src={event.imageUrl}
+                src={
+                  event.imageUrl ??
+                  `https://parqueorion.com/wp-content/plugins/cafe-lite/assets/img/banner-placeholder.png`
+                }
                 alt=""
               />
             </div>
@@ -87,7 +127,8 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
                 <div className="mt-6 sm:mt-14 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                   <div className="sm:hidden mt-6 min-w-0 flex-1">
                     <h3 className="text-sm font-bold uppercase text-red-500 truncate">
-                      Monday, March 9, 2020 at 8:45 PM EDT
+                      {dayjs(event.dateTimeStart).format("dddd, MMMM D, YYYY")}{" "}
+                      at {dayjs(event.dateTimeStart).format("h:mm A")}
                     </h3>
                   </div>
                   <div className="sm:hidden mt-1 min-w-0 flex-1">
@@ -103,37 +144,40 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
                     <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-blue-500" />
                     <span>Going</span>
                   </button> */}
-                    <DropdownWithIcons
-                      title="Respond"
-                      useSelectedOptionAsDefault={true}
-                      currentValue={response}
-                      handleChangeValue={handleUpdateResponse}
-                      options={[
-                        {
-                          icon: (
-                            <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                          ),
-                          iconActive: (
-                            <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-blue-500" />
-                          ),
-                          activeStyles:
-                            "border-blue-300 text-blue-500 bg-blue-50",
-                          label: "Going",
-                          value: Response.Accepted
-                        },
-                        {
-                          icon: (
-                            <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                          ),
-                          iconActive: (
-                            <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-red-500" />
-                          ),
-                          activeStyles: "border-red-300 text-red-500 bg-red-50",
-                          label: "Not Going",
-                          value: Response.Declined
-                        }
-                      ]}
-                    />
+                    {currentGuest && (
+                      <DropdownWithIcons
+                        title="Respond"
+                        useSelectedOptionAsDefault={true}
+                        currentValue={response}
+                        handleChangeValue={handleUpdateResponse}
+                        options={[
+                          {
+                            icon: (
+                              <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
+                            ),
+                            iconActive: (
+                              <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-blue-500" />
+                            ),
+                            activeStyles:
+                              "border-blue-300 text-blue-500 bg-blue-50",
+                            label: "Going",
+                            value: GuestResponse.Accepted
+                          },
+                          {
+                            icon: (
+                              <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
+                            ),
+                            iconActive: (
+                              <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-red-500" />
+                            ),
+                            activeStyles:
+                              "border-red-300 text-red-500 bg-red-50",
+                            label: "Not Going",
+                            value: GuestResponse.Declined
+                          }
+                        ]}
+                      />
+                    )}
                     <button
                       type="button"
                       className="inline-flex justify-center px-4 py-2 border border-gray-300 
@@ -150,7 +194,8 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
               </div>
               <div className="hidden sm:block mt-6 min-w-0 flex-1">
                 <h3 className="text-sm font-bold uppercase text-red-500 truncate">
-                  Monday, March 9, 2020 at 8:45 PM EDT
+                  {dayjs(event.dateTimeStart).format("dddd, MMMM D, YYYY")} at{" "}
+                  {dayjs(event.dateTimeStart).format("h:mm A")}
                 </h3>
               </div>
               <div className="hidden sm:block mt-1 min-w-0 flex-1">
@@ -196,7 +241,10 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
               <div className="">
                 <p>
                   <UsersIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  <span className="align-middle">33 people going</span>
+                  <span className="align-middle">
+                    {guestsAccepted.length}{" "}
+                    {guestsAccepted.length === 1 ? "person" : "people"} going
+                  </span>
                 </p>
                 {/* <p className="mt-2 mb-2">
                 <AvatarGroupStack />
@@ -205,45 +253,68 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
                   <StarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                   <span className="align-middle">
                     Hosted by{" "}
-                    <span className="font-semibold">Alicia Johnson</span>
+                    <span className="font-semibold">
+                      {event.Host?.firstName} {event.Host?.lastName}
+                    </span>
                   </span>
                 </p>
                 <p className="mt-2">
                   <LocationMarkerIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  <span className="align-middle font-semibold">
-                    <span className="font-semibold">Central Park</span>
-                  </span>
+                  {event.Address[0].locationName ? (
+                    <span className="align-middle font-semibold">
+                      {event.Address[0].locationName}
+                    </span>
+                  ) : (
+                    <a role="button" className="text-blue-500 hover:underline">
+                      Add location
+                    </a>
+                  )}
                 </p>
                 <p className="mt-2">
                   <CalendarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  <span className="align-middle">Monday, March 9, 2020</span>
+                  <span className="align-middle">
+                    {dayjs(event.dateTimeStart).format("dddd, MMMM D, YYYY")}
+                  </span>
                 </p>
                 <p className="mt-2">
                   <ClockIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  <span className="align-middle">8:45AM EDT</span>
-                </p>
-                <p className="mt-2">
-                  <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                   <span className="align-middle">
-                    Private{" "}
-                    <span className="text-sm">(invited guests only)</span>
+                    {dayjs(event.dateTimeStart).format("h:mm A")}
                   </span>
                 </p>
+                {event.Settings?.isPrivate ? (
+                  <p className="mt-2">
+                    <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                    <span className="align-middle">
+                      Private{" "}
+                      <span className="text-sm">(invited guests only)</span>
+                    </span>
+                  </p>
+                ) : (
+                  <p className="mt-2">
+                    <GlobeIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                    <span className="align-middle">Public </span>
+                  </p>
+                )}
               </div>
               <div
                 id="map"
                 className="h-72 sm:h-full mt-2 sm:mt-0 rounded-lg relative shadow"
               >
                 {/* <img
-                className="rounded-lg"
-                src="https://i.imgur.com/oFypSZG.jpg"
-              ></img> */}
-                <MapBox lat={40.7812} long={-73.9665} />
+                  className="rounded-lg"
+                  src="https://i.imgur.com/oFypSZG.jpg"
+                   ></img> */}
+                <MapBox
+                  lat={event.Address[0].latitude}
+                  long={event.Address[0].longitude}
+                />
                 <div
                   className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full 
-              text-base sm:text-sm text-center font-sans font-semibold p-4 sm:p-3"
+                    text-base sm:text-sm text-center font-sans font-semibold p-4 sm:p-3"
                 >
-                  Central Park, Manhattan, NY
+                  {event.Address[0].locationName}, {event.Address[0].city},{" "}
+                  {event.Address[0].state}
                 </div>
               </div>
             </div>
@@ -254,17 +325,16 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
               <div className="sm:col-span-2">
                 <dt className="text-lg font-bold text-gray-900">Details</dt>
                 <dd className="mt-1 max-w-prose text-sm text-gray-900 space-y-5">
-                  <p>
-                    We are so excited to celebrate together with the entire
-                    family! It's been a long time since we had a proper
-                    get-together.
-                  </p>
-                  <p>
-                    Grandma will be turning 90!! It will be so special for her
-                    to be surrounded by everyone she loves. Be ready for food,
-                    snacks, drinks, and desserts of all kinds. Come hungry and
-                    please try to be on time!
-                  </p>
+                  {/* <EditorContent
+                    editor={editor}
+                    onChange={() => {
+                      setDetailsText(editor.getText())
+                      setDetailsHtml(editor.getHTML())
+                    }}
+                  /> */}
+                  <div
+                    dangerouslySetInnerHTML={{ __html: event.detailsHtml }}
+                  ></div>
                 </dd>
               </div>
             </dl>
@@ -273,117 +343,89 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
           <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
             <h2 className="text-lg font-bold text-gray-900">Hosts</h2>
             <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixqx=Uz47TJ6CUV&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
+              {hosts.map((host: Guest) => (
+                <div
+                  key={host.id}
+                  className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400"
+                >
+                  <div className="flex-shrink-0">
+                    <img
+                      className="h-10 w-10 rounded-full"
+                      src={
+                        host.User.imageUrl ??
+                        `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkCLHRFbKUEWVuldDTj1d8aFG_RYfKlNHt1g&usqp=CAU`
+                      }
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <a href="#" className="focus:outline-none">
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      <p className="text-sm font-medium text-gray-900">
+                        {host.User.firstName} {host.User.lastName}
+                      </p>
+                      <StarIcon className="mr-1 h-5 w-5 text-indigo-700 inline" />
+                      <span className="text-sm text-indigo-700 truncate font-medium align-middle">
+                        Host
+                      </span>
+                    </a>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <a href="#" className="focus:outline-none">
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    <p className="text-sm font-medium text-gray-900">
-                      Alicia Johnson
-                    </p>
-                    {/* <StarIcon className="mr-1 h-5 w-5 text-indigo-700 inline" /> */}
-                    <span className="text-sm text-indigo-700 truncate font-medium align-middle">
-                      Host
-                    </span>
-                  </a>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
           {/* Guest list */}
           <div className="-mt-2 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
-            <h2 className="text-lg font-bold text-gray-900">Guests</h2>
+            <h2 className="text-lg font-bold text-gray-900">
+              Guests ({guests.length})
+            </h2>
             <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src="https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixqx=Uz47TJ6CUV&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
+              {guests.map((guest: Guest) => (
+                <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
+                  <div className="flex-shrink-0">
+                    <img
+                      className="h-10 w-10 rounded-full"
+                      src={
+                        guest.User.imageUrl ??
+                        `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkCLHRFbKUEWVuldDTj1d8aFG_RYfKlNHt1g&usqp=CAU`
+                      }
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <a href="#" className="focus:outline-none">
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      <p className="text-sm font-medium text-gray-900">
+                        {guest.User.firstName} {guest.User.lastName}
+                      </p>
+                      {guest.response === GuestResponse.Accepted ? (
+                        <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" />
+                      ) : guest.response === GuestResponse.Declined ? (
+                        <XCircleIcon className="mr-1 h-5 w-5 text-red-500 inline" />
+                      ) : (
+                        <QuestionMarkCircleIcon className="mr-1 h-5 w-5 text-gray-500 inline" />
+                      )}
+
+                      <span
+                        className={`
+                      text-sm truncate font-medium align-middle
+                      ${
+                        guest.response === GuestResponse.Accepted
+                          ? "text-blue-500"
+                          : guest.response === GuestResponse.Declined
+                          ? "text-red-500"
+                          : "text-gray-500"
+                      }
+                      `}
+                      >
+                        {guest.response === GuestResponse.Accepted
+                          ? "Going"
+                          : guest.response === GuestResponse.Declined
+                          ? "Not Going"
+                          : "No Response"}
+                      </span>
+                    </a>
+                  </div>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <a href="#" className="focus:outline-none">
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    <p className="text-sm font-medium text-gray-900">
-                      Michael Foster
-                    </p>
-                    {/* <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" /> */}
-                    <span className="text-sm text-blue-500 truncate font-medium align-middle">
-                      Going
-                    </span>
-                  </a>
-                </div>
-              </div>
-              <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixqx=Uz47TJ6CUV&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <a href="#" className="focus:outline-none">
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    <p className="text-sm font-medium text-gray-900">
-                      Dries Vincent
-                    </p>
-                    {/* <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" /> */}
-                    <span className="text-sm text-blue-500 truncate font-medium align-middle">
-                      Going
-                    </span>
-                  </a>
-                </div>
-              </div>
-              <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixqx=Uz47TJ6CUV&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <a href="#" className="focus:outline-none">
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    <p className="text-sm font-medium text-gray-900">
-                      Lindsay Walton
-                    </p>
-                    {/* <XCircleIcon className="mr-1 h-5 w-5 text-red-500 inline" /> */}
-                    <span className="text-sm text-red-500 truncate font-medium align-middle">
-                      Not Going
-                    </span>
-                  </a>
-                </div>
-              </div>
-              <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
-                <div className="flex-shrink-0">
-                  <img
-                    className="h-10 w-10 rounded-full"
-                    src="https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60"
-                    alt=""
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <a href="#" className="focus:outline-none">
-                    <span className="absolute inset-0" aria-hidden="true" />
-                    <p className="text-sm font-medium text-gray-900">
-                      Esther Howard
-                    </p>
-                    {/* <QuestionMarkCircleIcon className="mr-1 h-5 w-5 text-gray-500 inline" /> */}
-                    <span className="text-sm text-gray-500 truncate font-medium align-middle">
-                      No Response
-                    </span>
-                  </a>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </article>
@@ -393,6 +435,65 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode }) => {
 }
 
 export default EventDetail
+
+const demoGuests: Guest[] = [
+  {
+    id: 1,
+    dateCreated: new Date(),
+    User: {
+      id: 1,
+      email: "",
+      firstName: "Michael",
+      lastName: "Foster",
+      imageUrl:
+        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixqx=Uz47TJ6CUV&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+    },
+    isHost: false,
+    response: GuestResponse.Accepted
+  },
+  {
+    id: 2,
+    dateCreated: new Date(),
+    User: {
+      id: 2,
+      email: "",
+      firstName: "Dries",
+      lastName: "Vincent",
+      imageUrl:
+        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixqx=Uz47TJ6CUV&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+    },
+    isHost: false,
+    response: GuestResponse.Accepted
+  },
+  {
+    id: 3,
+    dateCreated: new Date(),
+    User: {
+      id: 3,
+      email: "",
+      firstName: "Lindsay",
+      lastName: "Walton",
+      imageUrl:
+        "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixqx=Uz47TJ6CUV&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+    },
+    isHost: false,
+    response: GuestResponse.Declined
+  },
+  {
+    id: 4,
+    dateCreated: new Date(),
+    User: {
+      id: 4,
+      email: "",
+      firstName: "Esther",
+      lastName: "Howard",
+      imageUrl:
+        "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60"
+    },
+    isHost: false,
+    response: GuestResponse.None
+  }
+]
 
 function shareIconFilled(styles) {
   return (

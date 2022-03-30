@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../middleware/prismaClient"
 import auth from "../../middleware/auth"
 import { v4 as uuidv4 } from "uuid"
-import { Response } from "../../models/interfaces"
+import { GuestResponse } from "../../models/interfaces"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   // const userAuth = await auth(req, res)
@@ -33,9 +33,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           data: {
             userId: userIdInt,
             title,
-            imageUrl: "https://source.unsplash.com/1600x900/?celebration",
-            dateTimeStart: new Date(),
-            dateTimeEnd: new Date()
+            imageUrl: "https://source.unsplash.com/1600x900/?celebration"
           }
         }
 
@@ -44,9 +42,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             data: {
               userId: undefined,
               title,
-              imageUrl: "https://source.unsplash.com/1600x900/?celebration",
-              dateTimeStart: new Date(),
-              dateTimeEnd: new Date()
+              imageUrl: "https://source.unsplash.com/1600x900/?celebration"
             }
           }
         }
@@ -60,6 +56,15 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
                 id: eventResponse.id
               }
             }
+          }
+        })
+
+        const eventSettingsResponse = await prisma.eventSettings.create({
+          data: {
+            eventId: eventResponse.id,
+            isPrivate: true,
+            showGuestList: true,
+            allowComments: true
           }
         })
 
@@ -80,7 +85,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               userId: userIdInt,
               eventId: eventResponse.id,
               isHost: true,
-              response: Response.Accepted
+              response: GuestResponse.Accepted
             }
           })
         }
@@ -88,6 +93,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         res.status(201)
         res.json({
           eventResponse,
+          eventSettingsResponse,
           addressResponse,
           eventInviteResponse,
           guestResponse

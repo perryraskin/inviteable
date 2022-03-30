@@ -13,6 +13,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     try {
       userFromCookie = await decryptCookie(req.cookies.auth)
     } catch (error) {
+      // console.log(error)
       console.log("User not found in cookie")
       return { id: 0 }
     }

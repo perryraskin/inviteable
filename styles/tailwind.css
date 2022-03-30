@@ -35,6 +35,10 @@
   height: 3.25rem;
 }
 
+.max-w-prose > div > p {
+  margin-bottom: 1rem;
+}
+
 @tailwind components;
 
 @tailwind utilities;
