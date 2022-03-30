@@ -144,7 +144,7 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
                     <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-blue-500" />
                     <span>Going</span>
                   </button> */}
-                    {currentGuest && (
+                    {(event.id === 1 || currentGuest) && (
                       <DropdownWithIcons
                         title="Respond"
                         useSelectedOptionAsDefault={true}
@@ -265,9 +265,14 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
                       {event.Address[0].locationName}
                     </span>
                   ) : (
-                    <a role="button" className="text-blue-500 hover:underline">
-                      Add location
-                    </a>
+                    <span className="align-middle">
+                      <a
+                        role="button"
+                        className="text-blue-500 hover:underline"
+                      >
+                        Set location
+                      </a>
+                    </span>
                   )}
                 </p>
                 <p className="mt-2">
@@ -360,7 +365,7 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
                   <div className="flex-1 min-w-0">
                     <a href="#" className="focus:outline-none">
                       <span className="absolute inset-0" aria-hidden="true" />
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-base font-medium text-gray-900">
                         {host.User.firstName} {host.User.lastName}
                       </p>
                       <StarIcon className="mr-1 h-5 w-5 text-indigo-700 inline" />
@@ -380,7 +385,10 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
             </h2>
             <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {guests.map((guest: Guest) => (
-                <div className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400">
+                <div
+                  key={guest.id}
+                  className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400"
+                >
                   <div className="flex-shrink-0">
                     <img
                       className="h-10 w-10 rounded-full"
@@ -393,7 +401,7 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
                   <div className="flex-1 min-w-0">
                     <a href="#" className="focus:outline-none">
                       <span className="absolute inset-0" aria-hidden="true" />
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-base font-medium text-gray-900">
                         {guest.User.firstName} {guest.User.lastName}
                       </p>
                       {guest.response === GuestResponse.Accepted ? (

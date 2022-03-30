@@ -68,13 +68,13 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           }
         })
 
-        const inviteUrl = await createShortUrl(eventResponse, inviteCode)
+        // const inviteUrl = await createShortUrl(eventResponse, inviteCode)
 
         const eventInviteResponse = await prisma.eventInvite.create({
           data: {
             eventId: eventResponse.id,
-            code: inviteCode,
-            url: inviteUrl
+            code: inviteCode
+            // url: inviteUrl
           }
         })
 
