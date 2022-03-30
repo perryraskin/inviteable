@@ -12,9 +12,10 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   // console.log("ssr:", ssr)
   const eventId = id as unknown
   const eventIdString = eventId as string
+  let event
   if (req.method === "GET") {
     try {
-      const event = await prisma.event.findUnique({
+      event = await prisma.event.findUnique({
         where: {
           id: parseInt(eventIdString)
         },
@@ -87,8 +88,25 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               }
             })
           }
+
+          const updatedEvent = await prisma.event.findUnique({
+            where: {
+              id: parseInt(eventIdString)
+            },
+            include: {
+              Host: true,
+              Address: true,
+              Guests: {
+                include: {
+                  User: true
+                }
+              },
+              Settings: true,
+              Invites: true
+            }
+          })
           res.status(200)
-          res.json({ authorized: true, event, guest })
+          res.json({ authorized: true, event: updatedEvent, guest })
         } else {
           // console.log("Not authorized to view event")
           res.status(401)

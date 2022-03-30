@@ -384,56 +384,60 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
               Guests ({guests.length})
             </h2>
             <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {guests.map((guest: Guest) => (
-                <div
-                  key={guest.id}
-                  className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400"
-                >
-                  <div className="flex-shrink-0">
-                    <img
-                      className="h-10 w-10 rounded-full"
-                      src={
-                        guest.User.imageUrl ??
-                        `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkCLHRFbKUEWVuldDTj1d8aFG_RYfKlNHt1g&usqp=CAU`
-                      }
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <a href="#" className="focus:outline-none">
-                      <span className="absolute inset-0" aria-hidden="true" />
-                      <p className="text-base font-medium text-gray-900">
-                        {guest.User.firstName} {guest.User.lastName}
-                      </p>
-                      {guest.response === GuestResponse.Accepted ? (
-                        <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" />
-                      ) : guest.response === GuestResponse.Declined ? (
-                        <XCircleIcon className="mr-1 h-5 w-5 text-red-500 inline" />
-                      ) : (
-                        <QuestionMarkCircleIcon className="mr-1 h-5 w-5 text-gray-500 inline" />
-                      )}
+              {guests.map((guest: Guest) => {
+                const guestResponse =
+                  guest.User.id === user.id ? response : guest.response
+                return (
+                  <div
+                    key={guest.id}
+                    className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400"
+                  >
+                    <div className="flex-shrink-0">
+                      <img
+                        className="h-10 w-10 rounded-full"
+                        src={
+                          guest.User.imageUrl ??
+                          `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkCLHRFbKUEWVuldDTj1d8aFG_RYfKlNHt1g&usqp=CAU`
+                        }
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <a href="#" className="focus:outline-none">
+                        <span className="absolute inset-0" aria-hidden="true" />
+                        <p className="text-base font-medium text-gray-900">
+                          {guest.User.firstName} {guest.User.lastName}
+                        </p>
+                        {guestResponse === GuestResponse.Accepted ? (
+                          <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" />
+                        ) : guestResponse === GuestResponse.Declined ? (
+                          <XCircleIcon className="mr-1 h-5 w-5 text-red-500 inline" />
+                        ) : (
+                          <QuestionMarkCircleIcon className="mr-1 h-5 w-5 text-gray-500 inline" />
+                        )}
 
-                      <span
-                        className={`
-                      text-sm truncate font-medium align-middle
-                      ${
-                        guest.response === GuestResponse.Accepted
-                          ? "text-blue-500"
-                          : guest.response === GuestResponse.Declined
-                          ? "text-red-500"
-                          : "text-gray-500"
-                      }
-                      `}
-                      >
-                        {guest.response === GuestResponse.Accepted
-                          ? "Going"
-                          : guest.response === GuestResponse.Declined
-                          ? "Not Going"
-                          : "No Response"}
-                      </span>
-                    </a>
+                        <span
+                          className={`
+                        text-sm truncate font-medium align-middle
+                        ${
+                          guestResponse === GuestResponse.Accepted
+                            ? "text-blue-500"
+                            : guestResponse === GuestResponse.Declined
+                            ? "text-red-500"
+                            : "text-gray-500"
+                        }
+                        `}
+                        >
+                          {guestResponse === GuestResponse.Accepted
+                            ? "Going"
+                            : guestResponse === GuestResponse.Declined
+                            ? "Not Going"
+                            : "No Response"}
+                        </span>
+                      </a>
+                    </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </article>
