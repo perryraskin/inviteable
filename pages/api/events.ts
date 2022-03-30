@@ -33,7 +33,9 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           data: {
             userId: userIdInt,
             title,
-            imageUrl: "https://source.unsplash.com/1600x900/?celebration"
+            imageUrl: "https://source.unsplash.com/1600x900/?celebration",
+            detailsText: "Join us for a celebration!",
+            detailsHtml: "<p>Join us for a celebration!</p>"
           }
         }
 
@@ -42,7 +44,9 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             data: {
               userId: undefined,
               title,
-              imageUrl: "https://source.unsplash.com/1600x900/?celebration"
+              imageUrl: "https://source.unsplash.com/1600x900/?celebration",
+              detailsText: "Join us for a celebration!",
+              detailsHtml: "<p>Join us for a celebration!</p>"
             }
           }
         }

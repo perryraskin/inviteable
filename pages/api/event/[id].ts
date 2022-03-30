@@ -221,6 +221,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
 
         res.json({ authorized: true, eventResponse, addressResponse })
       } catch (err) {
+        console.log(err)
         res.status(500)
         res.json({ error: err.message })
       }

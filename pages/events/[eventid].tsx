@@ -57,10 +57,15 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const { origin } = absoluteUrl(req)
   const { eventid } = params
   const { inviteCode, claim } = query
+  let event
 
-  const res = await fetch(`${origin}/api/event/${eventid}?ssr=true`)
-  const data = await res.json()
-  const { authorized, event } = data
+  try {
+    const res = await fetch(`${origin}/api/event/${eventid}?ssr=true`)
+    const data = await res.json()
+    event = data.event
+  } catch (error) {
+    console.log(error)
+  }
   // console.log(event)
 
   if (event && eventid) {
