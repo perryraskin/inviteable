@@ -167,7 +167,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     }
     // Only update if authenticated
     else {
-      const { event } = req.body
+      const { event: eventRequest } = req.body
       const {
         title,
         dateTimeStart,
@@ -185,7 +185,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         imageUrl,
         detailsText,
         detailsHtml
-      } = event
+      } = eventRequest
       try {
         const eventResponse = await prisma.event.update({
           where: {
@@ -207,15 +207,15 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             id: event.Address[0].id
           },
           data: {
-            locationName,
-            latitude,
-            longitude,
-            address1,
-            address2,
-            city,
-            state,
-            zip,
-            country
+            locationName: locationName ?? undefined,
+            latitude: latitude ? parseFloat(latitude) : undefined,
+            longitude: longitude ? parseFloat(longitude) : undefined,
+            address1: address1 ?? undefined,
+            address2: address2 ?? undefined,
+            city: city ?? undefined,
+            state: state ?? undefined,
+            zip: zip ?? undefined,
+            country: country ?? undefined
           }
         })
 

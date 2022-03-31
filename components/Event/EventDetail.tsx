@@ -19,13 +19,18 @@ import {
   LocationMarkerIcon,
   LockClosedIcon,
   UserAddIcon,
-  QuestionMarkCircleIcon
+  QuestionMarkCircleIcon,
+  PencilAltIcon,
+  SaveIcon,
+  SaveAsIcon,
+  CheckIcon
 } from "@heroicons/react/solid"
 
 // import AvatarGroupStack from "./AvatarGroupStack"
 import DropdownWithIcons from "../DropdownWithIcons"
 import ShareSheet from "../ShareSheet"
 import MapBox from "../MapBox"
+import LocationSearch from "../Elements/LocationSearch"
 
 import { Event, GuestResponse, User, Guest } from "../../models/interfaces"
 
@@ -33,17 +38,25 @@ interface Props {
   user: User
   event?: Event
   inviteCode?: string
+  refreshData: () => void
 }
 
-const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
+const EventDetail: NextPage<Props> = ({
+  user,
+  event,
+  inviteCode,
+  refreshData
+}) => {
   const now = dayjs()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false)
-
-  const [eventTitle, setEventTitle] = useState(event.title)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [mapBoxReset, setMapBoxReset] = useState(true)
 
   const currentGuest = event.Guests.find(guest => guest.userId === user.id)
   const [response, setResponse] = useState(currentGuest?.response)
+
+  const [locationSearchOpen, setLocationSearchOpen] = React.useState(false)
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -86,6 +99,13 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
 
   return (
     <>
+      <LocationSearch
+        open={locationSearchOpen}
+        setOpen={setLocationSearchOpen}
+        event={event}
+        refreshData={refreshData}
+        setMapBoxReset={setMapBoxReset}
+      />
       <div className="text-center">
         <Link href="/">
           <a>
@@ -132,19 +152,12 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
                     </h3>
                   </div>
                   <div className="sm:hidden mt-1 min-w-0 flex-1">
-                    <h1 className="text-2xl font-bold text-gray-900 truncate">
-                      {eventTitle}
+                    <h1 className="text-2xl font-bold text-gray-900">
+                      {event.title}
                     </h1>
                   </div>
                   <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                    {/* <button
-                    type="button"
-                    className="inline-flex justify-center px-4 py-2 border border-blue-300 shadow-sm text-sm font-semibold rounded-md text-blue-500 bg-blue-50 hover:bg-gray-50 focus:outline-none"
-                  >
-                    <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-blue-500" />
-                    <span>Going</span>
-                  </button> */}
-                    {(event.id === 1 || currentGuest) && (
+                    {!isEditMode && (event.id === 1 || currentGuest) && (
                       <DropdownWithIcons
                         title="Respond"
                         useSelectedOptionAsDefault={true}
@@ -178,17 +191,43 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
                         ]}
                       />
                     )}
-                    <button
-                      type="button"
-                      className="inline-flex justify-center px-4 py-2 border border-gray-300 
+                    {!isEditMode && (
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 border border-gray-300 
                     shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
                     focus:outline-none"
-                      onClick={() => setIsShareSheetOpen(true)}
-                    >
-                      <UserAddIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                      {/* {shareIcon("-ml-1 mr-2 h-5 w-5 text-gray-400")} */}
-                      <span>Invite</span>
-                    </button>
+                        onClick={() => setIsShareSheetOpen(true)}
+                      >
+                        <UserAddIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                        {/* {shareIcon("-ml-1 mr-2 h-5 w-5 text-gray-400")} */}
+                        <span>Invite</span>
+                      </button>
+                    )}
+                    {!isEditMode && currentGuest.isHost && (
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 border border-gray-300 
+                    shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
+                    focus:outline-none"
+                        onClick={() => setIsEditMode(true)}
+                      >
+                        <PencilAltIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                        <span>Edit</span>
+                      </button>
+                    )}
+                    {isEditMode && currentGuest.isHost && (
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 border border-gray-300 
+                    shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 
+                    focus:outline-none"
+                        onClick={() => setIsEditMode(!isEditMode)}
+                      >
+                        <CheckIcon className="-ml-1 mr-2 h-5 w-5 text-white" />
+                        <span>Save</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -200,7 +239,7 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
               </div>
               <div className="hidden sm:block mt-1 min-w-0 flex-1">
                 <h1 className="text-2xl font-bold text-gray-900 truncate">
-                  {eventTitle}
+                  {event.title}
                 </h1>
               </div>
             </div>
@@ -208,7 +247,7 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
           <ShareSheet
             open={isShareSheetOpen}
             setOpen={setIsShareSheetOpen}
-            eventTitle={eventTitle}
+            eventTitle={event.title}
             inviteUrl={`${window.location.origin}/events/${event.id}?inviteCode=${event.Invites[0]?.code}`}
           />
           {/* Tabs */}
@@ -260,20 +299,23 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
                 </p>
                 <p className="mt-2">
                   <LocationMarkerIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  {event.Address[0].locationName ? (
+                  {!isEditMode && event.Address[0].locationName ? (
                     <span className="align-middle font-semibold">
                       {event.Address[0].locationName}
                     </span>
-                  ) : (
+                  ) : currentGuest.isHost ? (
                     <span className="align-middle">
                       <a
                         role="button"
                         className="text-blue-500 hover:underline"
+                        onClick={() => setLocationSearchOpen(true)}
                       >
-                        Set location
+                        {event.Address[0].locationName
+                          ? event.Address[0].locationName
+                          : "Set location"}
                       </a>
                     </span>
-                  )}
+                  ) : null}
                 </p>
                 <p className="mt-2">
                   <CalendarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
@@ -310,10 +352,13 @@ const EventDetail: NextPage<Props> = ({ user, event, inviteCode }) => {
                   className="rounded-lg"
                   src="https://i.imgur.com/oFypSZG.jpg"
                    ></img> */}
-                <MapBox
-                  lat={event.Address[0].latitude}
-                  long={event.Address[0].longitude}
-                />
+                {mapBoxReset && (
+                  <MapBox
+                    lat={event.Address[0].latitude}
+                    long={event.Address[0].longitude}
+                    zoom={13}
+                  />
+                )}
                 <div
                   className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full 
                     text-base sm:text-sm text-center font-sans font-semibold p-4 sm:p-3"
