@@ -33,7 +33,7 @@ function MyApp({ Component, pageProps }) {
           images: [
             {
               url:
-                "https://res.cloudinary.com/raskin-me/image/upload/v1622149313/inviteable/inviteable-logo-2-alt-2_l0n7mc.png",
+                "https://inviteable.s3.amazonaws.com/images/1648769584238-pika-2022-03-31T232943.jpg",
               width: 800,
               height: 600,
               alt: "inviteable"
