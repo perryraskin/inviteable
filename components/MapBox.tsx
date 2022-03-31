@@ -16,6 +16,7 @@ mapboxgl.accessToken =
 interface Props {
   lat: number
   long: number
+  zoom: number
 }
 
 // const MapBox: NextPage<Props> = ({}) => {
@@ -40,13 +41,13 @@ interface Props {
 //   )
 // }
 
-const MapBox: NextPage<Props> = ({ lat, long }) => {
+const MapBox: NextPage<Props> = ({ lat, long, zoom }) => {
   useEffect(() => {
     var map = new mapboxgl.Map({
       container: "map", // container id
       style: "mapbox://styles/mapbox/streets-v11", //stylesheet location
       center: [long, lat],
-      zoom: 13
+      zoom: zoom
     })
 
     map.addControl(new mapboxgl.FullscreenControl())
