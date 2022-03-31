@@ -23,7 +23,9 @@ import {
   PencilAltIcon,
   SaveIcon,
   SaveAsIcon,
-  CheckIcon
+  CheckIcon,
+  OfficeBuildingIcon,
+  LockOpenIcon
 } from "@heroicons/react/solid"
 
 // import AvatarGroupStack from "./AvatarGroupStack"
@@ -32,7 +34,13 @@ import ShareSheet from "../ShareSheet"
 import MapBox from "../MapBox"
 import LocationSearch from "../Elements/LocationSearch"
 
-import { Event, GuestResponse, User, Guest } from "../../models/interfaces"
+import {
+  Event,
+  GuestResponse,
+  User,
+  Guest,
+  EventAccess
+} from "../../models/interfaces"
 
 interface Props {
   user: User
@@ -62,6 +70,21 @@ const EventDetail: NextPage<Props> = ({
     extensions: [StarterKit],
     content: ""
   })
+
+  /* Event attributes for edit/update */
+  const [title, setTitle] = useState(event.title)
+  const [detailsHtml, setDetailsHtml] = useState(event.detailsHtml)
+  const [detailsText, setDetailsText] = useState(event.detailsText)
+  const [price, setPrice] = useState(event.price)
+  const [imageUrl, setImageUrl] = useState(event.imageUrl)
+  const [dateStart, setDateStart] = useState(
+    dayjs(event.dateTimeStart).format(`YYYY-MM-DD`)
+  )
+  const [timeStart, setTimeStart] = useState(
+    dayjs(event.dateTimeStart).format(`HH:mm`)
+  )
+  const [address2, setAddress2] = useState(event.Address[0]?.address2)
+  const [eventAccess, setEventAccess] = useState(event.Settings?.access)
 
   async function handleUpdateResponse(updatedResponse: GuestResponse) {
     setResponse(updatedResponse)
@@ -140,7 +163,7 @@ const EventDetail: NextPage<Props> = ({
                     style={{ borderTopWidth: "26px" }}
                   >
                     <span className="flex items-center justify-center h-16 font-semibold text-6xl">
-                      9
+                      {dayjs(event.dateTimeStart).format("D")}
                     </span>
                   </div>
                 </div>
@@ -299,11 +322,7 @@ const EventDetail: NextPage<Props> = ({
                 </p>
                 <p className="mt-2">
                   <LocationMarkerIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  {!isEditMode && event.Address[0].locationName ? (
-                    <span className="align-middle font-semibold">
-                      {event.Address[0].locationName}
-                    </span>
-                  ) : currentGuest.isHost ? (
+                  {isEditMode ? (
                     <span className="align-middle">
                       <a
                         role="button"
@@ -315,21 +334,79 @@ const EventDetail: NextPage<Props> = ({
                           : "Set location"}
                       </a>
                     </span>
+                  ) : event.Address[0].locationName ? (
+                    <span className="align-middle font-semibold">
+                      {event.Address[0].locationName}
+                    </span>
                   ) : null}
                 </p>
+                {isEditMode ? (
+                  <p className="mt-2">
+                    <OfficeBuildingIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                    <span className="align-middle">
+                      <input
+                        type="text"
+                        className="shadow-sm h-8 w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
+                        placeholder="Apt #, Suite #, etc."
+                        value={address2}
+                        onChange={e => setAddress2(e.target.value)}
+                      />
+                    </span>
+                  </p>
+                ) : event.Address[0].address2 ? (
+                  <p className="mt-2">
+                    <OfficeBuildingIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                    <span className="align-middle">
+                      {event.Address[0].address2}
+                    </span>
+                  </p>
+                ) : null}
                 <p className="mt-2">
                   <CalendarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  <span className="align-middle">
-                    {dayjs(event.dateTimeStart).format("dddd, MMMM D, YYYY")}
-                  </span>
+                  {isEditMode ? (
+                    <span className="align-middle">
+                      <input
+                        type="date"
+                        className="shadow-sm h-8 w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
+                        value={dateStart}
+                        onChange={e => setDateStart(e.target.value)}
+                      />
+                    </span>
+                  ) : (
+                    <span className="align-middle">
+                      {dayjs(event.dateTimeStart).format("dddd, MMMM D, YYYY")}
+                    </span>
+                  )}
                 </p>
                 <p className="mt-2">
                   <ClockIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  <span className="align-middle">
-                    {dayjs(event.dateTimeStart).format("h:mm A")}
-                  </span>
+                  {isEditMode ? (
+                    <span className="align-middle">
+                      <input
+                        type="time"
+                        className="shadow-sm h-8 w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
+                        value={timeStart}
+                        onChange={e => setTimeStart(e.target.value)}
+                      />
+                    </span>
+                  ) : (
+                    <span className="align-middle">
+                      {dayjs(event.dateTimeStart).format("h:mm A")}
+                    </span>
+                  )}
                 </p>
-                {event.Settings?.isPrivate ? (
+                {isEditMode ? (
+                  <p className="mt-2">
+                    {eventAccess === EventAccess.Private ? (
+                      <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                    ) : eventAccess === EventAccess.Unlisted ? (
+                      <LockOpenIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                    ) : (
+                      <GlobeIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                    )}
+                    <span className="align-middle"></span>
+                  </p>
+                ) : event.Settings?.access === EventAccess.Private ? (
                   <p className="mt-2">
                     <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                     <span className="align-middle">

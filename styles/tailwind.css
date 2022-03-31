@@ -1,5 +1,8 @@
 @tailwind base;
 
+:root {
+  --tw-ring-color: rgb(108, 177, 255);
+}
 /* No button selection on click */
 .no-select {
   -webkit-touch-callout: none;

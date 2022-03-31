@@ -60,7 +60,7 @@ model EventSettings {
   id            Int      @id @default(autoincrement())
   dateCreated   DateTime @default(now())
   eventId       Int      @unique
-  isPrivate     Boolean  @default(true)
+  access        Int      @default(0)
   showGuestList Boolean  @default(true)
   allowComments Boolean  @default(true)
   Event         Event    @relation(fields: [eventId], references: [id])

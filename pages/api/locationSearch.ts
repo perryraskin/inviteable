@@ -23,9 +23,20 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         res.json({
           authorized: true,
           locations: features.map(feature => {
+            const shortAddress =
+              (feature.address ? feature.address + " " : "") +
+              feature.text +
+              " " +
+              (feature.context?.find(c => c.id.includes("place"))
+                ? feature.context?.find(c => c.id.includes("place"))?.text +
+                  ", "
+                : "") +
+              (feature.context?.find(c => c.id.includes("region"))
+                ? feature.context?.find(c => c.id.includes("region"))?.text
+                : "")
             return {
               id: feature.id,
-              name: feature.place_name,
+              name: shortAddress,
               latitude: feature.center[1],
               longitude: feature.center[0],
               address:

@@ -19,7 +19,7 @@ export interface Event {
   title: string
   dateTimeStart: Date
   dateTimeEnd: Date
-  Address: Address
+  Address: Address[]
   price: number
   imageUrl: string
   detailsText: string
@@ -44,7 +44,7 @@ export interface EventSettings {
   id: number
   dateCreated: Date
   eventId: number
-  isPrivate: boolean
+  access: EventAccess
   showGuestList: boolean
   allowComments: boolean
 }
@@ -76,4 +76,10 @@ export enum GuestResponse {
   None,
   Accepted,
   Declined
+}
+
+export enum EventAccess {
+  Private,
+  Unlisted,
+  Public
 }
