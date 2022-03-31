@@ -130,7 +130,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       include: {
         Address: true,
         Host: true,
-        Guests: true
+        Guests: true,
+        Settings: true
       }
     })
 
@@ -184,9 +185,13 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         price,
         imageUrl,
         detailsText,
-        detailsHtml
+        detailsHtml,
+        eventAccess,
+        showGuestList,
+        allowComments
       } = eventRequest
       try {
+        console.log(eventRequest)
         const eventResponse = await prisma.event.update({
           where: {
             id: parseInt(eventIdString)
@@ -227,12 +232,29 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               id: event.Address[0].id
             },
             data: {
-              locationName
+              locationName,
+              address2
             }
           })
         }
 
-        res.json({ authorized: true, eventResponse, addressResponse })
+        const settingsResponse = await prisma.eventSettings.update({
+          where: {
+            eventId: parseInt(eventIdString)
+          },
+          data: {
+            access: eventAccess ? parseInt(eventAccess) : undefined,
+            showGuestList,
+            allowComments
+          }
+        })
+
+        res.json({
+          authorized: true,
+          eventResponse,
+          addressResponse,
+          settingsResponse
+        })
       } catch (err) {
         console.log(err)
         res.status(500)
