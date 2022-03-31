@@ -31,6 +31,7 @@
     "@tiptap/starter-kit": "^2.0.0-beta.183",
     "@types/detect-node": "^2.0.0",
     "autoprefixer": "^10.4.2",
+    "aws-sdk": "^2.1105.0",
     "cookie": "^0.4.1",
     "dayjs": "^1.9.4",
     "detect-node": "^2.0.4",
@@ -53,6 +54,7 @@
     "react-dom": "^16.14.0",
     "react-location-picker": "^1.5.0",
     "react-mapbox-gl": "^5.1.1",
+    "react-s3-uploader": "^5.0.0",
     "tailwindcss": "^3.0.23",
     "uuid": "^8.3.2"
   },
