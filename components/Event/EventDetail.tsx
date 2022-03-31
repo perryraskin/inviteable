@@ -41,6 +41,8 @@ import {
   Guest,
   EventAccess
 } from "../../models/interfaces"
+import { DropdownWithSupportedText } from "../Elements/DropdownWithSupportedText"
+import { spinner } from "../Elements/Icons"
 
 interface Props {
   user: User
@@ -68,8 +70,19 @@ const EventDetail: NextPage<Props> = ({
 
   const editor = useEditor({
     extensions: [StarterKit],
-    content: ""
+    content: event.detailsHtml,
+    editable: false,
+    editorProps: {
+      attributes: {
+        class:
+          "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl focus:outline-none"
+      }
+    }
   })
+
+  useEffect(() => {
+    editor?.setEditable(isEditMode)
+  }, [isEditMode])
 
   /* Event attributes for edit/update */
   const [title, setTitle] = useState(event.title)
@@ -119,6 +132,38 @@ const EventDetail: NextPage<Props> = ({
   const guestsNotResponded = event.Guests.filter(
     (guest: Guest) => guest.response === GuestResponse.None
   )
+
+  async function handleUpdateEvent() {
+    setIsSubmitting(true)
+
+    const res = await fetch(`/api/event/${event.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        event: {
+          title,
+          detailsHtml,
+          detailsText,
+          price,
+          dateTimeStart: `${dateStart} ${timeStart}`,
+          address2,
+          eventAccess
+        }
+      })
+    })
+    const data = await res.json()
+    if (!data.error) {
+      setIsSubmitting(false)
+      setIsEditMode(false)
+      refreshData()
+    }
+  }
+
+  useEffect(() => {
+    console.log(detailsHtml)
+  }, [detailsHtml])
 
   return (
     <>
@@ -175,9 +220,18 @@ const EventDetail: NextPage<Props> = ({
                     </h3>
                   </div>
                   <div className="sm:hidden mt-1 min-w-0 flex-1">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                      {event.title}
-                    </h1>
+                    {isEditMode ? (
+                      <input
+                        type="text"
+                        className="shadow-sm w-full focus:ring-none text-2xl font-bold focus:border-none sm:text-sm border-gray-300 rounded-md"
+                        value={title}
+                        onChange={e => setTitle(e.target.value)}
+                      />
+                    ) : (
+                      <h1 className="text-2xl font-bold text-gray-900">
+                        {event.title}
+                      </h1>
+                    )}
                   </div>
                   <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
                     {!isEditMode && (event.id === 1 || currentGuest) && (
@@ -245,9 +299,12 @@ const EventDetail: NextPage<Props> = ({
                         className="inline-flex justify-center px-4 py-2 border border-gray-300 
                     shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 
                     focus:outline-none"
-                        onClick={() => setIsEditMode(!isEditMode)}
+                        onClick={handleUpdateEvent}
                       >
-                        <CheckIcon className="-ml-1 mr-2 h-5 w-5 text-white" />
+                        {!isSubmitting && (
+                          <CheckIcon className="-ml-1 mr-2 h-5 w-5 text-white" />
+                        )}
+                        {spinner(isSubmitting)}
                         <span>Save</span>
                       </button>
                     )}
@@ -261,9 +318,18 @@ const EventDetail: NextPage<Props> = ({
                 </h3>
               </div>
               <div className="hidden sm:block mt-1 min-w-0 flex-1">
-                <h1 className="text-2xl font-bold text-gray-900 truncate">
-                  {event.title}
-                </h1>
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    className="shadow-sm w-full focus:ring-none focus:border-none text-2xl font-bold border-gray-300 rounded-md"
+                    value={title}
+                    onChange={e => setTitle(e.target.value)}
+                  />
+                ) : (
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    {event.title}
+                  </h1>
+                )}
               </div>
             </div>
           </div>
@@ -346,7 +412,7 @@ const EventDetail: NextPage<Props> = ({
                     <span className="align-middle">
                       <input
                         type="text"
-                        className="shadow-sm h-8 w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
                         placeholder="Apt #, Suite #, etc."
                         value={address2}
                         onChange={e => setAddress2(e.target.value)}
@@ -367,7 +433,7 @@ const EventDetail: NextPage<Props> = ({
                     <span className="align-middle">
                       <input
                         type="date"
-                        className="shadow-sm h-8 w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
                         value={dateStart}
                         onChange={e => setDateStart(e.target.value)}
                       />
@@ -384,7 +450,7 @@ const EventDetail: NextPage<Props> = ({
                     <span className="align-middle">
                       <input
                         type="time"
-                        className="shadow-sm h-8 w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
                         value={timeStart}
                         onChange={e => setTimeStart(e.target.value)}
                       />
@@ -404,9 +470,19 @@ const EventDetail: NextPage<Props> = ({
                     ) : (
                       <GlobeIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                     )}
-                    <span className="align-middle"></span>
+                    <span className="align-middle">
+                      <select
+                        className="mt-1 w-32 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md"
+                        value={eventAccess.toString()}
+                        onChange={e => setEventAccess(parseInt(e.target.value))}
+                      >
+                        <option value={EventAccess.Private}>Private</option>
+                        {/* <option  value={EventAccess.Unlisted}>Unlisted</option> */}
+                        <option value={EventAccess.Public}>Public</option>
+                      </select>
+                    </span>
                   </p>
-                ) : event.Settings?.access === EventAccess.Private ? (
+                ) : eventAccess === EventAccess.Private ? (
                   <p className="mt-2">
                     <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                     <span className="align-middle">
@@ -453,17 +529,31 @@ const EventDetail: NextPage<Props> = ({
             <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <dt className="text-lg font-bold text-gray-900">Details</dt>
-                <dd className="mt-1 max-w-prose text-sm text-gray-900 space-y-5">
-                  {/* <EditorContent
+                <dd
+                  className={`mt-1 max-w-prose text-sm text-gray-900 space-y-5 ${
+                    isEditMode ? "border p-2 rounded" : ""
+                  }`}
+                >
+                  <EditorContent
                     editor={editor}
-                    onChange={() => {
+                    onKeyUp={() => {
                       setDetailsText(editor.getText())
                       setDetailsHtml(editor.getHTML())
                     }}
-                  /> */}
-                  <div
-                    dangerouslySetInnerHTML={{ __html: event.detailsHtml }}
-                  ></div>
+                  />
+                  {/* {isEditMode ? (
+                    <EditorContent
+                      editor={editor}
+                      onChange={() => {
+                        setDetailsText(editor.getText())
+                        setDetailsHtml(editor.getHTML())
+                      }}
+                    />
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: event.detailsHtml }}
+                    ></div>
+                  )} */}
                 </dd>
               </div>
             </dl>
