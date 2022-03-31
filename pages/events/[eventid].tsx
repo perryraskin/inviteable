@@ -64,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await res.json()
     event = data.event
   } catch (error) {
-    console.log(error)
+    // console.log(error)
   }
   // console.log(event)
 

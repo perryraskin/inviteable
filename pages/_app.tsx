@@ -16,6 +16,12 @@ function MyApp({ Component, pageProps }) {
   // const { Component, pageProps } = props
   return (
     <>
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, user-scalable=no"
+        ></meta>
+      </Head>
       <DefaultSeo
         title="inviteable"
         description="Events of any kind, with privacy in mind"
