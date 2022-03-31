@@ -28,7 +28,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               name: feature.place_name,
               latitude: feature.center[1],
               longitude: feature.center[0],
-              address: feature.address + " " + feature.text,
+              address:
+                (feature.address ? feature.address + " " : "") + feature.text,
               place: feature.context?.find(c => c.id.includes("place"))?.text,
               region: feature.context?.find(c => c.id.includes("region"))?.text,
               postcode: feature.context?.find(c => c.id.includes("postcode"))
