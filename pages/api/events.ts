@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../middleware/prismaClient"
 import auth from "../../middleware/auth"
 import { v4 as uuidv4 } from "uuid"
-import { GuestResponse } from "../../models/interfaces"
+import { EventAccess, GuestResponse } from "../../models/interfaces"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   // const userAuth = await auth(req, res)
@@ -66,7 +66,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         const eventSettingsResponse = await prisma.eventSettings.create({
           data: {
             eventId: eventResponse.id,
-            isPrivate: true,
+            access: EventAccess.Private,
             showGuestList: true,
             allowComments: true
           }
