@@ -3,6 +3,7 @@ import prisma from "../../middleware/prismaClient"
 import auth from "../../middleware/auth"
 import { v4 as uuidv4 } from "uuid"
 import { EventAccess, GuestResponse } from "../../models/interfaces"
+import dayjs from "dayjs"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   // const userAuth = await auth(req, res)
@@ -35,7 +36,17 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             title,
             imageUrl: "https://source.unsplash.com/1600x900/?celebration",
             detailsText: "Join us for a celebration!",
-            detailsHtml: "<p>Join us for a celebration!</p>"
+            detailsHtml: "<p>Join us for a celebration!</p>",
+            dateTimeStart: new Date(
+              dayjs()
+                .add(1, "day")
+                .format("YYYY-MM-DD") + "T20:00:00.000Z"
+            ),
+            dateTimeEnd: new Date(
+              dayjs()
+                .add(1, "day")
+                .format("YYYY-MM-DD") + "T22:00:00.000Z"
+            )
           }
         }
 
@@ -46,7 +57,17 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               title,
               imageUrl: "https://source.unsplash.com/1600x900/?celebration",
               detailsText: "Join us for a celebration!",
-              detailsHtml: "<p>Join us for a celebration!</p>"
+              detailsHtml: "<p>Join us for a celebration!</p>",
+              dateTimeStart: new Date(
+                dayjs()
+                  .add(1, "day")
+                  .format("YYYY-MM-DD") + "T20:00:00.000Z"
+              ),
+              dateTimeEnd: new Date(
+                dayjs()
+                  .add(1, "day")
+                  .format("YYYY-MM-DD") + "T22:00:00.000Z"
+              )
             }
           }
         }

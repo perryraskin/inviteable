@@ -95,10 +95,10 @@ const EventDetail: NextPage<Props> = ({
   const [price, setPrice] = useState(event.price)
   const [imageUrl, setImageUrl] = useState(event.imageUrl)
   const [dateStart, setDateStart] = useState(
-    dayjs(event.dateTimeStart).format(`YYYY-MM-DD`)
+    event.dateTimeStart ? dayjs(event.dateTimeStart).format(`YYYY-MM-DD`) : null
   )
   const [timeStart, setTimeStart] = useState(
-    dayjs(event.dateTimeStart).format(`HH:mm`)
+    event.dateTimeStart ? dayjs(event.dateTimeStart).format(`HH:mm`) : null
   )
   const [address2, setAddress2] = useState(event.Address[0]?.address2)
   const [eventAccess, setEventAccess] = useState(event.Settings?.access)
@@ -257,22 +257,6 @@ const EventDetail: NextPage<Props> = ({
                 </label>
               </div>
             </div>
-            {/* <div
-              onMouseLeave={() => setBannerHover(false)}
-              className={`${bannerHover ? "" : "hidden"}`}
-            >
-              <button
-                type="button"
-                className="relative block w-full border-2 border-gray-300 border-dashed 
-                rounded-lg p-12 text-center hover:border-gray-400 
-                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                <PhotographIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <span className="mt-2 block text-sm font-medium text-gray-900">
-                  Upload a new banner image
-                </span>
-              </button>
-            </div> */}
             <div className="absolute top-0 -gray-700"></div>
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
@@ -282,7 +266,7 @@ const EventDetail: NextPage<Props> = ({
                     style={{ borderTopWidth: "26px" }}
                   >
                     <span className="flex items-center justify-center h-16 font-semibold text-6xl">
-                      {dayjs(event.dateTimeStart).format("D")}
+                      {dateStart ? dayjs(dateStart).format("D") : "?"}
                     </span>
                   </div>
                 </div>
@@ -355,7 +339,7 @@ const EventDetail: NextPage<Props> = ({
                         <span>Invite</span>
                       </button>
                     )}
-                    {!isEditMode && currentGuest.isHost && (
+                    {!isEditMode && currentGuest?.isHost && (
                       <button
                         type="button"
                         className="inline-flex justify-center px-4 py-2 border border-gray-300 
@@ -367,7 +351,7 @@ const EventDetail: NextPage<Props> = ({
                         <span>Edit</span>
                       </button>
                     )}
-                    {isEditMode && currentGuest.isHost && (
+                    {isEditMode && (
                       <>
                         <button
                           type="button"
@@ -526,7 +510,7 @@ const EventDetail: NextPage<Props> = ({
                     </span>
                   ) : (
                     <span className="align-middle">
-                      {dayjs(event.dateTimeStart).format("dddd, MMMM D, YYYY")}
+                      {dayjs(dateStart).format("dddd, MMMM D, YYYY")}
                     </span>
                   )}
                 </p>
