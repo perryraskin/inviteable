@@ -216,6 +216,7 @@ const EventDetail: NextPage<Props> = ({
               onMouseOver={() => setBannerHover(true)}
               onMouseLeave={() => setBannerHover(false)}
               className="relative"
+              onClick={handleClickFileInput}
             >
               <img
                 className="h-32 w-full object-cover lg:h-48"
