@@ -363,7 +363,9 @@ const EventDetail: NextPage<Props> = ({
                   className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full 
                     text-base sm:text-sm text-center font-sans font-semibold p-4 sm:p-3"
                 >
-                  {event.Address[0].locationName}, {event.Address[0].city},{" "}
+                  {event.Address[0].address1.replace(/undefined/g, "").trim()}
+                  <br></br>
+                  {event.Address[0].city ? event.Address[0].city + ", " : ""}
                   {event.Address[0].state}
                 </div>
               </div>

@@ -202,22 +202,35 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           }
         })
 
-        const addressResponse = await prisma.address.update({
-          where: {
-            id: event.Address[0].id
-          },
-          data: {
-            locationName: locationName ?? undefined,
-            latitude: latitude ? parseFloat(latitude) : undefined,
-            longitude: longitude ? parseFloat(longitude) : undefined,
-            address1: address1 ?? undefined,
-            address2: address2 ?? undefined,
-            city: city ?? undefined,
-            state: state ?? undefined,
-            zip: zip ?? undefined,
-            country: country ?? undefined
-          }
-        })
+        let addressResponse
+
+        if (latitude && longitude) {
+          addressResponse = await prisma.address.update({
+            where: {
+              id: event.Address[0].id
+            },
+            data: {
+              locationName: locationName ?? undefined,
+              latitude: latitude ? parseFloat(latitude) : undefined,
+              longitude: longitude ? parseFloat(longitude) : undefined,
+              address1: address1 ? address1 : null,
+              address2: address2 ? address2 : null,
+              city: city ?? null,
+              state: state ?? null,
+              zip: zip ?? null,
+              country: country ?? null
+            }
+          })
+        } else {
+          addressResponse = await prisma.address.update({
+            where: {
+              id: event.Address[0].id
+            },
+            data: {
+              locationName
+            }
+          })
+        }
 
         res.json({ authorized: true, eventResponse, addressResponse })
       } catch (err) {
