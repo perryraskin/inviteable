@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { NextPage } from "next"
+import Script from "next/script"
 import Link from "next/link"
 import Head from "next/head"
 import Router from "next/router"
@@ -25,8 +26,10 @@ import {
   SaveAsIcon,
   CheckIcon,
   OfficeBuildingIcon,
-  LockOpenIcon
+  LockOpenIcon,
+  XIcon
 } from "@heroicons/react/solid"
+import S3 from "react-s3-uploader"
 
 // import AvatarGroupStack from "./AvatarGroupStack"
 import DropdownWithIcons from "../DropdownWithIcons"
@@ -43,6 +46,7 @@ import {
 } from "../../models/interfaces"
 import { DropdownWithSupportedText } from "../Elements/DropdownWithSupportedText"
 import { spinner } from "../Elements/Icons"
+import { CameraIcon, PhotographIcon } from "@heroicons/react/outline"
 
 interface Props {
   user: User
@@ -160,11 +164,10 @@ const EventDetail: NextPage<Props> = ({
       refreshData()
     }
   }
-
-  useEffect(() => {
-    console.log(detailsHtml)
-  }, [detailsHtml])
-
+  const [bannerHover, setBannerHover] = useState(false)
+  const handleClickFileInput = event => {
+    document.getElementById("s3").click()
+  }
   return (
     <>
       <LocationSearch
@@ -190,19 +193,71 @@ const EventDetail: NextPage<Props> = ({
         <article>
           {/* Profile header */}
           <div>
-            <div>
+            <div
+              onMouseOver={() => setBannerHover(true)}
+              onMouseLeave={() => setBannerHover(false)}
+              className="relative"
+            >
               <img
                 className="h-32 w-full object-cover lg:h-48"
                 src={
                   event.imageUrl ??
-                  `https://parqueorion.com/wp-content/plugins/cafe-lite/assets/img/banner-placeholder.png`
+                  `https://res.cloudinary.com/raskin-me/image/upload/v1648753994/inviteable/banner-placeholder_cecqad.png`
                 }
                 alt=""
               />
+              <div
+                className={`s3-btn-wrapper absolute bottom-4 right-8 ${
+                  bannerHover ? "" : "hidden"
+                }`}
+              >
+                <S3
+                  accept="image/*"
+                  multiple={false}
+                  signingUrl="/api/s3"
+                  signingUrlWithCredentials={true}
+                  className="hidden"
+                  id="s3"
+                  scrubFilename={name =>
+                    Date.now() + "-" + name.replace(/[^\w\d_\-.]+/gi, "")
+                  }
+                  // onFinish={(e) => handleUpdateProfileImage(e["uploadUrl"])}
+                  onFinish={e => console.log(e["uploadUrl"])}
+                />
+                <label htmlFor="s3">
+                  <button
+                    type="button"
+                    className="inline-flex justify-center px-4 py-2 border border-gray-300 
+                    shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-200 
+                    focus:outline-none"
+                    onClick={handleClickFileInput}
+                  >
+                    <PhotographIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                    <span>Upload</span>
+                  </button>
+                </label>
+              </div>
             </div>
+            {/* <div
+              onMouseLeave={() => setBannerHover(false)}
+              className={`${bannerHover ? "" : "hidden"}`}
+            >
+              <button
+                type="button"
+                className="relative block w-full border-2 border-gray-300 border-dashed 
+                rounded-lg p-12 text-center hover:border-gray-400 
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <PhotographIcon className="mx-auto h-12 w-12 text-gray-400" />
+                <span className="mt-2 block text-sm font-medium text-gray-900">
+                  Upload a new banner image
+                </span>
+              </button>
+            </div> */}
+            <div className="absolute top-0 -gray-700"></div>
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
-                <div className="flex">
+                <div className="flex relative z-10">
                   <div
                     className="h-24 w-24 rounded-xl shadow-lg border-red-500 bg-white"
                     style={{ borderTopWidth: "26px" }}
@@ -294,19 +349,31 @@ const EventDetail: NextPage<Props> = ({
                       </button>
                     )}
                     {isEditMode && currentGuest.isHost && (
-                      <button
-                        type="button"
-                        className="inline-flex justify-center px-4 py-2 border border-gray-300 
-                    shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 
+                      <>
+                        <button
+                          type="button"
+                          className="inline-flex justify-center px-4 py-2 border border-gray-300 
+                    shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
                     focus:outline-none"
-                        onClick={handleUpdateEvent}
-                      >
-                        {!isSubmitting && (
-                          <CheckIcon className="-ml-1 mr-2 h-5 w-5 text-white" />
-                        )}
-                        {spinner(isSubmitting)}
-                        <span>Save</span>
-                      </button>
+                          onClick={() => setIsEditMode(false)}
+                        >
+                          <XIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                          <span>Cancel</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="inline-flex justify-center px-4 py-2 border  
+                    shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 
+                    border-blue-500 focus:outline-none"
+                          onClick={handleUpdateEvent}
+                        >
+                          {!isSubmitting && (
+                            <CheckIcon className="-ml-1 mr-2 h-5 w-5 text-white" />
+                          )}
+                          {spinner(isSubmitting)}
+                          <span>Save</span>
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
