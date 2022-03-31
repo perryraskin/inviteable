@@ -14,7 +14,7 @@ export default async function(req, res) {
     const s3 = new aws.S3()
 
     const s3Param = {
-      Bucket: bucket,
+      Bucket: `${bucket}/images`,
       Key: objectName,
       Expires: 500,
       ContentType: contentType,

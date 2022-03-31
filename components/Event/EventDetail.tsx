@@ -168,6 +168,25 @@ const EventDetail: NextPage<Props> = ({
   const handleClickFileInput = event => {
     document.getElementById("s3").click()
   }
+
+  async function handleUpdateImage(url) {
+    setImageUrl(url)
+    const res = await fetch(`/api/event/${event.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        event: {
+          imageUrl: url
+        }
+      })
+    })
+    const data = await res.json()
+    if (!data.error) {
+      console.log(data)
+    }
+  }
   return (
     <>
       <LocationSearch
@@ -201,7 +220,7 @@ const EventDetail: NextPage<Props> = ({
               <img
                 className="h-32 w-full object-cover lg:h-48"
                 src={
-                  event.imageUrl ??
+                  imageUrl ??
                   `https://res.cloudinary.com/raskin-me/image/upload/v1648753994/inviteable/banner-placeholder_cecqad.png`
                 }
                 alt=""
@@ -221,8 +240,7 @@ const EventDetail: NextPage<Props> = ({
                   scrubFilename={name =>
                     Date.now() + "-" + name.replace(/[^\w\d_\-.]+/gi, "")
                   }
-                  // onFinish={(e) => handleUpdateProfileImage(e["uploadUrl"])}
-                  onFinish={e => console.log(e["uploadUrl"])}
+                  onFinish={e => handleUpdateImage(e["uploadUrl"])}
                 />
                 <label htmlFor="s3">
                   <button
