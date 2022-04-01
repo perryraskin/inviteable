@@ -7,6 +7,7 @@ import { useRouter } from "next/router"
 
 import "../styles/tailwind.css"
 import "mapbox-gl/dist/mapbox-gl.css"
+import "../styles/add-to-calendar.css"
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter()
