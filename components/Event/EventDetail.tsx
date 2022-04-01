@@ -1,37 +1,36 @@
 import React, { useState, useEffect } from "react"
 import { NextPage } from "next"
-import Script from "next/script"
 import Link from "next/link"
-import Head from "next/head"
 import Router from "next/router"
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
+dayjs.extend(utc)
+dayjs.extend(timezone)
 import {
   CheckCircleIcon,
   XCircleIcon,
   UsersIcon,
   CalendarIcon,
-  FlagIcon,
   StarIcon,
   ClockIcon,
-  TicketIcon,
   GlobeIcon,
   LocationMarkerIcon,
   LockClosedIcon,
   UserAddIcon,
   QuestionMarkCircleIcon,
   PencilAltIcon,
-  SaveIcon,
-  SaveAsIcon,
   CheckIcon,
   OfficeBuildingIcon,
   LockOpenIcon,
   XIcon
 } from "@heroicons/react/solid"
 import S3 from "react-s3-uploader"
+import { CalendarEvent } from "../../utilities/calendarUrls"
+import AddToCalendar from "../Elements/AddToCalendar"
 
-// import AvatarGroupStack from "./AvatarGroupStack"
 import DropdownWithIcons from "../DropdownWithIcons"
 import ShareSheet from "../ShareSheet"
 import MapBox from "../MapBox"
@@ -62,6 +61,26 @@ const EventDetail: NextPage<Props> = ({
   refreshData
 }) => {
   const now = dayjs()
+  const calendarAddress =
+    (event?.Address[0]?.address1 ?? "") +
+    " " +
+    (event?.Address[0]?.address2 ?? "") +
+    ", " +
+    (event?.Address[0]?.city ?? "") +
+    ", " +
+    (event?.Address[0]?.state ?? "") +
+    ", " +
+    (event?.Address[0]?.zip ?? "")
+  const calendarEvent: CalendarEvent = {
+    name: event?.title,
+    details: `${event?.detailsText}
+                                    
+    ${calendarAddress}`,
+    location: calendarAddress,
+    startsAt: dayjs(event?.dateTimeStart).format("YYYY-MM-DDTHH:mm:ssZ"),
+    endsAt: dayjs(event?.dateTimeEnd).format("YYYY-MM-DDTHH:mm:ssZ")
+  }
+
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
@@ -258,7 +277,7 @@ const EventDetail: NextPage<Props> = ({
               </div>
             </div>
             <div className="absolute top-0 -gray-700"></div>
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-5xl mx-auto px-4 sm:pl-6 lg:pl-8">
               <div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
                 <div className="flex relative z-10">
                   <div
@@ -378,6 +397,7 @@ const EventDetail: NextPage<Props> = ({
                         </button>
                       </>
                     )}
+                    <AddToCalendar event={calendarEvent} />
                   </div>
                 </div>
               </div>

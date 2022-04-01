@@ -42,6 +42,10 @@
   margin-bottom: 1rem;
 }
 
+.top-100 {
+  top: 29rem;
+}
+
 @tailwind components;
 
 @tailwind utilities;
