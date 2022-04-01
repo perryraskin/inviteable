@@ -33,6 +33,18 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         }
       })
 
+      if (!event) {
+        res.status(404)
+        res.json({
+          code: 404,
+          error: "Event not found",
+          event: {
+            title: "Not found"
+          }
+        })
+        return
+      }
+
       const eventInvite = await prisma.eventInvite.findFirst({
         where: {
           eventId: parseInt(eventIdString),

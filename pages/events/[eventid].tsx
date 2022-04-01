@@ -22,7 +22,7 @@ const EventDetailPage: NextPage<Props> = ({
   claim,
   errors
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  if (errors) return <p className="mt-10 text-center">Error!</p>
+  if (errors) return <p className="mt-10 text-center">{errors}</p>
   return (
     <>
       <NextSeo
@@ -58,6 +58,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   const { eventid } = params
   const { inviteCode, claim } = query
   let event
+  let code
 
   try {
     const res = await fetch(
@@ -65,12 +66,20 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     )
     const data = await res.json()
     event = data.event
+    code = data.code
+    // console.log(data)
   } catch (error) {
     // console.log(error)
   }
   // console.log(event)
 
-  if (event && eventid) {
+  if (code === 404) {
+    return {
+      props: {
+        errors: "Event not found :("
+      }
+    }
+  } else if (event && eventid) {
     return {
       props: {
         event,
@@ -90,7 +99,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   } else {
     return {
       props: {
-        errors: "Not logged in!"
+        errors: "Sorry, something went wrong :("
       }
     }
   }
