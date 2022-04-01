@@ -65,10 +65,13 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             ? event.Guests.some(g => g.userId === user.id && g.isHost === true)
             : false)
         // console.log(event.Host, user)
+        // if host or guest, return event
         if (isHost || isGuest) {
           res.status(200)
           res.json({ authorized: true, event })
-        } else if (
+        }
+        // if not host or guest, check for invite code
+        else if (
           user.id > 0 &&
           inviteCode &&
           inviteCode === event.Invites[0].code

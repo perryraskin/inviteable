@@ -62,20 +62,14 @@ const EventDetail: NextPage<Props> = ({
 }) => {
   const now = dayjs()
   const calendarAddress =
-    (event?.Address[0]?.address1 ?? "") +
-    " " +
-    (event?.Address[0]?.address2 ?? "") +
-    ", " +
-    (event?.Address[0]?.city ?? "") +
-    ", " +
-    (event?.Address[0]?.state ?? "") +
-    ", " +
-    (event?.Address[0]?.zip ?? "")
+    (event?.Address[0]?.address1 ? event?.Address[0]?.address1 : "") +
+    (event?.Address[0]?.address2 ? ", " + event?.Address[0]?.address2 : "") +
+    (event?.Address[0]?.city ? ", " + event?.Address[0]?.city : "") +
+    (event?.Address[0]?.state ? ", " + event?.Address[0]?.state : "") +
+    (event?.Address[0]?.zip ? ", " + event?.Address[0]?.zip : "")
   const calendarEvent: CalendarEvent = {
     name: event?.title,
-    details: `${event?.detailsText}
-                                    
-    ${calendarAddress}`,
+    details: event?.detailsText,
     location: calendarAddress,
     startsAt: dayjs(event?.dateTimeStart).format("YYYY-MM-DDTHH:mm:ssZ"),
     endsAt: dayjs(event?.dateTimeEnd).format("YYYY-MM-DDTHH:mm:ssZ")
@@ -284,6 +278,13 @@ const EventDetail: NextPage<Props> = ({
                     className="h-24 w-24 rounded-xl shadow-lg border-red-500 bg-white"
                     style={{ borderTopWidth: "26px" }}
                   >
+                    <span
+                      style={{ top: "2px" }}
+                      className="text-white uppercase text-sm
+                    font-bold absolute right-8 left-8"
+                    >
+                      {dayjs(dateStart).format("MMM")}
+                    </span>
                     <span className="flex items-center justify-center h-16 font-semibold text-6xl">
                       {dateStart ? dayjs(dateStart).format("D") : "?"}
                     </span>
@@ -649,8 +650,15 @@ const EventDetail: NextPage<Props> = ({
             </dl>
           </div>
           {/* Host list */}
-          <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
+          {/* <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
             <h2 className="text-lg font-bold text-gray-900">Hosts</h2>
+            <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2"></div>
+          </div> */}
+          {/* Guest list */}
+          <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
+            <h2 className="text-lg font-bold text-gray-900">
+              Guests ({event.Guests.length})
+            </h2>
             <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {hosts.map((host: Guest) => (
                 <div
@@ -680,14 +688,6 @@ const EventDetail: NextPage<Props> = ({
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-          {/* Guest list */}
-          <div className="-mt-2 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
-            <h2 className="text-lg font-bold text-gray-900">
-              Guests ({guests.length})
-            </h2>
-            <div className="mt-1 grid grid-cols-1 gap-4 sm:grid-cols-2">
               {guests.map((guest: Guest) => {
                 const guestResponse =
                   guest.User.id === user.id ? response : guest.response
