@@ -43,7 +43,11 @@
 }
 
 .top-100 {
-  top: 29rem;
+  top: 26.5rem;
+}
+
+.top-104 {
+  top: 30rem;
 }
 
 @tailwind components;
