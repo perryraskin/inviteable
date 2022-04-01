@@ -2,7 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../../middleware/prismaClient"
 import { User } from "@prisma/client"
 import auth from "../../../middleware/auth"
-import { GuestResponse } from "../../../models/interfaces"
+import { EventAccess, GuestResponse } from "../../../models/interfaces"
+import dayjs from "dayjs"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   const {
@@ -32,8 +33,29 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         }
       })
 
+      const eventInvite = await prisma.eventInvite.findFirst({
+        where: {
+          eventId: parseInt(eventIdString),
+          code: (inviteCode as unknown) as string
+        }
+      })
+
       // only return title and image for URL preview
-      if (ssr) {
+      // if event is public
+      if (ssr && event.Settings.access === EventAccess.Public) {
+        // console.log("SSR & event is public")
+        res.status(200)
+        res.json({
+          authorized: true,
+          event: {
+            title: event.title,
+            imageUrl: event.imageUrl
+          }
+        })
+      }
+      // or if invite code is valid
+      else if (ssr && eventInvite) {
+        // console.log("SSR & event is private")
         res.status(200)
         res.json({
           authorized: true,
@@ -202,7 +224,14 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           data: {
             title: title ?? undefined,
             dateTimeStart: dateTimeStart ? new Date(dateTimeStart) : undefined,
-            dateTimeEnd: dateTimeEnd ? new Date(dateTimeEnd) : undefined,
+            // dateTimeEnd: dateTimeEnd ? new Date(dateTimeEnd) : undefined,
+            dateTimeEnd: dateTimeStart
+              ? new Date(
+                  dayjs(dateTimeStart)
+                    .add(2, "hour")
+                    .format("YYYY-MM-DD HH:mm")
+                )
+              : undefined,
             price: price ? parseFloat(price) : undefined,
             imageUrl: imageUrl ?? undefined,
             detailsText: detailsText ?? undefined,
@@ -246,7 +275,9 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             eventId: parseInt(eventIdString)
           },
           data: {
-            access: eventAccess ? parseInt(eventAccess) : undefined,
+            access: Number.isInteger(eventAccess)
+              ? parseInt(eventAccess)
+              : undefined,
             showGuestList,
             allowComments
           }

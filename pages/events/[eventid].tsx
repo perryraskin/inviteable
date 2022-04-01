@@ -60,7 +60,9 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
   let event
 
   try {
-    const res = await fetch(`${origin}/api/event/${eventid}?ssr=true`)
+    const res = await fetch(
+      `${origin}/api/event/${eventid}?ssr=true&inviteCode=${inviteCode}`
+    )
     const data = await res.json()
     event = data.event
   } catch (error) {

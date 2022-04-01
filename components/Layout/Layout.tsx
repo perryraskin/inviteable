@@ -20,6 +20,22 @@ const Layout: NextPage<Props> = ({ children }) => {
           {/* <Footer /> */}
         </div>
       </div>
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
     </div>
   )
 }

@@ -69,7 +69,7 @@ const EventDetail: NextPage<Props> = ({
     (event?.Address[0]?.zip ? ", " + event?.Address[0]?.zip : "")
   const calendarEvent: CalendarEvent = {
     name: event?.title,
-    details: event?.detailsText,
+    details: event?.detailsText.replace(/\n/g, " "),
     location: calendarAddress,
     startsAt: dayjs(event?.dateTimeStart).format("YYYY-MM-DDTHH:mm:ssZ"),
     endsAt: dayjs(event?.dateTimeEnd).format("YYYY-MM-DDTHH:mm:ssZ")
@@ -375,16 +375,6 @@ const EventDetail: NextPage<Props> = ({
                       <>
                         <button
                           type="button"
-                          className="inline-flex justify-center px-4 py-2 border border-gray-300 
-                    shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
-                    focus:outline-none"
-                          onClick={() => setIsEditMode(false)}
-                        >
-                          <XIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                          <span>Cancel</span>
-                        </button>
-                        <button
-                          type="button"
                           className="inline-flex justify-center px-4 py-2 border  
                     shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-600 
                     border-blue-500 focus:outline-none"
@@ -395,6 +385,16 @@ const EventDetail: NextPage<Props> = ({
                           )}
                           {spinner(isSubmitting)}
                           <span>Save</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="inline-flex justify-center px-4 py-2 border border-gray-300 
+                    shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
+                    focus:outline-none"
+                          onClick={() => setIsEditMode(false)}
+                        >
+                          <XIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                          <span>Cancel</span>
                         </button>
                       </>
                     )}
@@ -464,8 +464,7 @@ const EventDetail: NextPage<Props> = ({
                 <p>
                   <UsersIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                   <span className="align-middle">
-                    {guestsAccepted.length}{" "}
-                    {guestsAccepted.length === 1 ? "person" : "people"} going
+                    {guestsAccepted.length} going
                   </span>
                 </p>
                 {/* <p className="mt-2 mb-2">
