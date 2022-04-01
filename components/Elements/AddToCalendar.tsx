@@ -72,9 +72,15 @@ type DropdownProps = {
   filename: string
   onToggle: OpenStateToggle
   urls: CalendarURLs
+  isHost: boolean
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ filename, onToggle, urls }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+  filename,
+  onToggle,
+  urls,
+  isHost
+}) => {
   const ref = useAutoFocus() as React.RefObject<HTMLAnchorElement>
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === "Escape") {
@@ -84,8 +90,10 @@ const Dropdown: React.FC<DropdownProps> = ({ filename, onToggle, urls }) => {
 
   return (
     <div
-      className="bg-white rounded-md shadow absolute z-10 
-      sm:right-4 sm:top-48 lg:top-64 top-100 w-11/12 sm:w-auto"
+      className={`bg-white rounded-md shadow absolute z-10 
+      sm:right-4 sm:top-48 lg:top-64 ${
+        isHost ? "top-104" : "top-100"
+      } w-11/12 sm:w-auto`}
       onKeyDown={onKeyDown}
       role="presentation"
     >
@@ -149,35 +157,42 @@ type AddToCalendarProps = {
   event: CalendarEvent
   open?: boolean
   filename?: string
+  isHost?: boolean
 }
 
 const AddToCalendar: React.FC<AddToCalendarProps> = ({
   children = "Options",
   event,
   filename = "download",
-  open: initialOpen = false
+  open: initialOpen = false,
+  isHost = false
 }) => {
   const [open, onToggle] = useOpenState(initialOpen)
   const urls = useMemo<CalendarURLs>(() => makeUrls(event), [event])
 
   return (
-    <>
-      <div className="">
-        {event && (
-          <button
-            type="button"
-            className="w-full inline-flex justify-center px-4 sm:px-1 py-2 border border-gray-300 
+    <div>
+      {event && (
+        <button
+          type="button"
+          className="w-full inline-flex justify-center px-4 sm:px-1 py-2 border border-gray-300 
     shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
     focus:outline-none"
-            onClick={onToggle}
-          >
-            <ChevronDownIcon className="-ml-1 mr-2 sm:ml-0 sm:mr-0 h-5 w-5 text-gray-400" />
-            <span className="sm:hidden">{children}</span>
-          </button>
-        )}
-      </div>
-      {open && <Dropdown filename={filename} onToggle={onToggle} urls={urls} />}
-    </>
+          onClick={onToggle}
+        >
+          <ChevronDownIcon className="-ml-1 mr-2 sm:ml-0 sm:mr-0 h-5 w-5 text-gray-400" />
+          <span className="sm:hidden">{children}</span>
+        </button>
+      )}
+      {open && (
+        <Dropdown
+          isHost={isHost}
+          filename={filename}
+          onToggle={onToggle}
+          urls={urls}
+        />
+      )}
+    </div>
   )
 }
 

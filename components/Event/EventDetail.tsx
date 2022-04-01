@@ -398,7 +398,10 @@ const EventDetail: NextPage<Props> = ({
                         </button>
                       </>
                     )}
-                    <AddToCalendar event={calendarEvent} />
+                    <AddToCalendar
+                      event={calendarEvent}
+                      isHost={currentGuest?.isHost}
+                    />
                   </div>
                 </div>
               </div>
