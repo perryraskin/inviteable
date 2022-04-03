@@ -11,7 +11,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   const user = userAuth as User
 
   const {
-    query: { id }
+    query: { id, tab }
   } = req
 
   // console.log("ssr:", ssr)
@@ -23,7 +23,11 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       if (parseInt(userIdString) === user.id) {
         events = await prisma.event.findMany({
           where: {
-            userId: user.id
+            userId: user.id,
+            dateTimeStart: {
+              gt: tab === "upcoming" ? new Date() : undefined,
+              lt: tab === "past" ? new Date() : undefined
+            }
           },
           include: {
             Host: true,
@@ -37,7 +41,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             Invites: true
           },
           orderBy: {
-            dateTimeStart: "asc"
+            dateTimeStart: tab === "upcoming" ? "asc" : "desc"
           }
         })
 

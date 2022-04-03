@@ -1,5 +1,6 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { NextPage } from "next"
+import Link from "next/link"
 import { CalendarIcon, ChevronRightIcon } from "@heroicons/react/solid"
 import { Event, User } from "../../models/interfaces"
 import dayjs from "dayjs"
@@ -101,40 +102,47 @@ interface Props {
 
 const EventList: NextPage<Props> = ({ user, events }) => {
   return (
-    <div className="bg-white shadow overflow-hidden sm:rounded-md">
+    <div className="bg-white shadow overflow-hidden sm:rounded-b-md">
       <ul role="list" className="divide-y divide-gray-200">
         {events.map(event => (
           <li key={event.id}>
-            <a href={`/events/${event.id}`} className="block hover:bg-gray-50">
-              <div className="px-4 py-4 flex items-center sm:px-6">
-                <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
-                  <div className="truncate">
-                    <div className="flex text-sm">
-                      <p className="font-medium text-blue-600 truncate">
-                        {event.title}
-                      </p>
-                    </div>
-                    <div className="mt-2 flex">
-                      <div className="flex items-center text-sm text-gray-500">
-                        <CalendarIcon
-                          className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-                          aria-hidden="true"
-                        />
-                        <p>
-                          <time
-                            dateTime={dayjs(event.dateTimeStart).format(
-                              "MMMM D, YYYY"
-                            )}
-                          >
-                            {dayjs(event.dateTimeStart).format("MMMM D, YYYY")}
-                          </time>
-                        </p>
+            <Link href={`/events/${event.id}`}>
+              <a className="block hover:bg-gray-50">
+                <div className="px-4 py-4 flex items-center sm:px-6">
+                  <div className="sm:w-2/12 w-1/4">
+                    <img
+                      className="h-20 w-20 object-cover rounded-lg"
+                      src={event.imageUrl}
+                    ></img>
+                  </div>
+                  <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div className="">
+                      <div className="flex">
+                        <p className="font-medium">{event.title}</p>
+                      </div>
+                      <div className="mt-2 flex">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <CalendarIcon
+                            className="flex-shrink-0 mr-1.5 h-5 w-5 text-red-400"
+                            aria-hidden="true"
+                          />
+                          <p>
+                            <time
+                              dateTime={dayjs(event.dateTimeStart).format(
+                                "MMMM D, YYYY"
+                              )}
+                            >
+                              {dayjs(event.dateTimeStart).format(
+                                "MMMM D, YYYY"
+                              )}
+                            </time>
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="mt-4 flex-shrink-0 sm:mt-0 sm:ml-5">
-                    <div className="flex overflow-hidden -space-x-1">
-                      {/* {position.applicants.map(applicant => (
+                    <div className="mt-4 flex-shrink-0 sm:mt-0 sm:ml-5">
+                      <div className="flex overflow-hidden -space-x-1">
+                        {/* {position.applicants.map(applicant => (
                         <img
                           key={applicant.email}
                           className="inline-block h-6 w-6 rounded-full ring-2 ring-white"
@@ -142,17 +150,18 @@ const EventList: NextPage<Props> = ({ user, events }) => {
                           alt={applicant.name}
                         />
                       ))} */}
+                      </div>
                     </div>
                   </div>
+                  <div className="ml-5 flex-shrink-0">
+                    <ChevronRightIcon
+                      className="h-5 w-5 text-gray-400"
+                      aria-hidden="true"
+                    />
+                  </div>
                 </div>
-                <div className="ml-5 flex-shrink-0">
-                  <ChevronRightIcon
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </div>
-              </div>
-            </a>
+              </a>
+            </Link>
           </li>
         ))}
       </ul>
