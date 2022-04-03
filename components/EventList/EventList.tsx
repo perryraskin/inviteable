@@ -109,7 +109,7 @@ const EventList: NextPage<Props> = ({ user, events }) => {
             <Link href={`/events/${event.id}`}>
               <a className="block hover:bg-gray-50">
                 <div className="px-4 py-4 flex items-center sm:px-6">
-                  <div className="sm:w-2/12 w-1/4">
+                  <div className="sm:w-2/12 w-1/3">
                     <img
                       className="h-20 w-20 object-cover rounded-lg"
                       src={event.imageUrl}
