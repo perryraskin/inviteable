@@ -23,10 +23,14 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       if (parseInt(userIdString) === user.id) {
         events = await prisma.event.findMany({
           where: {
-            userId: user.id,
             dateTimeStart: {
               gt: tab === "upcoming" ? new Date() : undefined,
               lt: tab === "past" ? new Date() : undefined
+            },
+            Guests: {
+              some: {
+                userId: user.id
+              }
             }
           },
           include: {
