@@ -12,6 +12,8 @@ import { MagicContext, LoggedInContext, LoadingContext } from "../Store"
 import EventList from "./EventList"
 import Section from "../Layout/Section"
 import Tabs from "../Elements/Tabs"
+import PopupInput from "../Elements/PopupInput"
+import { PlusIcon } from "@heroicons/react/solid"
 
 interface Props {}
 
@@ -20,6 +22,7 @@ const EventsLayout: NextPage<Props> = ({}) => {
   const [loggedIn, setLoggedIn] = React.useContext(LoggedInContext)
   const [isLoading, setIsLoading] = React.useContext(LoadingContext)
   const [currentEvents, setCurrentEvents] = React.useState([])
+  const [popupInputOpen, setPopupInputOpen] = React.useState(false)
 
   React.useEffect(() => {
     getEvents()
@@ -62,9 +65,31 @@ const EventsLayout: NextPage<Props> = ({}) => {
             </a>
           </Link>
         </div>
+        <PopupInput
+          user={loggedIn}
+          open={popupInputOpen}
+          setOpen={setPopupInputOpen}
+        />
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">My Events</h1>
+            <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b pb-6">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">My Events</h1>
+              </div>
+              <div className="mt-4 flex space-x-3 md:mt-0">
+                <button
+                  type="button"
+                  className="w-full md:w-auto inline-flex justify-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+                  onClick={() => setPopupInputOpen(true)}
+                >
+                  <PlusIcon
+                    className="-ml-1 mr-2 h-5 w-5 text-gray-400"
+                    aria-hidden="true"
+                  />
+                  <span>New Event</span>
+                </button>
+              </div>
+            </div>
             <Tabs tabs={tabs} refreshData={getEvents} />
             <EventList user={loggedIn} events={currentEvents} />
           </div>

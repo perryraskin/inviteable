@@ -160,6 +160,12 @@ export default function Landing() {
     })
   }
 
+  const handleKeyDown = event => {
+    if (event.key === "Enter") {
+      createEvent()
+    }
+  }
+
   return (
     <div className="bg-white">
       <main>
@@ -216,6 +222,7 @@ export default function Landing() {
                       placeholder="Enter event title"
                       value={eventTitle}
                       onChange={e => setEventTitle(e.target.value)}
+                      onKeyDown={handleKeyDown}
                     />
                   </div>
                   <div className="mt-4 sm:mt-0 sm:ml-3">
