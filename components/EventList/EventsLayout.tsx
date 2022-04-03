@@ -74,7 +74,9 @@ const EventsLayout: NextPage<Props> = ({}) => {
           <div className="max-w-3xl mx-auto">
             <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b pb-6">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">My Events</h1>
+                <h1 className="text-2xl font-bold text-gray-900 text-center sm:text-left">
+                  My Events
+                </h1>
               </div>
               <div className="mt-4 flex space-x-3 md:mt-0">
                 <button
