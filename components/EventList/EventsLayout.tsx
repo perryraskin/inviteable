@@ -11,6 +11,7 @@ import { MagicContext, LoggedInContext, LoadingContext } from "../Store"
 
 import EventList from "./EventList"
 import Section from "../Layout/Section"
+import Tabs from "../Elements/Tabs"
 
 interface Props {}
 
@@ -24,10 +25,10 @@ const EventsLayout: NextPage<Props> = ({}) => {
     getEvents()
   }, [loggedIn])
 
-  async function getEvents() {
+  async function getEvents(tab = "upcoming") {
     if (loggedIn) {
-      console.log(loggedIn)
-      const res = await fetch(`/api/user/${loggedIn.id}/events`)
+      // console.log(loggedIn)
+      const res = await fetch(`/api/user/${loggedIn.id}/events?tab=${tab}`)
       const data = await res.json()
       console.log(data)
       const { authorized, events } = data
@@ -61,12 +62,24 @@ const EventsLayout: NextPage<Props> = ({}) => {
             </a>
           </Link>
         </div>
-        <EventList user={loggedIn} events={currentEvents} />
-        {/* <p className="text-center pt-40">
-          This is where your events page will be!
-        </p> */}
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <h1 className="text-2xl font-bold mb-6">My Events</h1>
+            <Tabs tabs={tabs} refreshData={getEvents} />
+            <EventList user={loggedIn} events={currentEvents} />
+          </div>
+        </div>
       </React.Fragment>
     )
 }
+
+const tabs = [
+  {
+    name: "Upcoming",
+    href: "?tab=upcoming",
+    current: true
+  },
+  { name: "Past", href: "?tab=past", current: false }
+]
 
 export default withLayout(EventsLayout)
