@@ -1,4 +1,4 @@
-/* This example requires Tailwind CSS v2.0+ */
+import React from "react"
 import { NextPage } from "next"
 import Link from "next/link"
 import { CalendarIcon, ChevronRightIcon } from "@heroicons/react/solid"
@@ -101,13 +101,18 @@ interface Props {
 }
 
 const EventList: NextPage<Props> = ({ user, events }) => {
+  const [isLoading, setIsLoading] = React.useState(false)
   return (
     <div className="bg-white shadow overflow-hidden sm:rounded-b-md">
       <ul role="list" className="divide-y divide-gray-200">
         {events.map(event => (
-          <li key={event.id}>
+          <li key={event.id} onClick={() => setIsLoading(true)}>
             <Link href={`/events/${event.id}`}>
-              <a className="block hover:bg-gray-50">
+              <a
+                className={`block hover:bg-gray-50 ${
+                  isLoading ? "cursor-wait" : ""
+                }`}
+              >
                 <div className="px-4 py-4 flex items-center sm:px-6">
                   <div className="sm:w-2/12 w-1/3">
                     <img

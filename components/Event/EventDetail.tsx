@@ -210,7 +210,7 @@ const EventDetail: NextPage<Props> = ({
         setMapBoxReset={setMapBoxReset}
       />
       <div className="text-center">
-        <Link href="/">
+        <Link href="/events">
           <a>
             <img
               className="mb-6 h-12 inline"

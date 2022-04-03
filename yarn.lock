@@ -6287,6 +6287,11 @@ react-dom@^16.14.0:
     prop-types "^15.6.2"
     scheduler "^0.19.1"
 
+react-global-key-down-hook@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/react-global-key-down-hook/-/react-global-key-down-hook-0.2.1.tgz#2236448d96c7cfa893718fbf2efc886b1105bd9e"
+  integrity sha512-7bi/jJlD6VlRird5VJTKow3q28pWn6H36zhOzBmKGgklAdEjqqwyjX0vxBcHlohd08VcUUBiLxRJ/7oz3IZOiQ==
+
 react-google-maps@^9.4.5:
   version "9.4.5"
   resolved "https://registry.yarnpkg.com/react-google-maps/-/react-google-maps-9.4.5.tgz#920c199bdc925e0ce93880edffb09428d263aafa"

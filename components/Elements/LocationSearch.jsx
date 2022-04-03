@@ -120,8 +120,8 @@ export default function LocationSearch({
                     value={location}
                     className={({ active }) =>
                       classNames(
-                        "cursor-default select-none px-4 py-2 font-semibold",
-                        active && "bg-black text-white"
+                        "select-none px-4 py-2 font-semibold",
+                        active && "bg-black text-white cursor-pointer"
                       )
                     }
                   >
@@ -139,7 +139,7 @@ export default function LocationSearch({
             )}
 
             {query !== "" && locationResults.length === 0 && (
-              <p className="p-4 text-sm text-gray-500">No people found.</p>
+              <p className="p-4 text-sm text-gray-500">No locations found.</p>
             )}
           </Combobox>
         </Transition.Child>
