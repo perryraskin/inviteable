@@ -129,7 +129,9 @@ export default function Landing() {
   async function createEvent() {
     const data = { event: { userId: loggedIn?.id, title: eventTitle } }
     // console.log(data)
-    if (!isSubmittingForm) {
+    if (!eventTitle) {
+      alert("Please enter an event title")
+    } else if (!isSubmittingForm) {
       setIsSubmittingForm(true)
 
       let apiUrl = "/api/events"
