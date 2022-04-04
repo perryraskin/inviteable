@@ -506,7 +506,7 @@ const EventDetail: NextPage<Props> = ({
                         type="text"
                         className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
                         placeholder="Apt #, Suite #, etc."
-                        value={address2}
+                        value={address2 ?? ""}
                         onChange={e => setAddress2(e.target.value)}
                       />
                     </span>
@@ -532,7 +532,7 @@ const EventDetail: NextPage<Props> = ({
                     </span>
                   ) : (
                     <span className="align-middle">
-                      {dayjs(dateStart).format("dddd, MMMM D, YYYY")}
+                      {dayjs.utc(dateStart).format("dddd, MMMM D, YYYY")}
                     </span>
                   )}
                 </p>
@@ -549,7 +549,7 @@ const EventDetail: NextPage<Props> = ({
                     </span>
                   ) : (
                     <span className="align-middle">
-                      {dayjs(event.dateTimeStart).format("h:mm A")}
+                      {dayjs.utc(event.dateTimeStart).format("h:mm A")}
                     </span>
                   )}
                 </p>
