@@ -226,8 +226,8 @@ const EventDetail: NextPage<Props> = ({
           {/* Profile header */}
           <div>
             <div
-              onMouseOver={() => setBannerHover(true)}
-              onMouseLeave={() => setBannerHover(false)}
+              // onMouseOver={() => setBannerHover(true)}
+              // onMouseLeave={() => setBannerHover(false)}
               className="relative"
               onClick={handleClickFileInput}
             >
@@ -241,7 +241,7 @@ const EventDetail: NextPage<Props> = ({
               />
               <div
                 className={`s3-btn-wrapper absolute bottom-4 right-8 ${
-                  bannerHover ? "" : "hidden"
+                  isEditMode ? "hidden sm:block" : "hidden sm:block"
                 }`}
               >
                 <S3
@@ -255,12 +255,13 @@ const EventDetail: NextPage<Props> = ({
                     Date.now() + "-" + name.replace(/[^\w\d_\-.]+/gi, "")
                   }
                   onFinish={e => handleUpdateImage(e["uploadUrl"])}
+                  onError={e => alert(e)}
                 />
                 <label htmlFor="s3">
                   <button
                     type="button"
                     className="inline-flex justify-center px-4 py-2 border border-gray-300 
-                    shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-200 
+                    shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-200
                     focus:outline-none "
                     onClick={handleClickFileInput}
                   >
