@@ -41,7 +41,50 @@ const EventsLayout: NextPage<Props> = ({}) => {
     }
   }
 
-  if (isLoading) {
+  async function handleLogin() {
+    localStorage.setItem("authRedirectUrl", `${window.location.origin}/events`)
+    // Start the Google OAuth 2.0 flow!
+    const didToken = await magic.oauth.loginWithRedirect({
+      provider: "google",
+      redirectURI: `${window.location.origin}/callback`
+    })
+  }
+
+  if (!isLoading && !loggedIn) {
+    return (
+      <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 sm:w-1/2 sm:ml-auto sm:mr-auto">
+        <div className="text-center">
+          <Link href="/">
+            <a>
+              <img
+                className="mb-6 h-16 inline"
+                src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
+                alt="Inviteable"
+              />
+            </a>
+          </Link>
+        </div>
+
+        <div className="mt-6">
+          <a
+            href="#"
+            onClick={handleLogin}
+            className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+          >
+            <span className="sr-only">Sign in with Google</span>
+            {/* <img
+                  className="w-24 p-1"
+                  src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg"
+                ></img> */}
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"></img>
+            <span className="px-2 text-gray-900 text-base align-middle font-semibold ml-2">
+              Continue with Google
+            </span>
+          </a>
+        </div>
+      </div>
+    )
+  } else if (isLoading) {
     return (
       <Section>
         <img
