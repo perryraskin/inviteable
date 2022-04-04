@@ -229,7 +229,7 @@ const EventDetail: NextPage<Props> = ({
               // onMouseOver={() => setBannerHover(true)}
               // onMouseLeave={() => setBannerHover(false)}
               className="relative"
-              onClick={handleClickFileInput}
+              onClick={e => (currentGuest ? handleClickFileInput(e) : null)}
             >
               <img
                 className="h-32 w-full object-cover lg:h-48"
@@ -241,7 +241,7 @@ const EventDetail: NextPage<Props> = ({
               />
               <div
                 className={`s3-btn-wrapper absolute bottom-4 right-8 ${
-                  isEditMode ? "hidden sm:block" : "hidden sm:block"
+                  currentGuest ? "hidden sm:block" : "hidden"
                 }`}
               >
                 <S3
