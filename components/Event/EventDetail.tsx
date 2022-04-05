@@ -110,10 +110,12 @@ const EventDetail: NextPage<Props> = ({
   const [price, setPrice] = useState(event.price)
   const [imageUrl, setImageUrl] = useState(event.imageUrl)
   const [dateStart, setDateStart] = useState(
-    event.dateTimeStart ? dayjs(event.dateTimeStart).format(`YYYY-MM-DD`) : null
+    event.dateTimeStart
+      ? dayjs.utc(event.dateTimeStart).format(`YYYY-MM-DD`)
+      : null
   )
   const [timeStart, setTimeStart] = useState(
-    event.dateTimeStart ? dayjs(event.dateTimeStart).format(`HH:mm`) : null
+    event.dateTimeStart ? dayjs.utc(event.dateTimeStart).format(`HH:mm`) : null
   )
   const [address2, setAddress2] = useState(event.Address[0]?.address2)
   const [eventAccess, setEventAccess] = useState(event.Settings?.access)
@@ -303,8 +305,10 @@ const EventDetail: NextPage<Props> = ({
                 <div className="mt-6 sm:mt-14 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                   <div className="sm:hidden mt-6 min-w-0 flex-1">
                     <h3 className="text-sm font-bold uppercase text-red-500 truncate">
-                      {dayjs(event.dateTimeStart).format("dddd, MMMM D, YYYY")}{" "}
-                      at {dayjs(event.dateTimeStart).format("h:mm A")}
+                      {dayjs
+                        .utc(event.dateTimeStart)
+                        .format("dddd, MMMM D, YYYY")}{" "}
+                      at {dayjs.utc(event.dateTimeStart).format("h:mm A")}
                     </h3>
                   </div>
                   <div className="sm:hidden mt-1 min-w-0 flex-1">
@@ -431,8 +435,8 @@ const EventDetail: NextPage<Props> = ({
               </div>
               <div className="hidden sm:block mt-6 min-w-0 flex-1">
                 <h3 className="text-sm font-bold uppercase text-red-500 truncate">
-                  {dayjs(event.dateTimeStart).format("dddd, MMMM D, YYYY")} at{" "}
-                  {dayjs(event.dateTimeStart).format("h:mm A")}
+                  {dayjs.utc(event.dateTimeStart).format("dddd, MMMM D, YYYY")}{" "}
+                  at {dayjs.utc(event.dateTimeStart).format("h:mm A")}
                 </h3>
               </div>
               <div className="hidden sm:block mt-1 min-w-0 flex-1">
