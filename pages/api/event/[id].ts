@@ -4,6 +4,10 @@ import { User } from "@prisma/client"
 import auth from "../../../middleware/auth"
 import { EventAccess, GuestResponse } from "../../../models/interfaces"
 import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   const {
@@ -256,14 +260,15 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           },
           data: {
             title: title ?? undefined,
-            dateTimeStart: dateTimeStart ? new Date(dateTimeStart) : undefined,
+            dateTimeStart: dateTimeStart
+              ? dayjs.utc(dateTimeStart).toISOString()
+              : undefined,
             // dateTimeEnd: dateTimeEnd ? new Date(dateTimeEnd) : undefined,
             dateTimeEnd: dateTimeStart
-              ? new Date(
-                  dayjs(dateTimeStart)
-                    .add(2, "hour")
-                    .format("YYYY-MM-DD HH:mm")
-                )
+              ? dayjs
+                  .utc(dateTimeStart)
+                  .add(2, "hour")
+                  .toISOString()
               : undefined,
             price: price ? parseFloat(price) : undefined,
             imageUrl: imageUrl ?? undefined,

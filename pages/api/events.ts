@@ -4,6 +4,10 @@ import auth from "../../middleware/auth"
 import { v4 as uuidv4 } from "uuid"
 import { EventAccess, GuestResponse } from "../../models/interfaces"
 import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   // const userAuth = await auth(req, res)
