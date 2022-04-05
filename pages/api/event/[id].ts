@@ -99,8 +99,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             ? event.Guests.some(g => g.userId === user.id && g.isHost === true)
             : false)
         // console.log(event.Host, user)
-        // if host or guest, return event
-        if (isHost || isGuest) {
+        // if host or guest or event is public, return event
+        if (isHost || isGuest || event.Settings.access === EventAccess.Public) {
           res.status(200)
           res.json({ authorized: true, event })
         }
@@ -177,7 +177,28 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       (event.Guests
         ? event.Guests.some(g => g.userId === user.id && g.isHost === true)
         : false)
-    if (event.userId && !isHost) {
+
+    const isGuest = event.Guests
+      ? event.Guests.some(g => g.userId === user.id)
+      : false
+
+    // Record new guest response
+    if (!isGuest && event.Settings.access === EventAccess.Public) {
+      const response = req.body.response as GuestResponse
+      const guestResponse = await prisma.guest.create({
+        data: {
+          userId: user.id,
+          eventId: parseInt(eventIdString),
+          isHost: false,
+          response
+        }
+      })
+
+      res.status(200)
+      res.json({ authorized: true, guestResponse })
+    }
+    // Not authorized to update event if not host
+    else if (event.userId && !isHost) {
       res.status(401)
       res.json({ authorized: false })
     }
@@ -228,7 +249,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         allowComments
       } = eventRequest
       try {
-        console.log(eventRequest)
+        // console.log(eventRequest)
         const eventResponse = await prisma.event.update({
           where: {
             id: parseInt(eventIdString)

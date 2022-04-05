@@ -52,13 +52,15 @@ interface Props {
   event?: Event
   inviteCode?: string
   refreshData: () => void
+  handleLogin: () => void
 }
 
 const EventDetail: NextPage<Props> = ({
   user,
   event,
   inviteCode,
-  refreshData
+  refreshData,
+  handleLogin
 }) => {
   const now = dayjs()
   const calendarAddress =
@@ -118,7 +120,11 @@ const EventDetail: NextPage<Props> = ({
 
   async function handleUpdateResponse(updatedResponse: GuestResponse) {
     setResponse(updatedResponse)
-    fetch(`/api/guest/${currentGuest.id}`, {
+    let apiUrl = `/api/event/${event.id}`
+    if (currentGuest) {
+      apiUrl = `/api/guest/${currentGuest.id}`
+    }
+    fetch(apiUrl, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
@@ -200,6 +206,7 @@ const EventDetail: NextPage<Props> = ({
       console.log(data)
     }
   }
+
   return (
     <>
       <LocationSearch
@@ -257,18 +264,20 @@ const EventDetail: NextPage<Props> = ({
                   onFinish={e => handleUpdateImage(e["uploadUrl"])}
                   onError={e => alert(e)}
                 />
-                <label htmlFor="s3">
-                  <button
-                    type="button"
-                    className="inline-flex justify-center px-4 py-2 border border-gray-300 
+                {isEditMode && (
+                  <label htmlFor="s3">
+                    <button
+                      type="button"
+                      className="inline-flex justify-center px-4 py-2 border border-gray-300 
                     shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-200
                     focus:outline-none "
-                    onClick={handleClickFileInput}
-                  >
-                    <PhotographIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
-                    <span>Upload</span>
-                  </button>
-                </label>
+                      onClick={handleClickFileInput}
+                    >
+                      <PhotographIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                      <span>Upload</span>
+                    </button>
+                  </label>
+                )}
               </div>
             </div>
             <div className="absolute top-0 -gray-700"></div>
@@ -313,39 +322,53 @@ const EventDetail: NextPage<Props> = ({
                     )}
                   </div>
                   <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                    {!isEditMode && (event.id === 1 || currentGuest) && (
-                      <DropdownWithIcons
-                        title="Respond"
-                        useSelectedOptionAsDefault={true}
-                        currentValue={response}
-                        handleChangeValue={handleUpdateResponse}
-                        options={[
-                          {
-                            icon: (
-                              <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                            ),
-                            iconActive: (
-                              <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-blue-500" />
-                            ),
-                            activeStyles:
-                              "border-blue-300 text-blue-500 bg-blue-50",
-                            label: "Going",
-                            value: GuestResponse.Accepted
-                          },
-                          {
-                            icon: (
-                              <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                            ),
-                            iconActive: (
-                              <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-red-500" />
-                            ),
-                            activeStyles:
-                              "border-red-300 text-red-500 bg-red-50",
-                            label: "Not Going",
-                            value: GuestResponse.Declined
-                          }
-                        ]}
-                      />
+                    {!isEditMode &&
+                      (event.id === 1 ||
+                        currentGuest ||
+                        event.Settings.access === EventAccess.Public) && (
+                        <DropdownWithIcons
+                          title="Respond"
+                          useSelectedOptionAsDefault={true}
+                          currentValue={response}
+                          handleChangeValue={handleUpdateResponse}
+                          options={[
+                            {
+                              icon: (
+                                <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
+                              ),
+                              iconActive: (
+                                <CheckCircleIcon className="-ml-1 mr-2 h-5 w-5 text-blue-500" />
+                              ),
+                              activeStyles:
+                                "border-blue-300 text-blue-500 bg-blue-50",
+                              label: "Going",
+                              value: GuestResponse.Accepted
+                            },
+                            {
+                              icon: (
+                                <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
+                              ),
+                              iconActive: (
+                                <XCircleIcon className="-ml-1 mr-2 h-5 w-5 text-red-500" />
+                              ),
+                              activeStyles:
+                                "border-red-300 text-red-500 bg-red-50",
+                              label: "Not Going",
+                              value: GuestResponse.Declined
+                            }
+                          ]}
+                        />
+                      )}
+                    {!user && (
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 border border-gray-300 
+                    shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
+                    focus:outline-none"
+                        onClick={handleLogin}
+                      >
+                        <span>Respond</span>
+                      </button>
                     )}
                     {!isEditMode && (
                       <button

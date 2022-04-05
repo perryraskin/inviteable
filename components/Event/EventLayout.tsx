@@ -161,6 +161,7 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
             event={currentEvent}
             inviteCode={inviteCode}
             refreshData={getEvent}
+            handleLogin={handleLogin}
           />
         </div>
       </div>
