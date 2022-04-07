@@ -235,6 +235,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         title,
         dateTimeStart,
         dateTimeEnd,
+        timeZone,
         locationName,
         latitude,
         longitude,
@@ -273,7 +274,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             price: price ? parseFloat(price) : undefined,
             imageUrl: imageUrl ?? undefined,
             detailsText: detailsText ?? undefined,
-            detailsHtml: detailsHtml ?? undefined
+            detailsHtml: detailsHtml ?? undefined,
+            timeZone
           }
         })
 

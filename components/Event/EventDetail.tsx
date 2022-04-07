@@ -7,8 +7,10 @@ import StarterKit from "@tiptap/starter-kit"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
+import advancedFormat from "dayjs/plugin/advancedFormat"
 dayjs.extend(utc)
 dayjs.extend(timezone)
+dayjs.extend(advancedFormat)
 import {
   CheckCircleIcon,
   XCircleIcon,
@@ -62,7 +64,6 @@ const EventDetail: NextPage<Props> = ({
   refreshData,
   handleLogin
 }) => {
-  const now = dayjs()
   const calendarAddress =
     (event?.Address[0]?.address1 ? event?.Address[0]?.address1 : "") +
     (event?.Address[0]?.address2 ? ", " + event?.Address[0]?.address2 : "") +
@@ -174,7 +175,8 @@ const EventDetail: NextPage<Props> = ({
           price,
           dateTimeStart: `${dateStart} ${timeStart}`,
           address2,
-          eventAccess
+          eventAccess,
+          timeZone: dayjs.tz.guess()
         }
       })
     })
@@ -297,7 +299,7 @@ const EventDetail: NextPage<Props> = ({
                     >
                       {dayjs(dateStart).format("MMM")}
                     </span>
-                    <span className="flex items-center justify-center h-16 font-semibold text-6xl">
+                    <span className="flex items-center justify-center h-16 font-semibold text-5xl">
                       {dateStart ? dayjs(dateStart).format("D") : "?"}
                     </span>
                   </div>
@@ -308,7 +310,7 @@ const EventDetail: NextPage<Props> = ({
                       {dayjs
                         .utc(event.dateTimeStart)
                         .format("dddd, MMMM D, YYYY")}{" "}
-                      at {dayjs.utc(event.dateTimeStart).format("h:mm A")}
+                      at {dayjs.tz(event.dateTimeStart).format("h:mm A z")}
                     </h3>
                   </div>
                   <div className="sm:hidden mt-1 min-w-0 flex-1">
@@ -436,7 +438,7 @@ const EventDetail: NextPage<Props> = ({
               <div className="hidden sm:block mt-6 min-w-0 flex-1">
                 <h3 className="text-sm font-bold uppercase text-red-500 truncate">
                   {dayjs.utc(event.dateTimeStart).format("dddd, MMMM D, YYYY")}{" "}
-                  at {dayjs.utc(event.dateTimeStart).format("h:mm A")}
+                  at {dayjs.tz(event.dateTimeStart).format("h:mm A z")}
                 </h3>
               </div>
               <div className="hidden sm:block mt-1 min-w-0 flex-1">
@@ -576,7 +578,7 @@ const EventDetail: NextPage<Props> = ({
                     </span>
                   ) : (
                     <span className="align-middle">
-                      {dayjs.utc(event.dateTimeStart).format("h:mm A")}
+                      {dayjs.tz(event.dateTimeStart).format("h:mm A z")}
                     </span>
                   )}
                 </p>

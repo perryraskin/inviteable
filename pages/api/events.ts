@@ -50,7 +50,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               dayjs()
                 .add(1, "day")
                 .format("YYYY-MM-DD") + "T22:00:00.000Z"
-            )
+            ),
+            timeZone: "America/New_York"
           }
         }
 
@@ -71,7 +72,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
                 dayjs()
                   .add(1, "day")
                   .format("YYYY-MM-DD") + "T22:00:00.000Z"
-              )
+              ),
+              timeZone: "America/New_York"
             }
           }
         }

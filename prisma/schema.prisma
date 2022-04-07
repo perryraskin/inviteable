@@ -33,6 +33,7 @@ model Event {
   title         String
   dateTimeStart DateTime?
   dateTimeEnd   DateTime?
+  timeZone      String?
   price         Decimal        @default(0) @db.Decimal(10, 2)
   imageUrl      String?
   detailsText   String?

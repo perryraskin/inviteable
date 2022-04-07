@@ -19,6 +19,7 @@ export interface Event {
   title: string
   dateTimeStart: Date
   dateTimeEnd: Date
+  timeZone: string
   Address: Address[]
   price: number
   imageUrl: string
