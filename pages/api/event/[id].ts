@@ -254,6 +254,15 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         allowComments
       } = eventRequest
       try {
+        // only allow hosts to update event settings
+        if (eventAccess || showGuestList || allowComments) {
+          if (!isHost) {
+            res.status(401)
+            res.json({ authorized: false })
+            return
+          }
+        }
+
         // console.log(eventRequest)
         const eventResponse = await prisma.event.update({
           where: {
