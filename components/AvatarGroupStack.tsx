@@ -21,6 +21,7 @@ const AvatarGroupStack: NextPage<Props> = ({ guestList }) => {
           if (index < 5) {
             return (
               <img
+                key={index}
                 className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white"
                 src={guest.User.imageUrl}
                 // alt={guest.User.firstName + " " + guest.User.lastName}

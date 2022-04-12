@@ -316,7 +316,7 @@ const EventDetail: NextPage<Props> = ({
                       {dayjs
                         .utc(event.dateTimeStart)
                         .format("dddd, MMMM D, YYYY")}{" "}
-                      at {dayjs.tz(event.dateTimeStart).format("h:mm A z")}
+                      at {dayjs.tz(event.dateTimeStart).format("h:mm A")}
                     </h3>
                   </div>
                   <div className="sm:hidden mt-1 min-w-0 flex-1">
@@ -444,7 +444,7 @@ const EventDetail: NextPage<Props> = ({
               <div className="hidden sm:block mt-6 min-w-0 flex-1">
                 <h3 className="text-sm font-bold uppercase text-red-500 truncate">
                   {dayjs.utc(event.dateTimeStart).format("dddd, MMMM D, YYYY")}{" "}
-                  at {dayjs.tz(event.dateTimeStart).format("h:mm A z")}
+                  at {dayjs.tz(event.dateTimeStart).format("h:mm A")}
                 </h3>
               </div>
               <div className="hidden sm:block mt-1 min-w-0 flex-1">
@@ -468,6 +468,7 @@ const EventDetail: NextPage<Props> = ({
             setOpen={setIsEventSettingsOpen}
             event={event}
             guest={currentGuest}
+            refreshData={refreshData}
           />
           <ShareSheet
             open={isShareSheetOpen}
@@ -497,7 +498,9 @@ const EventDetail: NextPage<Props> = ({
                   whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm absolute right-2"
                     onClick={() => setIsEventSettingsOpen(true)}
                   >
-                    <CogIcon className="mr-2 h-5 w-5 text-gray-400 inline hover:text-blue-500" />
+                    {currentGuest?.isHost && (
+                      <CogIcon className="mr-2 h-5 w-5 text-gray-400 inline hover:text-blue-500" />
+                    )}
                   </button>
                 </nav>
               </div>
@@ -596,8 +599,14 @@ const EventDetail: NextPage<Props> = ({
                       />
                     </span>
                   ) : (
-                    <span className="align-middle">
-                      {dayjs.tz(event.dateTimeStart).format("h:mm A z")}
+                    <span className="align-middle group relative cursor-default">
+                      {dayjs.tz(event.dateTimeStart).format("h:mm A")}
+                      <span className="absolute bottom-0 flex-col items-center hidden mb-6 group-hover:flex">
+                        <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-black shadow-lg">
+                          {event.timeZone}
+                        </span>
+                        <span className="w-3 h-3 -mt-2 rotate-45 bg-black"></span>
+                      </span>
                     </span>
                   )}
                 </p>
@@ -708,78 +717,88 @@ const EventDetail: NextPage<Props> = ({
             <h2 className="text-lg font-bold text-gray-900">
               Guests ({event.Guests.length})
             </h2>
-            <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {hosts.map((host: Guest) => (
-                <div
-                  key={host.id}
-                  className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3"
-                >
-                  <div className="flex-shrink-0">
-                    <img
-                      className="h-10 w-10 rounded-full"
-                      src={
-                        host.User.imageUrl ??
-                        `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkCLHRFbKUEWVuldDTj1d8aFG_RYfKlNHt1g&usqp=CAU`
-                      }
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    {/* <span className="absolute inset-0" aria-hidden="true" /> */}
-                    <p className="text-base font-medium text-gray-900">
-                      {host.User.firstName} {host.User.lastName}
-                    </p>
-                    <StarIcon className="mr-1 h-5 w-5 text-indigo-700 inline" />
-                    <span className="text-sm text-indigo-700 truncate font-medium align-middle">
-                      Host
-                    </span>
-                  </div>
-                  {/* <a
-                    className=" cursor-pointer"
-                    href={`mailto:${host.User.email}`}
-                  >
-                    <MailIcon className="ml-1 h-6 w-6 text-gray-400 inline hover:text-indigo-700" />
-                  </a> */}
-                  {/* <a
-                    className=" cursor-pointer"
-                    href={`https://wa.me/${host.User.phone}`}
-                  >
-                    <ChatIcon className="h-6 w-6 text-gray-400 inline hover:text-indigo-700" />
-                  </a> */}
-                </div>
-              ))}
-              {guests.map((guest: Guest) => {
-                const guestResponse =
-                  guest.User.id === user.id ? response : guest.response
-                return (
+            {!event.Settings.showGuestList && currentGuest.isHost && (
+              <p className="italic text-gray-500 text-sm font-medium">
+                Guest list is only displayed to event hosts. You can change this
+                in the event settings.
+              </p>
+            )}
+            {(event.Settings.showGuestList || currentGuest?.isHost) && (
+              <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {hosts.map((host: Guest) => (
                   <div
-                    key={guest.id}
-                    className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400"
+                    key={host.id}
+                    className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3"
                   >
                     <div className="flex-shrink-0">
                       <img
                         className="h-10 w-10 rounded-full"
                         src={
-                          guest.User.imageUrl ??
+                          host.User.imageUrl ??
                           `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkCLHRFbKUEWVuldDTj1d8aFG_RYfKlNHt1g&usqp=CAU`
                         }
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <a href="#" className="focus:outline-none">
-                        <span className="absolute inset-0" aria-hidden="true" />
-                        <p className="text-base font-medium text-gray-900">
-                          {guest.User.firstName} {guest.User.lastName}
-                        </p>
-                        {guestResponse === GuestResponse.Accepted ? (
-                          <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" />
-                        ) : guestResponse === GuestResponse.Declined ? (
-                          <XCircleIcon className="mr-1 h-5 w-5 text-red-500 inline" />
-                        ) : (
-                          <QuestionMarkCircleIcon className="mr-1 h-5 w-5 text-gray-500 inline" />
-                        )}
+                      {/* <span className="absolute inset-0" aria-hidden="true" /> */}
+                      <p className="text-base font-medium text-gray-900">
+                        {host.User.firstName} {host.User.lastName}
+                      </p>
+                      <StarIcon className="mr-1 h-5 w-5 text-indigo-700 inline" />
+                      <span className="text-sm text-indigo-700 truncate font-medium align-middle">
+                        Host
+                      </span>
+                    </div>
+                    {/* <a
+                    className=" cursor-pointer"
+                    href={`mailto:${host.User.email}`}
+                  >
+                    <MailIcon className="ml-1 h-6 w-6 text-gray-400 inline hover:text-indigo-700" />
+                  </a> */}
+                    {/* <a
+                    className=" cursor-pointer"
+                    href={`https://wa.me/${host.User.phone}`}
+                  >
+                    <ChatIcon className="h-6 w-6 text-gray-400 inline hover:text-indigo-700" />
+                  </a> */}
+                  </div>
+                ))}
+                {guests.map((guest: Guest) => {
+                  const guestResponse =
+                    guest.User.id === user.id ? response : guest.response
+                  return (
+                    <div
+                      key={guest.id}
+                      className="relative rounded-lg border border-gray-300 bg-white px-6 py-5 shadow-sm flex items-center space-x-3 hover:border-gray-400"
+                    >
+                      <div className="flex-shrink-0">
+                        <img
+                          className="h-10 w-10 rounded-full"
+                          src={
+                            guest.User.imageUrl ??
+                            `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkCLHRFbKUEWVuldDTj1d8aFG_RYfKlNHt1g&usqp=CAU`
+                          }
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <a href="#" className="focus:outline-none">
+                          <span
+                            className="absolute inset-0"
+                            aria-hidden="true"
+                          />
+                          <p className="text-base font-medium text-gray-900">
+                            {guest.User.firstName} {guest.User.lastName}
+                          </p>
+                          {guestResponse === GuestResponse.Accepted ? (
+                            <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" />
+                          ) : guestResponse === GuestResponse.Declined ? (
+                            <XCircleIcon className="mr-1 h-5 w-5 text-red-500 inline" />
+                          ) : (
+                            <QuestionMarkCircleIcon className="mr-1 h-5 w-5 text-gray-500 inline" />
+                          )}
 
-                        <span
-                          className={`
+                          <span
+                            className={`
                         text-sm truncate font-medium align-middle
                         ${
                           guestResponse === GuestResponse.Accepted
@@ -789,19 +808,20 @@ const EventDetail: NextPage<Props> = ({
                             : "text-gray-500"
                         }
                         `}
-                        >
-                          {guestResponse === GuestResponse.Accepted
-                            ? "Going"
-                            : guestResponse === GuestResponse.Declined
-                            ? "Not Going"
-                            : "No Response"}
-                        </span>
-                      </a>
+                          >
+                            {guestResponse === GuestResponse.Accepted
+                              ? "Going"
+                              : guestResponse === GuestResponse.Declined
+                              ? "Not Going"
+                              : "No Response"}
+                          </span>
+                        </a>
+                      </div>
                     </div>
-                  </div>
-                )
-              })}
-            </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </article>
       </main>
