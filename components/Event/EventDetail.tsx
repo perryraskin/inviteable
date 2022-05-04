@@ -334,7 +334,8 @@ const EventDetail: NextPage<Props> = ({
                     )}
                   </div>
                   <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-                    {!isEditMode &&
+                    {user &&
+                      !isEditMode &&
                       (event.id === 1 ||
                         currentGuest ||
                         event.Settings.access === EventAccess.Public) && (
