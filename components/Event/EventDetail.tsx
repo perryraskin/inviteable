@@ -155,12 +155,22 @@ const EventDetail: NextPage<Props> = ({
     event.id === 1
       ? demoGuests
       : event.Guests.filter((guest: Guest) => !guest.isHost)
-  const guestsAccepted = event.Guests.filter(
-    (guest: Guest) => guest.response === GuestResponse.Accepted
-  )
-  const guestsDeclined = event.Guests.filter(
-    (guest: Guest) => guest.response === GuestResponse.Declined
-  )
+  const guestsAccepted =
+    event.id === 1
+      ? demoGuests.filter(
+          (guest: Guest) => guest.response === GuestResponse.Accepted
+        )
+      : event.Guests.filter(
+          (guest: Guest) => guest.response === GuestResponse.Accepted
+        )
+  const guestsDeclined =
+    event.id === 1
+      ? demoGuests.filter(
+          (guest: Guest) => guest.response === GuestResponse.Declined
+        )
+      : event.Guests.filter(
+          (guest: Guest) => guest.response === GuestResponse.Declined
+        )
   const guestsNotResponded = event.Guests.filter(
     (guest: Guest) => guest.response === GuestResponse.None
   )
