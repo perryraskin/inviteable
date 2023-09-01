@@ -118,11 +118,19 @@ const EventDetail: NextPage<Props> = ({
   const [imageUrl, setImageUrl] = useState(event.imageUrl)
   const [dateStart, setDateStart] = useState(
     event.dateTimeStart
-      ? dayjs.utc(event.dateTimeStart).format(`YYYY-MM-DD`)
+      ? dayjs
+          .utc(event.dateTimeStart)
+          .local()
+          .format(`YYYY-MM-DD`)
       : null
   )
   const [timeStart, setTimeStart] = useState(
-    event.dateTimeStart ? dayjs.utc(event.dateTimeStart).format(`HH:mm`) : null
+    event.dateTimeStart
+      ? dayjs
+          .utc(event.dateTimeStart)
+          .local()
+          .format(`HH:mm`)
+      : null
   )
   const [address2, setAddress2] = useState(event.Address[0]?.address2)
   const [eventAccess, setEventAccess] = useState(event.Settings?.access)
@@ -325,8 +333,13 @@ const EventDetail: NextPage<Props> = ({
                     <h3 className="text-sm font-bold uppercase text-red-500 truncate">
                       {dayjs
                         .utc(event.dateTimeStart)
+                        .local()
                         .format("dddd, MMMM D, YYYY")}{" "}
-                      at {dayjs.tz(event.dateTimeStart).format("h:mm A")}
+                      at{" "}
+                      {dayjs
+                        .utc(event.dateTimeStart)
+                        .local()
+                        .format("h:mm A")}
                     </h3>
                   </div>
                   <div className="sm:hidden mt-1 min-w-0 flex-1">
@@ -454,8 +467,15 @@ const EventDetail: NextPage<Props> = ({
               </div>
               <div className="hidden sm:block mt-6 min-w-0 flex-1">
                 <h3 className="text-sm font-bold uppercase text-red-500 truncate">
-                  {dayjs.utc(event.dateTimeStart).format("dddd, MMMM D, YYYY")}{" "}
-                  at {dayjs.tz(event.dateTimeStart).format("h:mm A")}
+                  {dayjs
+                    .utc(event.dateTimeStart)
+                    .local()
+                    .format("dddd, MMMM D, YYYY")}{" "}
+                  at{" "}
+                  {dayjs
+                    .utc(event.dateTimeStart)
+                    .local()
+                    .format("h:mm A")}
                 </h3>
               </div>
               <div className="hidden sm:block mt-1 min-w-0 flex-1">
@@ -594,7 +614,7 @@ const EventDetail: NextPage<Props> = ({
                     </span>
                   ) : (
                     <span className="align-middle">
-                      {dayjs.utc(dateStart).format("dddd, MMMM D, YYYY")}
+                      {dayjs(dateStart).format("dddd, MMMM D, YYYY")}
                     </span>
                   )}
                 </p>
@@ -611,10 +631,10 @@ const EventDetail: NextPage<Props> = ({
                     </span>
                   ) : (
                     <span className="align-middle group relative cursor-default">
-                      {dayjs.tz(event.dateTimeStart).format("h:mm A")}
+                      {dayjs(event.dateTimeStart).format("h:mm A")}
                       <span className="absolute bottom-0 flex-col items-center hidden mb-6 group-hover:flex">
                         <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-black shadow-lg">
-                          {event.timeZone}
+                          {dayjs.tz.guess()}
                         </span>
                         <span className="w-3 h-3 -mt-2 rotate-45 bg-black"></span>
                       </span>
