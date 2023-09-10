@@ -715,7 +715,7 @@ const EventDetail: NextPage<Props> = ({
                         value={adjustedTimeZone}
                         onChange={e => setAdjustedTimeZone(e.target.value)}
                       >
-                        {Intl.supportedValuesOf("timeZone").map(tz => (
+                        {(Intl as any).supportedValuesOf("timeZone").map(tz => (
                           <option value={tz}>{tz}</option>
                         ))}
                       </select>

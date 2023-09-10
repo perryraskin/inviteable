@@ -265,8 +265,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         }
 
         // console.log(eventRequest)
-        console.log(timeZone, dateTimeStart)
-        console.log(dayjs(dateTimeStart).tz(timeZone))
+        // console.log(timeZone, dateTimeStart)
+        // console.log(dayjs(dateTimeStart).tz(timeZone))
         const eventResponse = await prisma.event.update({
           where: {
             id: parseInt(eventIdString)
