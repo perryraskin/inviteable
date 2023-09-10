@@ -25,13 +25,42 @@ export default function LocationSearch({
   const [query, setQuery] = useState("")
 
   React.useEffect(() => {
-    fetch(`/api/locationSearch?query=${query}`)
+    if (query.includes("http")) {
+    }
+    //
+    else {
+      fetch(`/api/locationSearch?query=${query}`)
+        .then(res => res.json())
+        .then(data => {
+          // console.log(data)
+          setLocationResults(data.locations)
+        })
+    }
+  }, [query])
+
+  function handleAddLocationUrl() {
+    setOpen(false)
+    fetch(`/api/event/${event.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        event: {
+          locationUrl: query
+        }
+      })
+    })
       .then(res => res.json())
       .then(data => {
+        setMapBoxReset(false)
         // console.log(data)
-        setLocationResults(data.locations)
+        refreshData()
+        setTimeout(() => {
+          setMapBoxReset(true)
+        }, 2000)
       })
-  }, [query])
+  }
 
   function setEventLocation(location) {
     setOpen(false)
@@ -49,7 +78,8 @@ export default function LocationSearch({
           zip: location.postcode,
           country: location.country,
           latitude: location.latitude,
-          longitude: location.longitude
+          longitude: location.longitude,
+          locationUrl: ""
         }
       })
     })
@@ -104,7 +134,7 @@ export default function LocationSearch({
               />
               <Combobox.Input
                 className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
-                placeholder="Search..."
+                placeholder="Search or enter URL"
                 onChange={event => setQuery(event.target.value)}
               />
             </div>
@@ -138,9 +168,19 @@ export default function LocationSearch({
               </Combobox.Options>
             )}
 
-            {query !== "" && locationResults.length === 0 && (
+            {query.includes("http") ? (
+              <p
+                className={classNames(
+                  "select-none px-4 py-2 font-semibold text-sm",
+                  "hover:bg-black hover:text-white hover:cursor-pointer"
+                )}
+                onClick={handleAddLocationUrl}
+              >
+                {query}
+              </p>
+            ) : query !== "" && locationResults.length === 0 ? (
               <p className="p-4 text-sm text-gray-500">No locations found.</p>
-            )}
+            ) : null}
           </Combobox>
         </Transition.Child>
       </Dialog>

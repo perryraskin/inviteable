@@ -251,7 +251,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         detailsHtml,
         eventAccess,
         showGuestList,
-        allowComments
+        allowComments,
+        locationUrl
       } = eventRequest
       try {
         // only allow hosts to update event settings
@@ -283,7 +284,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             imageUrl: imageUrl ?? undefined,
             detailsText: detailsText ?? undefined,
             detailsHtml: detailsHtml ?? undefined,
-            timeZone
+            timeZone,
+            locationUrl: locationUrl ?? undefined
           }
         })
 
