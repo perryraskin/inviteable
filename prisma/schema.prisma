@@ -45,6 +45,7 @@ model Event {
   Address       Address[]
   Settings      EventSettings?
   Invites       EventInvite[]
+  locationUrl   String?
 }
 
 model EventInvite {

@@ -29,6 +29,7 @@ export interface Event {
   Guests: Guest[]
   Settings: EventSettings
   Invites: EventInvite[]
+  locationUrl?: string
 }
 
 export interface EventInvite {

@@ -30,7 +30,8 @@ import {
   XIcon,
   CogIcon,
   MailIcon,
-  ChatIcon
+  ChatIcon,
+  VideoCameraIcon
 } from "@heroicons/react/solid"
 import S3 from "react-s3-uploader"
 import { CalendarEvent } from "../../utilities/calendarUrls"
@@ -560,26 +561,57 @@ const EventDetail: NextPage<Props> = ({
                     </span>
                   </span>
                 </p>
-                <p className="mt-2">
-                  <LocationMarkerIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  {isEditMode ? (
-                    <span className="align-middle">
-                      <a
-                        role="button"
-                        className="text-blue-500 hover:underline"
-                        onClick={() => setLocationSearchOpen(true)}
-                      >
-                        {event.Address[0].locationName
-                          ? event.Address[0].locationName
-                          : "Set location"}
-                      </a>
+                {event.locationUrl ? (
+                  <p className="mt-2">
+                    <VideoCameraIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                    <span className="align-middle font-semibold truncate">
+                      {isEditMode ? (
+                        <a
+                          role="button"
+                          className="text-blue-500 hover:underline"
+                          onClick={() => setLocationSearchOpen(true)}
+                        >
+                          {event.locationUrl}
+                        </a>
+                      ) : (
+                        <a
+                          className="text-blue-500 hover:underline"
+                          href={event.locationUrl}
+                          target="_blank"
+                        >
+                          {
+                            event.locationUrl
+                              .replace("http://", "")
+                              .replace("https://", "")
+                              .split("/")[0]
+                          }
+                        </a>
+                      )}
                     </span>
-                  ) : event.Address[0].locationName ? (
-                    <span className="align-middle font-semibold">
-                      {event.Address[0].locationName}
-                    </span>
-                  ) : null}
-                </p>
+                  </p>
+                ) : (
+                  <p className="mt-2">
+                    <LocationMarkerIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                    {isEditMode ? (
+                      <span className="align-middle">
+                        <a
+                          role="button"
+                          className="text-blue-500 hover:underline"
+                          onClick={() => setLocationSearchOpen(true)}
+                        >
+                          {event.Address[0].locationName
+                            ? event.Address[0].locationName
+                            : "Set location"}
+                        </a>
+                      </span>
+                    ) : event.Address[0].locationName ? (
+                      <span className="align-middle font-semibold">
+                        {event.Address[0].locationName}
+                      </span>
+                    ) : null}
+                  </p>
+                )}
+
                 {isEditMode ? (
                   <p className="mt-2">
                     <OfficeBuildingIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
@@ -677,31 +709,33 @@ const EventDetail: NextPage<Props> = ({
                   </p>
                 )}
               </div>
-              <div
-                id="map"
-                className="h-72 sm:h-full mt-2 sm:mt-0 rounded-lg relative shadow"
-              >
-                {/* <img
+              {!event.locationUrl && (
+                <div
+                  id="map"
+                  className="h-72 sm:h-full mt-2 sm:mt-0 rounded-lg relative shadow"
+                >
+                  {/* <img
                   className="rounded-lg"
                   src="https://i.imgur.com/oFypSZG.jpg"
                    ></img> */}
-                {mapBoxReset && (
-                  <MapBox
-                    lat={event.Address[0].latitude}
-                    long={event.Address[0].longitude}
-                    zoom={13}
-                  />
-                )}
-                <div
-                  className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full 
+                  {mapBoxReset && (
+                    <MapBox
+                      lat={event.Address[0].latitude}
+                      long={event.Address[0].longitude}
+                      zoom={13}
+                    />
+                  )}
+                  <div
+                    className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full 
                     text-base sm:text-sm text-center font-sans font-semibold p-4 sm:p-3"
-                >
-                  {event.Address[0].address1}
-                  <br></br>
-                  {event.Address[0].city ? event.Address[0].city + ", " : ""}
-                  {event.Address[0].state}
+                  >
+                    {event.Address[0].address1}
+                    <br></br>
+                    {event.Address[0].city ? event.Address[0].city + ", " : ""}
+                    {event.Address[0].state}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
