@@ -31,7 +31,8 @@ import {
   CogIcon,
   MailIcon,
   ChatIcon,
-  VideoCameraIcon
+  VideoCameraIcon,
+  MapIcon
 } from "@heroicons/react/solid"
 import S3 from "react-s3-uploader"
 import { CalendarEvent } from "../../utilities/calendarUrls"
@@ -119,22 +120,54 @@ const EventDetail: NextPage<Props> = ({
   const [imageUrl, setImageUrl] = useState(event.imageUrl)
   const [dateStart, setDateStart] = useState(
     event.dateTimeStart
-      ? dayjs
-          .utc(event.dateTimeStart)
-          .local()
+      ? dayjs(event.dateTimeStart)
+          .tz(event.timeZone)
           .format(`YYYY-MM-DD`)
       : null
   )
   const [timeStart, setTimeStart] = useState(
     event.dateTimeStart
-      ? dayjs
-          .utc(event.dateTimeStart)
-          .local()
+      ? dayjs(event.dateTimeStart)
+          .tz(event.timeZone)
           .format(`HH:mm`)
       : null
   )
   const [address2, setAddress2] = useState(event.Address[0]?.address2)
   const [eventAccess, setEventAccess] = useState(event.Settings?.access)
+  const [eventTimeZone, setEventTimeZone] = useState(event.timeZone)
+
+  const [dateStartView, setDateStartView] = useState(
+    dayjs(event.dateTimeStart)
+      .tz(event.timeZone)
+      .format("dddd, MMMM D, YYYY")
+  )
+  const [timeStartView, setTimeStartView] = useState(
+    dayjs(event.dateTimeStart)
+      .tz(event.timeZone)
+      .format("h:mm A")
+  )
+  const [adjustedTimeZone, setAdjustedTimeZone] = useState(event.timeZone)
+
+  useEffect(() => {
+    const localAdjustedTimeZone = localStorage.getItem(
+      "inviteable.adjustedTimeZone"
+    )
+    if (localAdjustedTimeZone) {
+      setAdjustedTimeZone(localAdjustedTimeZone)
+    }
+  }, [])
+  useEffect(() => {
+    const localAdjustedTimeZone = localStorage.getItem(
+      "inviteable.adjustedTimeZone"
+    )
+    if (!localAdjustedTimeZone || localAdjustedTimeZone !== adjustedTimeZone) {
+      localStorage.setItem("inviteable.adjustedTimeZone", adjustedTimeZone)
+    }
+
+    const convertedDateTime = dayjs(event.dateTimeStart).tz(adjustedTimeZone)
+    setDateStartView(convertedDateTime.format("dddd, MMMM D, YYYY"))
+    setTimeStartView(convertedDateTime.format("h:mm A"))
+  }, [adjustedTimeZone, event])
 
   async function handleUpdateResponse(updatedResponse: GuestResponse) {
     setResponse(updatedResponse)
@@ -199,9 +232,12 @@ const EventDetail: NextPage<Props> = ({
           detailsText,
           price,
           dateTimeStart: `${dateStart} ${timeStart}`,
+          // dateTimeStart: dayjs(`${dateStart} ${timeStart}`)
+          //   .tz(eventTimeZone)
+          //   .format(),
           address2,
           eventAccess,
-          timeZone: dayjs.tz.guess()
+          timeZone: eventTimeZone
         }
       })
     })
@@ -209,6 +245,7 @@ const EventDetail: NextPage<Props> = ({
     if (!data.error) {
       setIsSubmitting(false)
       setIsEditMode(false)
+      setAdjustedTimeZone(eventTimeZone)
       refreshData()
     }
   }
@@ -332,15 +369,7 @@ const EventDetail: NextPage<Props> = ({
                 <div className="mt-6 sm:mt-14 sm:flex-1 sm:min-w-0 sm:flex sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
                   <div className="sm:hidden mt-6 min-w-0 flex-1">
                     <h3 className="text-sm font-bold uppercase text-red-500 truncate">
-                      {dayjs
-                        .utc(event.dateTimeStart)
-                        .local()
-                        .format("dddd, MMMM D, YYYY")}{" "}
-                      at{" "}
-                      {dayjs
-                        .utc(event.dateTimeStart)
-                        .local()
-                        .format("h:mm A")}
+                      {dateStartView} at {timeStartView}
                     </h3>
                   </div>
                   <div className="sm:hidden mt-1 min-w-0 flex-1">
@@ -468,15 +497,7 @@ const EventDetail: NextPage<Props> = ({
               </div>
               <div className="hidden sm:block mt-6 min-w-0 flex-1">
                 <h3 className="text-sm font-bold uppercase text-red-500 truncate">
-                  {dayjs
-                    .utc(event.dateTimeStart)
-                    .local()
-                    .format("dddd, MMMM D, YYYY")}{" "}
-                  at{" "}
-                  {dayjs
-                    .utc(event.dateTimeStart)
-                    .local()
-                    .format("h:mm A")}
+                  {dateStartView} at {timeStartView}
                 </h3>
               </div>
               <div className="hidden sm:block mt-1 min-w-0 flex-1">
@@ -523,7 +544,7 @@ const EventDetail: NextPage<Props> = ({
                     className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 
                   whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
                   >
-                    Comments
+                    Comments <span className="text-xs">(coming soon!)</span>
                   </button>
                   <button
                     className="border-transparent text-gray-500 hover:text-gray-700  
@@ -645,9 +666,7 @@ const EventDetail: NextPage<Props> = ({
                       />
                     </span>
                   ) : (
-                    <span className="align-middle">
-                      {dayjs(dateStart).format("dddd, MMMM D, YYYY")}
-                    </span>
+                    <span className="align-middle">{dateStartView}</span>
                   )}
                 </p>
                 <p className="mt-2">
@@ -663,10 +682,46 @@ const EventDetail: NextPage<Props> = ({
                     </span>
                   ) : (
                     <span className="align-middle group relative cursor-default">
-                      {dayjs(event.dateTimeStart).format("h:mm A")}
-                      <span className="absolute bottom-0 flex-col items-center hidden mb-6 group-hover:flex">
+                      {timeStartView}
+                      {/* <span className="absolute bottom-0 flex-col items-center hidden mb-6 group-hover:flex">
                         <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-black shadow-lg">
                           {dayjs.tz.guess()}
+                        </span>
+                        <span className="w-3 h-3 -mt-2 rotate-45 bg-black"></span>
+                      </span> */}
+                    </span>
+                  )}
+                </p>
+
+                <p className="mt-2">
+                  <MapIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                  {isEditMode ? (
+                    <span className="align-middle">
+                      {/* <select
+                        className="mt-1 sm:w-48 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md"
+                        value={eventTimeZone}
+                        onChange={e => setEventTimeZone(e.target.value)}
+                      >
+                        {Intl.supportedValuesOf("timeZone").map(tz => (
+                          <option value={tz}>{tz}</option>
+                        ))}
+                      </select> */}
+                      {event.timeZone}
+                    </span>
+                  ) : (
+                    <span className="align-middle group relative cursor-default">
+                      <select
+                        className="mt-1 sm:w-48 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md"
+                        value={adjustedTimeZone}
+                        onChange={e => setAdjustedTimeZone(e.target.value)}
+                      >
+                        {(Intl as any).supportedValuesOf("timeZone").map(tz => (
+                          <option value={tz}>{tz}</option>
+                        ))}
+                      </select>
+                      <span className="absolute bottom-2 flex-col items-center hidden mb-6 group-hover:flex">
+                        <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-black shadow-lg">
+                          Select preferred time zone:
                         </span>
                         <span className="w-3 h-3 -mt-2 rotate-45 bg-black"></span>
                       </span>
