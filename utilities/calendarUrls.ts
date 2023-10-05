@@ -73,10 +73,9 @@ const makeICSCalendarUrl = (event: CalendarEvent) => {
   if (typeof document !== "undefined") {
     components.push(`URL:${document.URL}`)
   }
-
   components.push(
-    `DTSTART:${makeTime(event.startsAt)}`,
-    `DTEND:${makeTime(event.endsAt)}`,
+    `DTSTART;TZID=UTC:${makeTime(event.startsAt)}`,
+    `DTEND;TZID=UTC:${makeTime(event.endsAt)}`,
     `SUMMARY:${event.name}`,
     `DESCRIPTION:${event.details}`,
     `LOCATION:${event.location}`,
