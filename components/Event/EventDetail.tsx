@@ -80,9 +80,9 @@ const EventDetail: NextPage<Props> = ({
   const calendarEvent: CalendarEvent = {
     name: event?.title,
     details: event?.detailsText.replace(/\n/g, " "),
-    location: calendarAddress,
-    startsAt: dayjs(event?.dateTimeStart).format("YYYY-MM-DDTHH:mm:ssZ"),
-    endsAt: dayjs(event?.dateTimeEnd).format("YYYY-MM-DDTHH:mm:ssZ")
+    location: event.locationUrl ? event.locationUrl : calendarAddress,
+    startsAt: dayjs.utc(event?.dateTimeStart).format("YYYY-MM-DDTHH:mm:ssZ"),
+    endsAt: dayjs.utc(event?.dateTimeEnd).format("YYYY-MM-DDTHH:mm:ssZ")
   }
 
   const [isSubmitting, setIsSubmitting] = useState(false)
