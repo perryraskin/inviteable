@@ -318,7 +318,7 @@ const EventDetail: NextPage<Props> = ({
                 <S3
                   accept="image/*"
                   multiple={false}
-                  signingUrl="/api/s3"
+                  signingUrl={`/api/event/${event.id}/upload/banner/s3`}
                   signingUrlWithCredentials={true}
                   className="hidden"
                   id="s3"
