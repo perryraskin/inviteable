@@ -1,6 +1,6 @@
 import React from "react"
 import Head from "next/head"
-import App from "next/app"
+import { ClerkProvider } from "@clerk/nextjs"
 import Script from "next/script"
 import { DefaultSeo } from "next-seo"
 import { useRouter } from "next/router"
@@ -65,7 +65,9 @@ function MyApp({ Component, pageProps }) {
       ) : (
         ""
       )}
-      <Component {...pageProps} />
+      <ClerkProvider {...pageProps}>
+        <Component {...pageProps} />
+      </ClerkProvider>
     </>
   )
 }
