@@ -31,6 +31,7 @@
     "@tiptap/pm": "^2.1.16",
     "@tiptap/react": "^2.1.16",
     "@tiptap/starter-kit": "^2.1.16",
+    "@tremor/react": "^3.13.3",
     "@types/detect-node": "^2.0.0",
     "autoprefixer": "^10.4.2",
     "aws-sdk": "^2.1105.0",
