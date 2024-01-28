@@ -34,9 +34,21 @@ const EventDetailPage: NextPage<Props> = ({
           description: "You're invited to an event on inviteable.app",
           images: [
             {
-              url: event?.imageUrl,
+              url: event?.designImageUrl ?? event?.imageUrl,
               width: 800,
               height: 600,
+              alt: "You're invited to an event on inviteable.app"
+            },
+            {
+              url: event?.designImageUrl ?? event?.imageUrl,
+              width: 800,
+              height: 418,
+              alt: "You're invited to an event on inviteable.app"
+            },
+            {
+              url: event?.designImageUrl ?? event?.imageUrl,
+              width: 1200,
+              height: 627,
               alt: "You're invited to an event on inviteable.app"
             }
           ]
@@ -67,7 +79,7 @@ export const getServerSideProps: GetServerSideProps = async ctx => {
     const data = await res.json()
     event = data.event
     code = data.code
-    // console.log(data)
+    console.log(data)
   } catch (error) {
     // console.log(error)
   }

@@ -65,7 +65,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           authorized: true,
           event: {
             title: event.title,
-            imageUrl: event.imageUrl
+            imageUrl: event.imageUrl,
+            designImageUrl: event.designImageUrl
           }
         })
       }
@@ -77,7 +78,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           authorized: true,
           event: {
             title: event.title,
-            imageUrl: event.imageUrl
+            imageUrl: event.imageUrl,
+            designImageUrl: event.designImageUrl
           }
         })
       }
@@ -247,6 +249,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         country,
         price,
         imageUrl,
+        designImageUrl,
         detailsText,
         detailsHtml,
         eventAccess,
@@ -284,6 +287,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               : undefined,
             price: price ? parseFloat(price) : undefined,
             imageUrl: imageUrl ?? undefined,
+            designImageUrl: designImageUrl ?? undefined,
             detailsText: detailsText ?? undefined,
             detailsHtml: detailsHtml ?? undefined,
             timeZone,

@@ -23,6 +23,7 @@ export interface Event {
   Address: Address[]
   price: number
   imageUrl: string
+  designImageUrl: string
   detailsText: string
   detailsHtml: string
   Host: User
