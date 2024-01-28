@@ -20,6 +20,7 @@
     "url": "https://github.com/perryraskin/event-planner"
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.29.5",
     "@fullhuman/postcss-purgecss": "^2.3.0",
     "@hapi/iron": "^6.0.0",
     "@headlessui/react": "^1.7.18",
