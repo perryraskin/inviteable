@@ -184,23 +184,22 @@ export default function Landing() {
               </div>
               <div className="mt-10">
                 <div>
-                  <Link href={loggedIn ? "/events" : "#"}>
-                    <a
-                      onClick={loggedIn ? null : handleLogin}
-                      className="inline-flex space-x-4"
-                    >
-                      <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
-                        {loggedIn ? "Welcome back!" : "Have an account?"}
-                      </span>
-                      <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
-                        <span>{loggedIn ? "My Events" : "Sign in"}</span>
-                        <ChevronRightIcon
-                          style={{ marginTop: "2px" }}
-                          className="h-5 w-5"
-                          aria-hidden="true"
-                        />
-                      </span>
-                    </a>
+                  <Link
+                    href={loggedIn ? "/events" : "#"}
+                    onClick={loggedIn ? null : handleLogin}
+                    className="inline-flex space-x-4"
+                  >
+                    <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
+                      {loggedIn ? "Welcome back!" : "Have an account?"}
+                    </span>
+                    <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
+                      <span>{loggedIn ? "My Events" : "Sign in"}</span>
+                      <ChevronRightIcon
+                        style={{ marginTop: "2px" }}
+                        className="h-5 w-5"
+                        aria-hidden="true"
+                      />
+                    </span>
                   </Link>
                 </div>
                 <div className="mt-6 sm:max-w-xl md:text-left text-center">

@@ -154,6 +154,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 }
 
 type AddToCalendarProps = {
+  children?: string
   event: CalendarEvent
   open?: boolean
   filename?: string
