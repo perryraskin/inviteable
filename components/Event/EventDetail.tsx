@@ -32,7 +32,8 @@ import {
   MailIcon,
   ChatIcon,
   VideoCameraIcon,
-  MapIcon
+  MapIcon,
+  PaperClipIcon
 } from "@heroicons/react/solid"
 import S3 from "react-s3-uploader"
 import { CalendarEvent } from "../../utilities/calendarUrls"
@@ -55,6 +56,8 @@ import { spinner } from "../Elements/Icons"
 import { CameraIcon, PhotographIcon } from "@heroicons/react/outline"
 import AvatarGroupStack from "../AvatarGroupStack"
 import EventSettings from "../Modals/EventSettings"
+import { ClickableImage } from "../Elements/CickableImage"
+import { classNames } from "../../utilitites"
 
 interface Props {
   user: User
@@ -85,6 +88,12 @@ const EventDetail: NextPage<Props> = ({
     endsAt: dayjs.utc(event?.dateTimeEnd).format("YYYY-MM-DDTHH:mm:ssZ")
   }
 
+  const tabs = [
+    // "Design",
+    "About"
+    // "Comments"
+  ]
+  const [currentTab, setCurrentTab] = useState("About")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isEventSettingsOpen, setIsEventSettingsOpen] = useState(false)
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false)
@@ -118,6 +127,7 @@ const EventDetail: NextPage<Props> = ({
   const [detailsText, setDetailsText] = useState(event.detailsText)
   const [price, setPrice] = useState(event.price)
   const [imageUrl, setImageUrl] = useState(event.imageUrl)
+  const [designImageUrl, setDesignImageUrl] = useState(event.designImageUrl)
   const [dateStart, setDateStart] = useState(
     event.dateTimeStart
       ? dayjs(event.dateTimeStart)
@@ -250,8 +260,8 @@ const EventDetail: NextPage<Props> = ({
     }
   }
   const [bannerHover, setBannerHover] = useState(false)
-  const handleClickFileInput = event => {
-    document.getElementById("s3").click()
+  function handleClickFileInput(s3ElementId: string) {
+    document.getElementById(s3ElementId).click()
   }
 
   async function handleUpdateImage(url) {
@@ -264,6 +274,25 @@ const EventDetail: NextPage<Props> = ({
       body: JSON.stringify({
         event: {
           imageUrl: url
+        }
+      })
+    })
+    const data = await res.json()
+    if (!data.error) {
+      console.log(data)
+    }
+  }
+
+  async function handleUpdateDesignImage(url) {
+    setDesignImageUrl(url)
+    const res = await fetch(`/api/event/${event.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        event: {
+          designImageUrl: url
         }
       })
     })
@@ -299,8 +328,10 @@ const EventDetail: NextPage<Props> = ({
             <div
               // onMouseOver={() => setBannerHover(true)}
               // onMouseLeave={() => setBannerHover(false)}
-              className="relative"
-              onClick={e => (currentGuest ? handleClickFileInput(e) : null)}
+              className="relative hover:opacity-80 hover:cursor-pointer"
+              onClick={() =>
+                currentGuest ? handleClickFileInput("s3-banner") : null
+              }
             >
               <img
                 className="h-32 w-full object-cover lg:h-48"
@@ -321,7 +352,7 @@ const EventDetail: NextPage<Props> = ({
                   signingUrl={`/api/event/${event.id}/upload/banner/s3`}
                   signingUrlWithCredentials={true}
                   className="hidden"
-                  id="s3"
+                  id="s3-banner"
                   scrubFilename={name =>
                     Date.now() + "-" + name.replace(/[^\w\d_\-.]+/gi, "")
                   }
@@ -329,13 +360,13 @@ const EventDetail: NextPage<Props> = ({
                   onError={e => alert(e)}
                 />
                 {isEditMode && (
-                  <label htmlFor="s3">
+                  <label htmlFor="s3-banner">
                     <button
                       type="button"
                       className="inline-flex justify-center px-4 py-2 border border-gray-300 
                     shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-200
                     focus:outline-none "
-                      onClick={handleClickFileInput}
+                      onClick={() => handleClickFileInput("s3-banner")}
                     >
                       <PhotographIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
                       <span>Upload</span>
@@ -532,18 +563,20 @@ const EventDetail: NextPage<Props> = ({
             <div className="border-b border-gray-200">
               <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-                  <button
-                    className="border-blue-500 text-gray-900 whitespace-nowrap py-4 px-1 
-                  border-b-2 font-medium text-sm"
-                  >
-                    About
-                  </button>
-                  <button
-                    className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 
-                  whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm"
-                  >
-                    Comments <span className="text-xs">(coming soon!)</span>
-                  </button>
+                  {tabs.map(tab => (
+                    <button
+                      key={tab}
+                      className={classNames(
+                        "whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm",
+                        tab === currentTab
+                          ? "border-blue-500 text-gray-900"
+                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                      )}
+                      onClick={() => setCurrentTab(tab)}
+                    >
+                      {tab}
+                    </button>
+                  ))}
                   <button
                     className="border-transparent text-gray-500 hover:text-gray-700  
                   whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm absolute right-2"
@@ -558,144 +591,188 @@ const EventDetail: NextPage<Props> = ({
             </div>
           </div>
 
-          {/* Details */}
-          <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="">
-                <div className="flex">
-                  <div className="mr-3">
-                    <UsersIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                    <span className="align-middle">
-                      {guestsAccepted.length} going
-                    </span>
+          {currentTab === "Design" ? (
+            <>
+              {/* CARD DESIGN */}
+              {designImageUrl && (
+                <ClickableImage
+                  className="sm:mt-6 sm:w-[34rem] sm:px-6 lg:px-8"
+                  src={designImageUrl}
+                  title={event.title + " - Card Design"}
+                />
+              )}
+              {currentGuest?.isHost && (
+                <>
+                  <S3
+                    accept="image/*"
+                    multiple={false}
+                    signingUrl={`/api/event/${event.id}/upload/design/s3`}
+                    signingUrlWithCredentials={true}
+                    className="hidden"
+                    id="s3-design"
+                    scrubFilename={name =>
+                      Date.now() + "-" + name.replace(/[^\w\d_\-.]+/gi, "")
+                    }
+                    onFinish={e => handleUpdateDesignImage(e["uploadUrl"])}
+                    onError={e => alert(e)}
+                  />
+                  <div className="px-4 sm:px-6 lg:px-8">
+                    <label htmlFor="s3-design">
+                      <button
+                        type="button"
+                        className="inline-flex justify-center px-4 py-2 border border-gray-300 
+                  shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-200
+                  focus:outline-none w-full sm:w-auto"
+                        onClick={() => handleClickFileInput("s3-design")}
+                      >
+                        <PhotographIcon className="-ml-1 mr-2 h-5 w-5 text-gray-400" />
+                        <span>Upload</span>
+                      </button>
+                    </label>
                   </div>
-                  <AvatarGroupStack guestList={guestsAccepted} />
-                </div>
-                <p className="mt-2">
-                  <StarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  <span className="align-middle">
-                    Hosted by{" "}
-                    <span className="font-semibold">
-                      {event.Host?.firstName} {event.Host?.lastName}
-                    </span>
-                  </span>
-                </p>
-                {event.locationUrl ? (
-                  <p className="mt-2">
-                    <VideoCameraIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                    <span className="align-middle font-semibold truncate">
-                      {isEditMode ? (
-                        <a
-                          role="button"
-                          className="text-blue-500 hover:underline"
-                          onClick={() => setLocationSearchOpen(true)}
-                        >
-                          {event.locationUrl}
-                        </a>
-                      ) : (
-                        <a
-                          className="text-blue-500 hover:underline"
-                          href={event.locationUrl}
-                          target="_blank"
-                        >
-                          {
-                            event.locationUrl
-                              .replace("http://", "")
-                              .replace("https://", "")
-                              .split("/")[0]
-                          }
-                        </a>
-                      )}
-                    </span>
-                  </p>
-                ) : (
-                  <p className="mt-2">
-                    <LocationMarkerIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                    {isEditMode ? (
+                </>
+              )}
+            </>
+          ) : currentTab === "About" ? (
+            <>
+              {/* Details */}
+              <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="">
+                    <div className="flex">
+                      <div className="mr-3">
+                        <UsersIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        <span className="align-middle">
+                          {guestsAccepted.length} going
+                        </span>
+                      </div>
+                      <AvatarGroupStack guestList={guestsAccepted} />
+                    </div>
+                    <p className="mt-2">
+                      <StarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                       <span className="align-middle">
-                        <a
-                          role="button"
-                          className="text-blue-500 hover:underline"
-                          onClick={() => setLocationSearchOpen(true)}
-                        >
-                          {event.Address[0].locationName
-                            ? event.Address[0].locationName
-                            : "Set location"}
-                        </a>
+                        Hosted by{" "}
+                        <span className="font-semibold">
+                          {event.Host?.firstName} {event.Host?.lastName}
+                        </span>
                       </span>
-                    ) : event.Address[0].locationName ? (
-                      <span className="align-middle font-semibold">
-                        {event.Address[0].locationName}
-                      </span>
-                    ) : null}
-                  </p>
-                )}
+                    </p>
+                    {event.locationUrl ? (
+                      <p className="mt-2">
+                        <VideoCameraIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        <span className="align-middle font-semibold truncate">
+                          {isEditMode ? (
+                            <a
+                              role="button"
+                              className="text-blue-500 hover:underline"
+                              onClick={() => setLocationSearchOpen(true)}
+                            >
+                              {event.locationUrl}
+                            </a>
+                          ) : (
+                            <a
+                              className="text-blue-500 hover:underline"
+                              href={event.locationUrl}
+                              target="_blank"
+                            >
+                              {
+                                event.locationUrl
+                                  .replace("http://", "")
+                                  .replace("https://", "")
+                                  .split("/")[0]
+                              }
+                            </a>
+                          )}
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="mt-2">
+                        <LocationMarkerIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        {isEditMode ? (
+                          <span className="align-middle">
+                            <a
+                              role="button"
+                              className="text-blue-500 hover:underline"
+                              onClick={() => setLocationSearchOpen(true)}
+                            >
+                              {event.Address[0].locationName
+                                ? event.Address[0].locationName
+                                : "Set location"}
+                            </a>
+                          </span>
+                        ) : event.Address[0].locationName ? (
+                          <span className="align-middle font-semibold">
+                            {event.Address[0].locationName}
+                          </span>
+                        ) : null}
+                      </p>
+                    )}
 
-                {isEditMode ? (
-                  <p className="mt-2">
-                    <OfficeBuildingIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                    <span className="align-middle">
-                      <input
-                        type="text"
-                        className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
-                        placeholder="Apt #, Suite #, etc."
-                        value={address2 ?? ""}
-                        onChange={e => setAddress2(e.target.value)}
-                      />
-                    </span>
-                  </p>
-                ) : event.Address[0].address2 ? (
-                  <p className="mt-2">
-                    <OfficeBuildingIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                    <span className="align-middle">
-                      {event.Address[0].address2}
-                    </span>
-                  </p>
-                ) : null}
-                <p className="mt-2">
-                  <CalendarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  {isEditMode ? (
-                    <span className="align-middle">
-                      <input
-                        type="date"
-                        className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
-                        value={dateStart}
-                        onChange={e => setDateStart(e.target.value)}
-                      />
-                    </span>
-                  ) : (
-                    <span className="align-middle">{dateStartView}</span>
-                  )}
-                </p>
-                <p className="mt-2">
-                  <ClockIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  {isEditMode ? (
-                    <span className="align-middle">
-                      <input
-                        type="time"
-                        className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
-                        value={timeStart}
-                        onChange={e => setTimeStart(e.target.value)}
-                      />
-                    </span>
-                  ) : (
-                    <span className="align-middle group relative cursor-default">
-                      {timeStartView}
-                      {/* <span className="absolute bottom-0 flex-col items-center hidden mb-6 group-hover:flex">
+                    {isEditMode ? (
+                      <p className="mt-2">
+                        <OfficeBuildingIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        <span className="align-middle">
+                          <input
+                            type="text"
+                            className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
+                            placeholder="Apt #, Suite #, etc."
+                            value={address2 ?? ""}
+                            onChange={e => setAddress2(e.target.value)}
+                          />
+                        </span>
+                      </p>
+                    ) : event.Address[0].address2 ? (
+                      <p className="mt-2">
+                        <OfficeBuildingIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        <span className="align-middle">
+                          {event.Address[0].address2}
+                        </span>
+                      </p>
+                    ) : null}
+                    <p className="mt-2">
+                      <CalendarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                      {isEditMode ? (
+                        <span className="align-middle">
+                          <input
+                            type="date"
+                            className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
+                            value={dateStart}
+                            onChange={e => setDateStart(e.target.value)}
+                          />
+                        </span>
+                      ) : (
+                        <span className="align-middle">{dateStartView}</span>
+                      )}
+                    </p>
+                    <p className="mt-2">
+                      <ClockIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                      {isEditMode ? (
+                        <span className="align-middle">
+                          <input
+                            type="time"
+                            className="shadow-sm w-48 focus:ring-none focus:border-none sm:text-sm border-gray-300 rounded-md"
+                            value={timeStart}
+                            onChange={e => setTimeStart(e.target.value)}
+                          />
+                        </span>
+                      ) : (
+                        <span className="align-middle group relative cursor-default">
+                          {timeStartView}
+                          {/* <span className="absolute bottom-0 flex-col items-center hidden mb-6 group-hover:flex">
                         <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-black shadow-lg">
                           {dayjs.tz.guess()}
                         </span>
                         <span className="w-3 h-3 -mt-2 rotate-45 bg-black"></span>
                       </span> */}
-                    </span>
-                  )}
-                </p>
+                        </span>
+                      )}
+                    </p>
 
-                <p className="mt-2">
-                  <MapIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                  {isEditMode ? (
-                    <span className="align-middle">
-                      {/* <select
+                    <p className="mt-2">
+                      <MapIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                      {isEditMode ? (
+                        <span className="align-middle">
+                          {/* <select
                         className="mt-1 sm:w-48 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md"
                         value={eventTimeZone}
                         onChange={e => setEventTimeZone(e.target.value)}
@@ -704,111 +781,157 @@ const EventDetail: NextPage<Props> = ({
                           <option value={tz}>{tz}</option>
                         ))}
                       </select> */}
-                      {event.timeZone}
-                    </span>
-                  ) : (
-                    <span className="align-middle group relative cursor-default">
-                      <select
-                        className="mt-1 sm:w-48 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md"
-                        value={adjustedTimeZone}
-                        onChange={e => setAdjustedTimeZone(e.target.value)}
-                      >
-                        {(Intl as any).supportedValuesOf("timeZone").map(tz => (
-                          <option value={tz}>{tz}</option>
-                        ))}
-                      </select>
-                      <span className="absolute bottom-2 flex-col items-center hidden mb-6 group-hover:flex">
-                        <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-black shadow-lg">
-                          Select preferred time zone:
+                          {event.timeZone}
                         </span>
-                        <span className="w-3 h-3 -mt-2 rotate-45 bg-black"></span>
-                      </span>
-                    </span>
-                  )}
-                </p>
-                {isEditMode ? (
-                  <p className="mt-2">
-                    {eventAccess === EventAccess.Private ? (
-                      <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                    ) : eventAccess === EventAccess.Unlisted ? (
-                      <LockOpenIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                      ) : (
+                        <span className="align-middle group relative cursor-default">
+                          <select
+                            className="mt-1 sm:w-48 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md"
+                            value={adjustedTimeZone}
+                            onChange={e => setAdjustedTimeZone(e.target.value)}
+                          >
+                            {(Intl as any)
+                              .supportedValuesOf("timeZone")
+                              .map(tz => (
+                                <option value={tz}>{tz}</option>
+                              ))}
+                          </select>
+                          <span className="absolute bottom-2 flex-col items-center hidden mb-6 group-hover:flex">
+                            <span className="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-black shadow-lg">
+                              Select preferred time zone:
+                            </span>
+                            <span className="w-3 h-3 -mt-2 rotate-45 bg-black"></span>
+                          </span>
+                        </span>
+                      )}
+                    </p>
+                    {isEditMode ? (
+                      <p className="mt-2">
+                        {eventAccess === EventAccess.Private ? (
+                          <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        ) : eventAccess === EventAccess.Unlisted ? (
+                          <LockOpenIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        ) : (
+                          <GlobeIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        )}
+                        <span className="align-middle">
+                          <select
+                            className="mt-1 w-32 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md"
+                            value={eventAccess.toString()}
+                            onChange={e =>
+                              setEventAccess(parseInt(e.target.value))
+                            }
+                          >
+                            <option value={EventAccess.Private}>Private</option>
+                            {/* <option  value={EventAccess.Unlisted}>Unlisted</option> */}
+                            <option value={EventAccess.Public}>Public</option>
+                          </select>
+                        </span>
+                      </p>
+                    ) : eventAccess === EventAccess.Private ? (
+                      <p className="mt-2">
+                        <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        <span className="align-middle">
+                          Private{" "}
+                          <span className="text-sm">(invited guests only)</span>
+                        </span>
+                      </p>
                     ) : (
-                      <GlobeIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                      <p className="mt-2">
+                        <GlobeIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
+                        <span className="align-middle">Public </span>
+                      </p>
                     )}
-                    <span className="align-middle">
-                      <select
-                        className="mt-1 w-32 pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none sm:text-sm rounded-md"
-                        value={eventAccess.toString()}
-                        onChange={e => setEventAccess(parseInt(e.target.value))}
-                      >
-                        <option value={EventAccess.Private}>Private</option>
-                        {/* <option  value={EventAccess.Unlisted}>Unlisted</option> */}
-                        <option value={EventAccess.Public}>Public</option>
-                      </select>
-                    </span>
-                  </p>
-                ) : eventAccess === EventAccess.Private ? (
-                  <p className="mt-2">
-                    <LockClosedIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                    <span className="align-middle">
-                      Private{" "}
-                      <span className="text-sm">(invited guests only)</span>
-                    </span>
-                  </p>
-                ) : (
-                  <p className="mt-2">
-                    <GlobeIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
-                    <span className="align-middle">Public </span>
-                  </p>
-                )}
-              </div>
-              {!event.locationUrl && (
-                <div
-                  id="map"
-                  className="h-72 sm:h-full mt-2 sm:mt-0 rounded-lg relative shadow"
-                >
-                  {/* <img
+                    {designImageUrl ? (
+                      <div className="mt-2 relative">
+                        <PaperClipIcon className="hidden sm:inline mr-2 h-5 w-5 text-gray-400" />
+                        <ClickableImage
+                          className="mt-2 sm:-mt-4 sm:w-96 sm:px-6 lg:px-8"
+                          src={designImageUrl}
+                          title={event.title + " (Design)"}
+                        />
+                      </div>
+                    ) : currentGuest?.isHost ? (
+                      <div className="mt-2 relative">
+                        <PaperClipIcon className="hidden sm:inline mr-2 h-5 w-5 text-gray-400" />
+                        <S3
+                          accept="image/*"
+                          multiple={false}
+                          signingUrl={`/api/event/${event.id}/upload/design/s3`}
+                          signingUrlWithCredentials={true}
+                          className="hidden"
+                          id="s3-design"
+                          scrubFilename={name =>
+                            Date.now() +
+                            "-" +
+                            name.replace(/[^\w\d_\-.]+/gi, "")
+                          }
+                          onFinish={e =>
+                            handleUpdateDesignImage(e["uploadUrl"])
+                          }
+                          onError={e => alert(e)}
+                        />
+                        <label htmlFor="s3-design">
+                          <button
+                            type="button"
+                            className="text-sm font-medium text-gray-700 hover:underline"
+                            onClick={() => handleClickFileInput("s3-design")}
+                          >
+                            <span>Upload design (e.g. from Canva)</span>
+                          </button>
+                        </label>
+                      </div>
+                    ) : null}
+                  </div>
+                  {!event.locationUrl && (
+                    <div
+                      id="map"
+                      className="h-72 sm:h-full mt-2 sm:mt-0 rounded-lg relative shadow"
+                    >
+                      {/* <img
                   className="rounded-lg"
                   src="https://i.imgur.com/oFypSZG.jpg"
                    ></img> */}
-                  {mapBoxReset && (
-                    <MapBox
-                      lat={event.Address[0].latitude}
-                      long={event.Address[0].longitude}
-                      zoom={13}
-                    />
-                  )}
-                  <div
-                    className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full 
+                      {mapBoxReset && (
+                        <MapBox
+                          lat={event.Address[0].latitude}
+                          long={event.Address[0].longitude}
+                          zoom={13}
+                        />
+                      )}
+                      <div
+                        className="bg-white rounded-b-lg absolute bottom-0 z-10 w-full 
                     text-base sm:text-sm text-center font-sans font-semibold p-4 sm:p-3"
-                  >
-                    {event.Address[0].address1}
-                    <br></br>
-                    {event.Address[0].city ? event.Address[0].city + ", " : ""}
-                    {event.Address[0].state}
-                  </div>
+                      >
+                        {event.Address[0].address1}
+                        <br></br>
+                        {event.Address[0].city
+                          ? event.Address[0].city + ", "
+                          : ""}
+                        {event.Address[0].state}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
 
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
-              <div className="sm:col-span-2">
-                <dt className="text-lg font-bold text-gray-900">Details</dt>
-                <dd
-                  className={`mt-1 max-w-prose text-sm text-gray-900 space-y-5 ${
-                    isEditMode ? "border p-2 rounded" : ""
-                  }`}
-                >
-                  <EditorContent
-                    editor={editor}
-                    onKeyUp={() => {
-                      setDetailsText(editor.getText())
-                      setDetailsHtml(editor.getHTML())
-                    }}
-                  />
-                  {/* {isEditMode ? (
+              <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <dl className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <dt className="text-lg font-bold text-gray-900">Details</dt>
+                    <dd
+                      className={`mt-1 max-w-prose text-sm text-gray-900 space-y-5 ${
+                        isEditMode ? "border p-2 rounded" : ""
+                      }`}
+                    >
+                      <EditorContent
+                        editor={editor}
+                        onKeyUp={() => {
+                          setDetailsText(editor.getText())
+                          setDetailsHtml(editor.getHTML())
+                        }}
+                      />
+                      {/* {isEditMode ? (
                     <EditorContent
                       editor={editor}
                       onChange={() => {
@@ -821,10 +944,13 @@ const EventDetail: NextPage<Props> = ({
                       dangerouslySetInnerHTML={{ __html: event.detailsHtml }}
                     ></div>
                   )} */}
-                </dd>
+                    </dd>
+                  </div>
+                </dl>
               </div>
-            </dl>
-          </div>
+            </>
+          ) : null}
+
           {/* Host list */}
           {/* <div className="mt-8 max-w-5xl mx-auto px-4 pb-12 sm:px-6 lg:px-8">
             <h2 className="text-lg font-bold text-gray-900">Hosts</h2>

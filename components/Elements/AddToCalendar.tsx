@@ -169,9 +169,9 @@ const AddToCalendar: React.FC<AddToCalendarProps> = ({
   const urls = useMemo<CalendarURLs>(() => makeUrls(event), [event])
 
   return (
-    <div className="sm:inline-flex rounded-md shadow-sm">
+    <div className="sm:inline-flex rounded-md">
       <Menu as="div" className="relative -ml-px block">
-        <Menu.Button className="w-full text-center relative sm:inline-flex items-center rounded-md bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">
+        <Menu.Button className="w-full text-center relative sm:inline-flex items-center shadow-sm rounded-md bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">
           <span className="sr-only">Open options</span>
           <span className="sm:hidden text-sm font-medium text-gray-700">
             Options
