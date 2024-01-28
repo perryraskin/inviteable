@@ -55,13 +55,11 @@ const EventsLayout: NextPage<Props> = ({}) => {
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 sm:w-1/2 sm:ml-auto sm:mr-auto">
         <div className="text-center">
           <Link href="/">
-            <a>
-              <img
-                className="mb-6 h-16 inline"
-                src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
-                alt="Inviteable"
-              />
-            </a>
+            <img
+              className="mb-6 h-16 inline"
+              src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
+              alt="Inviteable"
+            />
           </Link>
         </div>
 
@@ -99,13 +97,11 @@ const EventsLayout: NextPage<Props> = ({}) => {
       <React.Fragment>
         <div className="text-center mt-4">
           <Link href="/">
-            <a>
-              <img
-                className="mb-6 h-16 inline"
-                src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
-                alt="Inviteable"
-              />
-            </a>
+            <img
+              className="mb-6 h-16 inline"
+              src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
+              alt="Inviteable"
+            />
           </Link>
         </div>
         <PopupInput

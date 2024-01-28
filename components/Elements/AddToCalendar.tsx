@@ -2,6 +2,8 @@ import { ChevronDownIcon } from "@heroicons/react/solid"
 import React, { useEffect, useMemo, useRef, useState } from "react"
 
 import makeUrls, { CalendarEvent } from "../../utilities/calendarUrls"
+import { Menu, Transition } from "@headlessui/react"
+import { classNames } from "../../utilitites"
 
 type CalendarURLs = ReturnType<typeof makeUrls>
 
@@ -90,10 +92,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <div
-      className={`bg-white rounded-md shadow absolute z-10 
-      sm:right-4 sm:top-48 lg:top-64 ${
-        isHost ? "top-104" : "top-100"
-      } w-11/12 sm:w-auto`}
+      className={`bg-white rounded-md w-11/12 sm:w-auto`}
       onKeyDown={onKeyDown}
       role="presentation"
     >
@@ -161,7 +160,6 @@ type AddToCalendarProps = {
 }
 
 const AddToCalendar: React.FC<AddToCalendarProps> = ({
-  children = "Options",
   event,
   filename = "download",
   open: initialOpen = false,
@@ -171,29 +169,65 @@ const AddToCalendar: React.FC<AddToCalendarProps> = ({
   const urls = useMemo<CalendarURLs>(() => makeUrls(event), [event])
 
   return (
-    <div>
-      {event && (
-        <button
-          type="button"
-          className="w-full inline-flex justify-center px-4 sm:px-1 py-2 border border-gray-300 
-    shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
-    focus:outline-none"
-          onClick={onToggle}
+    <div className="sm:inline-flex rounded-md shadow-sm">
+      <Menu as="div" className="relative -ml-px block">
+        <Menu.Button className="w-full text-center relative sm:inline-flex items-center rounded-md bg-white px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10">
+          <span className="sr-only">Open options</span>
+          <span className="sm:hidden text-sm font-medium text-gray-700">
+            Options
+          </span>
+          <ChevronDownIcon
+            className="ml-1 mr-2 sm:ml-0 sm:mr-0 h-5 w-5 inline"
+            aria-hidden="true"
+          />
+        </Menu.Button>
+        <Transition
+          as={React.Fragment}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
         >
-          <ChevronDownIcon className="-ml-1 mr-2 sm:ml-0 sm:mr-0 h-5 w-5 text-gray-400" />
-          <span className="sm:hidden">{children}</span>
-        </button>
-      )}
-      {open && (
-        <Dropdown
-          isHost={isHost}
-          filename={filename}
-          onToggle={onToggle}
-          urls={urls}
-        />
-      )}
+          <Menu.Items className="absolute right-0 z-10 -mr-1 mt-2 w-full sm:w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div className="py-1">
+              <Dropdown
+                isHost={isHost}
+                filename={filename}
+                onToggle={onToggle}
+                urls={urls}
+              />
+            </div>
+          </Menu.Items>
+        </Transition>
+      </Menu>
     </div>
   )
+  // return (
+  //   <div>
+  //     {event && (
+  //       <button
+  //         type="button"
+  //         className="w-full inline-flex justify-center px-4 sm:px-1 py-2 border border-gray-300
+  //   shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50
+  //   focus:outline-none"
+  //         onClick={onToggle}
+  //       >
+  //         <ChevronDownIcon className="-ml-1 mr-2 sm:ml-0 sm:mr-0 h-5 w-5 text-gray-400" />
+  //         <span className="sm:hidden">Options</span>
+  //       </button>
+  //     )}
+  //     {open && (
+  //       <Dropdown
+  //         isHost={isHost}
+  //         filename={filename}
+  //         onToggle={onToggle}
+  //         urls={urls}
+  //       />
+  //     )}
+  //   </div>
+  // )
 }
 
 export default AddToCalendar

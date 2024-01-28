@@ -46,9 +46,7 @@ const MenuBar: NextPage<Props> = ({}) => {
           </svg> */}
         </div>
         <div className="text-xl text-white font-bold tracking-tight ml-2">
-          <Link href={`/`}>
-            <a>inviteable</a>
-          </Link>
+          <Link href={`/`}>inviteable</Link>
         </div>
       </div>
       <div

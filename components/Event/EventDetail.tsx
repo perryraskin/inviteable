@@ -284,13 +284,11 @@ const EventDetail: NextPage<Props> = ({
       />
       <div className="text-center">
         <Link href="/events">
-          <a>
-            <img
-              className="mb-6 h-12 inline"
-              src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
-              alt="Inviteable"
-            />
-          </a>
+          <img
+            className="mb-6 h-12 inline"
+            src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
+            alt="Inviteable"
+          />
         </Link>
       </div>
 
@@ -320,7 +318,7 @@ const EventDetail: NextPage<Props> = ({
                 <S3
                   accept="image/*"
                   multiple={false}
-                  signingUrl="/api/s3"
+                  signingUrl={`/api/event/${event.id}/upload/banner/s3`}
                   signingUrlWithCredentials={true}
                   className="hidden"
                   id="s3"
