@@ -129,7 +129,10 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
                   className="w-24 p-1"
                   src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg"
                 ></img> */}
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"></img>
+            <img
+              src="https://inviteable.s3.amazonaws.com/images/google-logo.png"
+              className="w-6"
+            ></img>
             <span className="px-2 text-gray-900 text-base align-middle font-semibold ml-2">
               Continue with Google
             </span>
