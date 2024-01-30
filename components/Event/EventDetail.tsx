@@ -57,7 +57,7 @@ import { CameraIcon, PhotographIcon } from "@heroicons/react/outline"
 import AvatarGroupStack from "../AvatarGroupStack"
 import EventSettings from "../Modals/EventSettings"
 import { ClickableImage } from "../Elements/CickableImage"
-import { classNames } from "../../utilitites"
+import { classNames } from "../../utilities"
 
 interface Props {
   user: User

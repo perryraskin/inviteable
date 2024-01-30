@@ -3,7 +3,6 @@ import { NextPage } from "next"
 import Link from "next/link"
 import Router, { useRouter } from "next/router"
 import withLayout from "../../hocs/withLayout"
-import utilities from "../../utilities"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc)

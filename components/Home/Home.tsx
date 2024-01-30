@@ -2,7 +2,6 @@ import React from "react"
 import { NextPage } from "next"
 import Router from "next/router"
 import withLayout from "../../hocs/withLayout"
-import utilities from "../../utilities"
 
 import Landing from "../Home/Landing"
 import EventForm from "../Event/EventForm"
