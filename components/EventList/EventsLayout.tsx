@@ -29,13 +29,18 @@ const EventsLayout: NextPage<Props> = ({}) => {
 
   async function getEvents(tab = "upcoming") {
     if (loggedIn) {
-      // console.log(loggedIn)
-      const res = await fetch(`/api/user/${loggedIn.id}/events?tab=${tab}`)
-      const data = await res.json()
-      console.log(data)
-      const { authorized, events } = data
-      if (authorized) {
-        setCurrentEvents(events)
+      try {
+        const res = await fetch(`/api/user/${loggedIn.id}/events?tab=${tab}`)
+        const data = await res.json()
+        const { authorized, events } = data
+        if (authorized && Array.isArray(events)) {
+          setCurrentEvents(events)
+        } else {
+          setCurrentEvents([])
+        }
+      } catch (error) {
+        console.error("Failed to fetch events:", error)
+        setCurrentEvents([])
       }
     }
   }
