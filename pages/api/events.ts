@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../middleware/prismaClient"
-import auth from "../../middleware/auth"
 import { v4 as uuidv4 } from "uuid"
 import { EventAccess, GuestResponse } from "../../models/interfaces"
 import dayjs from "dayjs"
@@ -8,6 +7,10 @@ import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
 dayjs.extend(utc)
 dayjs.extend(timezone)
+
+function getFirstPartOfUUID(uuid: string) {
+  return uuid.split("-")[0]
+}
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
   // const userAuth = await auth(req, res)
@@ -20,9 +23,9 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   } = req
   const { userId, title } = event
   const userIdString = (userId as unknown) as string
-  const userIdInt = parseInt(userIdString)
 
-  const inviteCode = uuidv4()
+  const newUUID = uuidv4()
+  const inviteCode = getFirstPartOfUUID(newUUID)
 
   try {
     switch (method) {
@@ -36,7 +39,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
 
         let eventData = {
           data: {
-            userId: userIdInt,
+            clerkUserId: userIdString,
             title,
             imageUrl: `https://source.unsplash.com/1600x900/?${title}`,
             detailsText: "Join us for a celebration!",
@@ -58,7 +61,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         if (!userId) {
           eventData = {
             data: {
-              userId: undefined,
+              clerkUserId: undefined,
               title,
               imageUrl: "https://source.unsplash.com/1600x900/?celebration",
               detailsText: "Join us for a celebration!",
@@ -113,7 +116,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         if (userId) {
           guestResponse = await prisma.guest.create({
             data: {
-              userId: userIdInt,
+              clerkUserId: userIdString,
               eventId: eventResponse.id,
               isHost: true,
               response: GuestResponse.Accepted

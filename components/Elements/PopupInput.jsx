@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from "react"
 import { Router, useRouter } from "next/router"
-import { SearchIcon } from "@heroicons/react/solid"
 import { Combobox, Dialog, Transition } from "@headlessui/react"
 import useGlobalKeyDown from "react-global-key-down-hook"
 
@@ -16,7 +15,7 @@ function classNames(...classes) {
 //   errorMessage: string
 // }
 
-export default function PopupInput({ user, open, setOpen }) {
+export default function PopupInput({ userId, open, setOpen }) {
   const router = useRouter()
   const [isSubmittingForm, setIsSubmittingForm] = React.useState(false)
   const [eventTitle, setEventTitle] = React.useState("")
@@ -28,7 +27,7 @@ export default function PopupInput({ user, open, setOpen }) {
   }, ["Enter"])
 
   async function createEvent() {
-    const data = { event: { userId: user?.id, title: eventTitle } }
+    const data = { event: { userId, title: eventTitle } }
     // console.log(data)
     if (!isSubmittingForm) {
       setIsSubmittingForm(true)

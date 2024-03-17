@@ -43,37 +43,28 @@ import DropdownWithIcons from "../DropdownWithIcons"
 import ShareSheet from "../Modals/ShareSheet"
 import MapBox from "../MapBox"
 import LocationSearch from "../Elements/LocationSearch"
-
 import {
   Event,
   GuestResponse,
-  User,
   Guest,
-  EventAccess
+  EventAccess,
+  ClerkUser
 } from "../../models/interfaces"
-import { DropdownWithSupportedText } from "../Elements/DropdownWithSupportedText"
 import { spinner } from "../Elements/Icons"
 import { CameraIcon, PhotographIcon } from "@heroicons/react/outline"
 import AvatarGroupStack from "../AvatarGroupStack"
 import EventSettings from "../Modals/EventSettings"
 import { ClickableImage } from "../Elements/CickableImage"
-import { classNames } from "../../utilitites"
+import { classNames } from "../../utilities"
+import { useUser } from "@clerk/nextjs"
 
 interface Props {
-  user: User
-  event?: Event
+  event: Event
   inviteCode?: string
   refreshData: () => void
-  handleLogin: () => void
 }
 
-const EventDetail: NextPage<Props> = ({
-  user,
-  event,
-  inviteCode,
-  refreshData,
-  handleLogin
-}) => {
+const EventDetail: NextPage<Props> = ({ event, inviteCode, refreshData }) => {
   const calendarAddress =
     (event?.Address[0]?.address1 ? event?.Address[0]?.address1 : "") +
     (event?.Address[0]?.address2 ? ", " + event?.Address[0]?.address2 : "") +
@@ -93,6 +84,27 @@ const EventDetail: NextPage<Props> = ({
     "About"
     // "Comments"
   ]
+
+  const [clerkUserMap, setClerkUserMap] = useState<{
+    [clerkUserId: string]: ClerkUser
+  }>({})
+  useEffect(() => {
+    const userIdList = event.Guests.map(guest => guest.clerkUserId)
+    fetch("/api/clerk/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ userIdList })
+    })
+      .then(res => res.json())
+      .then((guests: { [clerkUserId: string]: ClerkUser }) =>
+        setClerkUserMap(guests)
+      )
+  }, [event])
+
+  const { user } = useUser()
+
   const [currentTab, setCurrentTab] = useState("About")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isEventSettingsOpen, setIsEventSettingsOpen] = useState(false)
@@ -100,7 +112,9 @@ const EventDetail: NextPage<Props> = ({
   const [isEditMode, setIsEditMode] = useState(false)
   const [mapBoxReset, setMapBoxReset] = useState(true)
 
-  const currentGuest = event.Guests.find(guest => guest.userId === user.id)
+  const currentGuest = user
+    ? event.Guests.find(guest => guest.clerkUserId === user.id)
+    : null
   const [response, setResponse] = useState(currentGuest?.response)
 
   const [locationSearchOpen, setLocationSearchOpen] = React.useState(false)
@@ -328,9 +342,14 @@ const EventDetail: NextPage<Props> = ({
             <div
               // onMouseOver={() => setBannerHover(true)}
               // onMouseLeave={() => setBannerHover(false)}
-              className="relative hover:opacity-80 hover:cursor-pointer"
+              className={classNames(
+                "relative",
+                currentGuest?.isHost
+                  ? "hover:opacity-80 hover:cursor-pointer"
+                  : ""
+              )}
               onClick={() =>
-                currentGuest ? handleClickFileInput("s3-banner") : null
+                currentGuest?.isHost ? handleClickFileInput("s3-banner") : null
               }
             >
               <img
@@ -455,15 +474,14 @@ const EventDetail: NextPage<Props> = ({
                         />
                       )}
                     {!user && (
-                      <button
-                        type="button"
+                      <Link
+                        href={"/signin"}
                         className="inline-flex justify-center px-4 py-2 border border-gray-300 
                     shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 
                     focus:outline-none"
-                        onClick={handleLogin}
                       >
                         <span>Respond</span>
-                      </button>
+                      </Link>
                     )}
                     {!isEditMode && (
                       <button
@@ -646,14 +664,18 @@ const EventDetail: NextPage<Props> = ({
                           {guestsAccepted.length} going
                         </span>
                       </div>
-                      <AvatarGroupStack guestList={guestsAccepted} />
+                      <AvatarGroupStack
+                        guestList={guestsAccepted}
+                        clerkUserMap={clerkUserMap}
+                      />
                     </div>
                     <p className="mt-2">
                       <StarIcon className="mr-2 h-5 w-5 text-gray-400 inline" />
                       <span className="align-middle">
                         Hosted by{" "}
                         <span className="font-semibold">
-                          {event.Host?.firstName} {event.Host?.lastName}
+                          {clerkUserMap[event.clerkUserId]?.firstName}{" "}
+                          {clerkUserMap[event.clerkUserId]?.lastName}
                         </span>
                       </span>
                     </p>
@@ -978,7 +1000,7 @@ const EventDetail: NextPage<Props> = ({
                       <img
                         className="h-10 w-10 rounded-full"
                         src={
-                          host.User.imageUrl ??
+                          clerkUserMap[host.clerkUserId]?.imageUrl ??
                           `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkCLHRFbKUEWVuldDTj1d8aFG_RYfKlNHt1g&usqp=CAU`
                         }
                       />
@@ -986,7 +1008,8 @@ const EventDetail: NextPage<Props> = ({
                     <div className="flex-1 min-w-0">
                       {/* <span className="absolute inset-0" aria-hidden="true" /> */}
                       <p className="text-base font-medium text-gray-900">
-                        {host.User.firstName} {host.User.lastName}
+                        {clerkUserMap[host.clerkUserId]?.firstName}{" "}
+                        {clerkUserMap[host.clerkUserId]?.lastName}
                       </p>
                       <StarIcon className="mr-1 h-5 w-5 text-indigo-700 inline" />
                       <span className="text-sm text-indigo-700 truncate font-medium align-middle">
@@ -995,13 +1018,13 @@ const EventDetail: NextPage<Props> = ({
                     </div>
                     {/* <a
                     className=" cursor-pointer"
-                    href={`mailto:${host.User.email}`}
+                    href={`mailto:${host.User?.email}`}
                   >
                     <MailIcon className="ml-1 h-6 w-6 text-gray-400 inline hover:text-indigo-700" />
                   </a> */}
                     {/* <a
                     className=" cursor-pointer"
-                    href={`https://wa.me/${host.User.phone}`}
+                    href={`https://wa.me/${host.User?.phone}`}
                   >
                     <ChatIcon className="h-6 w-6 text-gray-400 inline hover:text-indigo-700" />
                   </a> */}
@@ -1009,7 +1032,9 @@ const EventDetail: NextPage<Props> = ({
                 ))}
                 {guests.map((guest: Guest) => {
                   const guestResponse =
-                    guest.User.id === user.id ? response : guest.response
+                    user && guest.clerkUserId === user.id
+                      ? response
+                      : guest.response
                   return (
                     <div
                       key={guest.id}
@@ -1019,7 +1044,7 @@ const EventDetail: NextPage<Props> = ({
                         <img
                           className="h-10 w-10 rounded-full"
                           src={
-                            guest.User.imageUrl ??
+                            clerkUserMap[guest.clerkUserId]?.imageUrl ??
                             `https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkCLHRFbKUEWVuldDTj1d8aFG_RYfKlNHt1g&usqp=CAU`
                           }
                         />
@@ -1031,7 +1056,8 @@ const EventDetail: NextPage<Props> = ({
                             aria-hidden="true"
                           />
                           <p className="text-base font-medium text-gray-900">
-                            {guest.User.firstName} {guest.User.lastName}
+                            {clerkUserMap[guest.clerkUserId]?.firstName}{" "}
+                            {clerkUserMap[guest.clerkUserId]?.lastName}
                           </p>
                           {guestResponse === GuestResponse.Accepted ? (
                             <CheckCircleIcon className="mr-1 h-5 w-5 text-blue-500 inline" />
@@ -1080,8 +1106,7 @@ const demoGuests: Guest[] = [
     id: 1,
     dateCreated: new Date(),
     User: {
-      id: 1,
-      email: "",
+      id: "1",
       firstName: "Michael",
       lastName: "Foster",
       imageUrl:
@@ -1094,8 +1119,7 @@ const demoGuests: Guest[] = [
     id: 2,
     dateCreated: new Date(),
     User: {
-      id: 2,
-      email: "",
+      id: "2",
       firstName: "Dries",
       lastName: "Vincent",
       imageUrl:
@@ -1108,8 +1132,7 @@ const demoGuests: Guest[] = [
     id: 3,
     dateCreated: new Date(),
     User: {
-      id: 3,
-      email: "",
+      id: "3",
       firstName: "Lindsay",
       lastName: "Walton",
       imageUrl:
@@ -1122,8 +1145,7 @@ const demoGuests: Guest[] = [
     id: 4,
     dateCreated: new Date(),
     User: {
-      id: 4,
-      email: "",
+      id: "4",
       firstName: "Esther",
       lastName: "Howard",
       imageUrl:

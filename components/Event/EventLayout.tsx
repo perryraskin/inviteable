@@ -1,20 +1,16 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { NextPage } from "next"
 import Link from "next/link"
-import Router from "next/router"
 import withLayout from "../../hocs/withLayout"
-import utilities from "../../utilities"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc)
-import { MagicContext, LoggedInContext, LoadingContext } from "../Store"
 
-import Landing from "../Home/Landing"
 import EventDetail from "./EventDetail"
 import Section from "../Layout/Section"
 import PendingBanner from "./PendingBanner"
-
-import { Event } from "../../models/interfaces"
+import { useUser } from "@clerk/nextjs"
+import { SignInButton } from "@clerk/clerk-react"
 
 interface Props {
   eventId: string
@@ -23,30 +19,22 @@ interface Props {
 }
 
 const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
-  const [magic] = React.useContext(MagicContext)
-  const [loggedIn, setLoggedIn] = React.useContext(LoggedInContext)
-  const [isLoading, setIsLoading] = React.useContext(LoadingContext)
+  const { isLoaded, isSignedIn, user } = useUser()
   const [currentEvent, setCurrentEvent] = React.useState(null)
   const [responseCompleted, setResponseCompleted] = React.useState(false)
   const [isClaiming, setIsClaiming] = React.useState(false)
+  const [signInRequired, setSignInRequired] = React.useState(false)
 
-  /**
-   * Log user out of of the session with our app (clears the `auth` cookie)
-   * Log the user out of their session with Magic
-   */
-  const handleLogout = async () => {
-    fetch(`/api/user/logout`, {
-      method: "GET"
-    })
-    setLoggedIn(false)
-    await magic.user.logout()
-    // magic.user.logout().then(res => (window.location.href = "/"))
-  }
+  React.useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      setSignInRequired(true)
+    }
+  }, [isLoaded, isSignedIn])
 
   React.useEffect(() => {
     // handleLogout()
-    console.log("loggedIn user:", loggedIn)
-    if (loggedIn && claim) {
+    console.log("loggedIn user:", user)
+    if (isSignedIn && user && claim) {
       setIsClaiming(true)
       fetch(`/api/event/${eventId}`, {
         method: "PUT",
@@ -55,7 +43,7 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
         },
         body: JSON.stringify({
           event: {
-            userId: loggedIn.id
+            userId: user.id
           }
         })
       })
@@ -67,7 +55,7 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
           }
         })
     }
-  }, [loggedIn])
+  }, [isSignedIn])
 
   React.useEffect(() => {
     if (inviteCode) {
@@ -97,15 +85,20 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
     }
   }
 
-  async function handleLogin() {
-    // Start the Google OAuth 2.0 flow!
-    const didToken = await magic.oauth.loginWithRedirect({
-      provider: "google",
-      redirectURI: `${window.location.origin}/callback`
-    })
-  }
-
-  if (!isLoading && responseCompleted && !currentEvent) {
+  if (signInRequired) {
+    return (
+      <div className="mt-10 w-fit mx-auto">
+        <SignInButton
+          redirectUrl={`${window.location.origin}/events/${eventId}?inviteCode=${inviteCode}`}
+        >
+          <button>
+            Please <span className="underline">sign in here</span> to view this
+            event :)
+          </button>
+        </SignInButton>
+      </div>
+    )
+  } else if (!isLoaded && responseCompleted && !currentEvent) {
     return (
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 sm:w-1/2 sm:ml-auto sm:mr-auto">
         <div className="text-center">
@@ -120,8 +113,7 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
 
         <div className="mt-6">
           <a
-            href="#"
-            onClick={handleLogin}
+            href={"/signin"}
             className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
           >
             <span className="sr-only">Sign in with Google</span>
@@ -140,7 +132,7 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
         </div>
       </div>
     )
-  } else if (isLoading || !currentEvent || isClaiming) {
+  } else if (!isLoaded || !currentEvent || isClaiming) {
     return (
       <Section>
         <img
@@ -154,15 +146,13 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
     return (
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
-          {!currentEvent.userId && (
-            <PendingBanner user={loggedIn} eventId={currentEvent.id} />
+          {!currentEvent.clerkUserId && (
+            <PendingBanner eventId={currentEvent.id} />
           )}
           <EventDetail
-            user={loggedIn}
             event={currentEvent}
             inviteCode={inviteCode}
             refreshData={getEvent}
-            handleLogin={handleLogin}
           />
         </div>
       </div>

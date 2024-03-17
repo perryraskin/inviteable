@@ -1,43 +1,39 @@
 import React from "react"
-import { MagicContext } from "../Store"
 import { ExclamationCircleIcon, XIcon } from "@heroicons/react/outline"
 import { spinner } from "../Elements/Icons"
+import { useUser } from "@clerk/nextjs"
+import { SignInButton } from "@clerk/clerk-react"
 
-export default function PendingBanner({ user, eventId }) {
-  const [magic] = React.useContext(MagicContext)
+export default function PendingBanner({ eventId }) {
+  const { isSignedIn, user } = useUser()
   const [isSubmitting, setIsSubmitting] = React.useState(false)
 
   async function claimEvent() {
     setIsSubmitting(true)
-    if (user) {
-      fetch(`/api/event/${eventId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          event: {
-            userId: user.id
-          }
-        })
+    // if (user) {
+    fetch(`/api/event/${eventId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        event: {
+          userId: user.id
+        }
       })
-        .then(res => res.json())
-        .then(data => {
-          if (!data.error) {
-            window.location.reload()
-          }
-        })
-    } else {
-      localStorage.setItem(
-        "authRedirectUrl",
-        `${window.location.origin}/events/${eventId}?claim=true`
-      )
-      // Start the Google OAuth 2.0 flow!
-      const didToken = await magic.oauth.loginWithRedirect({
-        provider: "google",
-        redirectURI: `${window.location.origin}/callback`
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          window.location.reload()
+        }
       })
-    }
+    // } else {
+    //   localStorage.setItem(
+    //     "authRedirectUrl",
+    //     `${window.location.origin}/events/${eventId}?claim=true`
+    //   )
+    // }
   }
   return (
     <div className="fixed bottom-0 inset-x-0 pb-2 sm:pb-5 z-10">
@@ -58,13 +54,26 @@ export default function PendingBanner({ user, eventId }) {
               </p>
             </div>
             <div className="order-3 mt-2 flex-shrink-0 w-full sm:order-2 sm:mt-0 sm:w-auto">
-              <a
-                href="#"
-                onClick={claimEvent}
-                className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-orange-600 bg-white hover:bg-orange-50"
-              >
-                {spinner(isSubmitting, "text-orange-600")}Claim now
-              </a>
+              {isSignedIn ? (
+                <a
+                  role="button"
+                  onClick={claimEvent}
+                  className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-orange-600 bg-white hover:bg-orange-50"
+                >
+                  {spinner(isSubmitting, "text-orange-600")}Claim now
+                </a>
+              ) : (
+                <SignInButton
+                  redirectUrl={`${window.location.origin}/events/${eventId}?claim=true`}
+                >
+                  <button
+                    type="button"
+                    className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-orange-600 bg-white hover:bg-orange-50"
+                  >
+                    {spinner(isSubmitting, "text-orange-600")}Claim now
+                  </button>
+                </SignInButton>
+              )}
             </div>
             <div className="order-2 flex-shrink-0 sm:order-3 sm:ml-2">
               <button

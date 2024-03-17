@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react"
 
 import makeUrls, { CalendarEvent } from "../../utilities/calendarUrls"
 import { Menu, Transition } from "@headlessui/react"
-import { classNames } from "../../utilitites"
 
 type CalendarURLs = ReturnType<typeof makeUrls>
 

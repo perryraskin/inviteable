@@ -2,10 +2,10 @@ import React from "react"
 import Link from "next/link"
 import { Router, useRouter } from "next/router"
 import { ChevronRightIcon, StarIcon } from "@heroicons/react/solid"
-import { MagicContext, LoggedInContext, LoadingContext } from "../Store"
 
 import { spinner } from "../Elements/Icons"
 import Subscribe from "./Subscribe"
+import { SignInButton, useAuth } from "@clerk/nextjs"
 
 const stats = [
   { label: "Founded", value: "2021" },
@@ -115,19 +115,18 @@ const footerNavigation = {
 
 export default function Landing() {
   const router = useRouter()
+  const origin = typeof window !== "undefined" ? window.location.origin : ""
   const [isSubmittingForm, setIsSubmittingForm] = React.useState(false)
   const [eventTitle, setEventTitle] = React.useState("")
-  const [loggedIn, setLoggedIn] = React.useContext(LoggedInContext)
-  const [isLoading, setIsLoading] = React.useContext(LoadingContext)
+  const { userId } = useAuth()
   const [email, setEmail] = React.useState("")
-  const [magic] = React.useContext(MagicContext)
 
   // React.useEffect(() => {
-  //   console.log(loggedIn)
-  // }, [loggedIn])
+  //   console.log(userId)
+  // }, [userId])
 
   async function createEvent() {
-    const data = { event: { userId: loggedIn?.id, title: eventTitle } }
+    const data = { event: { userId, title: eventTitle } }
     // console.log(data)
     if (!eventTitle) {
       alert("Please enter an event title")
@@ -154,14 +153,6 @@ export default function Landing() {
     }
   }
 
-  const handleLogin = async () => {
-    // Start the Google OAuth 2.0 flow!
-    const didToken = await magic.oauth.loginWithRedirect({
-      provider: "google",
-      redirectURI: `${window.location.origin}/callback`
-    })
-  }
-
   const handleKeyDown = event => {
     if (event.key === "Enter") {
       createEvent()
@@ -183,25 +174,19 @@ export default function Landing() {
                 />
               </div>
               <div className="mt-10">
-                <div>
-                  <Link
-                    href={loggedIn ? "/events" : "#"}
-                    onClick={loggedIn ? null : handleLogin}
-                    className="inline-flex space-x-4"
-                  >
-                    <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
-                      {loggedIn ? "Welcome back!" : "Have an account?"}
-                    </span>
-                    <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
-                      <span>{loggedIn ? "My Events" : "Sign in"}</span>
-                      <ChevronRightIcon
-                        style={{ marginTop: "2px" }}
-                        className="h-5 w-5"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Link>
-                </div>
+                <Link href="/events" className="inline-flex space-x-4">
+                  <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
+                    {userId ? "Welcome back!" : "Have an account?"}
+                  </span>
+                  <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
+                    <span>{userId ? "My Events" : "Sign in"}</span>
+                    <ChevronRightIcon
+                      style={{ marginTop: "2px" }}
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </Link>
                 <div className="mt-6 sm:max-w-xl md:text-left text-center">
                   <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
                     Events of any kind, with privacy in mind

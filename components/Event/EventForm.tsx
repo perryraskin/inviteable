@@ -2,7 +2,6 @@ import React, { useState } from "react"
 import { NextPage } from "next"
 import Router from "next/router"
 import withLayout from "../../hocs/withLayout"
-import utilities from "../../utilities"
 import CountrySelect from "../CountrySelect"
 
 import dayjs from "dayjs"

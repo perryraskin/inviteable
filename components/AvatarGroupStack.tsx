@@ -1,15 +1,13 @@
 import React from "react"
 import { NextPage } from "next"
-import Router from "next/router"
-
-import Avatar from "react-avatar"
-import { Guest } from "../models/interfaces"
+import { ClerkUser, Guest } from "../models/interfaces"
 
 interface Props {
   guestList: Guest[]
+  clerkUserMap: { [clerkUserId: string]: ClerkUser }
 }
 
-const AvatarGroupStack: NextPage<Props> = ({ guestList }) => {
+const AvatarGroupStack: NextPage<Props> = ({ guestList, clerkUserMap }) => {
   return (
     <>
       <div className="flex -space-x-2 relative z-0 overflow-hidden">
@@ -23,9 +21,13 @@ const AvatarGroupStack: NextPage<Props> = ({ guestList }) => {
               <img
                 key={index}
                 className="relative z-30 inline-block h-6 w-6 rounded-full ring-2 ring-white"
-                src={guest.User.imageUrl}
-                // alt={guest.User.firstName + " " + guest.User.lastName}
-                title={guest.User.firstName + " " + guest.User.lastName}
+                src={clerkUserMap[guest.clerkUserId]?.imageUrl}
+                // alt={clerkUserMap[guest.clerkUserId]?.firstName + " " + clerkUserMap[guest.clerkUserId]?.lastName}
+                title={
+                  clerkUserMap[guest.clerkUserId]?.firstName +
+                  " " +
+                  clerkUserMap[guest.clerkUserId]?.lastName
+                }
               />
             )
           }
