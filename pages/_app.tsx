@@ -56,7 +56,6 @@ function MyApp({ Component, pageProps }) {
 
       {process.env.NODE_ENV == "production" ? (
         <>
-          // Analytics Script
           <Script
             src="https://api.pirsch.io/pirsch.js"
             id="pirschjs"
