@@ -62,10 +62,13 @@ function MyApp({ Component, pageProps }) {
             data-code="j367R1dAJFBl2vlor7pXa2e3KYn3QbkR"
             strategy="afterInteractive"
           />
+          <Script id="coframe-script" strategy="afterInteractive">
+            {`window.COFRAME_PAGE_ID="65f77a29315a94b6a95d29d4";`}
+          </Script>
           <Script
-            src={`window.COFRAME_PAGE_ID="65f77a29315a94b6a95d29d4";`}
-          ></Script>
-          <Script src="https://cdn.jsdelivr.net/npm/coframe-ai/dist/cf.min.js"></Script>
+            src="https://cdn.jsdelivr.net/npm/coframe-ai/dist/cf.min.js"
+            strategy="afterInteractive"
+          />
         </>
       ) : (
         ""
