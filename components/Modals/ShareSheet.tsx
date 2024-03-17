@@ -123,7 +123,7 @@ const ShareSheet: NextPage<Props> = ({
                       className="inline-flex justify-center px-4 py-2 border border-gray-300 
                     shadow-sm text-sm font-medium rounded-md text-white bg-blue-400 hover:bg-blue-300 
                     focus:outline-none"
-                      href={`sms:&body=${inviteUrl}`}
+                      href={`sms:&body=${encodeURIComponent(inviteUrl)}`}
                     >
                       {ChatIcon()}
                     </a>
@@ -131,7 +131,9 @@ const ShareSheet: NextPage<Props> = ({
                       className="inline-flex ml-2 justify-center px-4 py-2 border border-gray-300 
                     shadow-sm text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-400 
                     focus:outline-none"
-                      href={`whatsapp://send?text=${inviteUrl}`}
+                      href={`whatsapp://send?text=${encodeURIComponent(
+                        inviteUrl
+                      )}`}
                     >
                       {WhatsAppIcon()}
                     </a>
