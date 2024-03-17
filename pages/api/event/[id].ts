@@ -1,11 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../../middleware/prismaClient"
-import { User } from "@prisma/client"
-import auth from "../../../middleware/auth"
 import { EventAccess, GuestResponse } from "../../../models/interfaces"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
+import { getAuth } from "@clerk/nextjs/server"
 dayjs.extend(utc)
 dayjs.extend(timezone)
 
@@ -84,25 +83,28 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         })
       }
       // if no userId, event has not been claimed (and has only a title)
-      else if (!event.userId || event.id === 1) {
+      else if (!event.clerkUserId || event.id === 1000001) {
         console.log(event)
         res.status(200)
         res.json({ authorized: true, event })
       }
       // otherwise, check for logged-in host or guest
       else {
-        const userAuth = await auth(req, res)
-        const user = userAuth as User
+        const { userId } = getAuth(req)
         // console.log(user)
 
         const isGuest = event.Guests
-          ? event.Guests.some(g => g.userId === user.id && g.isHost === false)
+          ? event.Guests.some(
+              g => g.clerkUserId === userId && g.isHost === false
+            )
           : false
 
         const isHost =
-          event.userId === user.id ||
+          event.clerkUserId === userId ||
           (event.Guests
-            ? event.Guests.some(g => g.userId === user.id && g.isHost === true)
+            ? event.Guests.some(
+                g => g.clerkUserId === userId && g.isHost === true
+              )
             : false)
         // console.log(event.Host, user)
         // if host or guest or event is public, return event
@@ -111,22 +113,18 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           res.json({ authorized: true, event })
         }
         // if not host or guest, check for invite code
-        else if (
-          user.id > 0 &&
-          inviteCode &&
-          inviteCode === event.Invites[0].code
-        ) {
+        else if (userId && inviteCode && inviteCode === event.Invites[0].code) {
           console.log(inviteCode, event.Invites[0].code)
           let guest = await prisma.guest.findFirst({
             where: {
               eventId: parseInt(eventIdString),
-              userId: user.id
+              clerkUserId: userId
             }
           })
           if (!guest) {
             guest = await prisma.guest.create({
               data: {
-                userId: user.id,
+                clerkUserId: userId,
                 eventId: parseInt(eventIdString)
               }
             })
@@ -148,6 +146,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               Invites: true
             }
           })
+
           res.status(200)
           res.json({ authorized: true, event: updatedEvent, guest })
         } else {
@@ -163,8 +162,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
   }
   // UPDATE
   else if (req.method === "PUT") {
-    const userAuth = await auth(req, res)
-    const user = userAuth as User
+    const { userId } = getAuth(req)
 
     const event = await prisma.event.findUnique({
       where: {
@@ -179,13 +177,13 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
     })
 
     const isHost =
-      event.userId === user.id ||
+      event.clerkUserId === userId ||
       (event.Guests
-        ? event.Guests.some(g => g.userId === user.id && g.isHost === true)
+        ? event.Guests.some(g => g.clerkUserId === userId && g.isHost === true)
         : false)
 
     const isGuest = event.Guests
-      ? event.Guests.some(g => g.userId === user.id)
+      ? event.Guests.some(g => g.clerkUserId === userId)
       : false
 
     // Record new guest response
@@ -193,7 +191,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       const response = req.body.response as GuestResponse
       const guestResponse = await prisma.guest.create({
         data: {
-          userId: user.id,
+          clerkUserId: userId,
           eventId: parseInt(eventIdString),
           isHost: false,
           response
@@ -204,24 +202,24 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       res.json({ authorized: true, guestResponse })
     }
     // Not authorized to update event if not host
-    else if (event.userId && !isHost) {
+    else if (event.clerkUserId && !isHost) {
       res.status(401)
       res.json({ authorized: false })
     }
     // Claim the un-claimed event
-    else if (!event.userId) {
+    else if (!event.clerkUserId) {
       const eventResponse = await prisma.event.update({
         where: {
           id: parseInt(eventIdString)
         },
         data: {
-          userId: user.id
+          clerkUserId: userId
         }
       })
 
       const guestResponse = await prisma.guest.create({
         data: {
-          userId: user.id,
+          clerkUserId: userId,
           eventId: parseInt(eventIdString),
           isHost: true,
           response: GuestResponse.Accepted

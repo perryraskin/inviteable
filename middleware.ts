@@ -7,8 +7,8 @@ import { NextResponse } from "next/server"
 export default authMiddleware({
   // publicRoutes: req =>
   //   req.url === "/" || (req.url !== "/events/" && req.url.includes("/events/"))
-  publicRoutes: ["/", "/events/:eventId(\\d+)"],
-  debug: true
+  publicRoutes: ["/", "/events/(.*)", "/api/event/(.*)", "/api/events"]
+  // debug: true
   // afterAuth(auth, req, evt) {
   //   // Handle users who aren't authenticated
   //   if (!auth.userId && !auth.isPublicRoute) {

@@ -1,60 +1,57 @@
 import React from "react"
 import { NextPage } from "next"
 import Link from "next/link"
-import Router, { useRouter } from "next/router"
 import withLayout from "../../hocs/withLayout"
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
 dayjs.extend(utc)
-import { MagicContext, LoggedInContext, LoadingContext } from "../Store"
 
 import EventList from "./EventList"
 import Section from "../Layout/Section"
 import Tabs from "../Elements/Tabs"
 import PopupInput from "../Elements/PopupInput"
 import { PlusIcon } from "@heroicons/react/solid"
+import { UserButton, useUser } from "@clerk/nextjs"
 
 interface Props {}
 
 const EventsLayout: NextPage<Props> = ({}) => {
-  const [magic] = React.useContext(MagicContext)
-  const [loggedIn, setLoggedIn] = React.useContext(LoggedInContext)
-  const [isLoading, setIsLoading] = React.useContext(LoadingContext)
+  const { isLoaded, isSignedIn, user } = useUser()
   const [currentEvents, setCurrentEvents] = React.useState([])
   const [popupInputOpen, setPopupInputOpen] = React.useState(false)
 
   React.useEffect(() => {
-    getEvents()
-  }, [loggedIn])
+    if (isSignedIn) {
+      getEvents()
+    }
+  }, [isSignedIn, user])
 
   async function getEvents(tab = "upcoming") {
-    if (loggedIn) {
-      try {
-        const res = await fetch(`/api/user/${loggedIn.id}/events?tab=${tab}`)
-        const data = await res.json()
-        const { authorized, events } = data
-        if (authorized && Array.isArray(events)) {
-          setCurrentEvents(events)
-        } else {
-          setCurrentEvents([])
-        }
-      } catch (error) {
-        console.error("Failed to fetch events:", error)
+    try {
+      const res = await fetch(`/api/user/${user.id}/events?tab=${tab}`)
+      const data = await res.json()
+      const { authorized, events } = data
+      if (authorized && Array.isArray(events)) {
+        setCurrentEvents(events)
+      } else {
         setCurrentEvents([])
       }
+    } catch (error) {
+      console.error("Failed to fetch events:", error)
+      setCurrentEvents([])
     }
   }
 
-  async function handleLogin() {
-    localStorage.setItem("authRedirectUrl", `${window.location.origin}/events`)
-    // Start the Google OAuth 2.0 flow!
-    const didToken = await magic.oauth.loginWithRedirect({
-      provider: "google",
-      redirectURI: `${window.location.origin}/callback`
-    })
-  }
+  // async function handleLogin() {
+  //   localStorage.setItem("authRedirectUrl", `${window.location.origin}/events`)
+  //   // Start the Google OAuth 2.0 flow!
+  //   const didToken = await magic.oauth.loginWithRedirect({
+  //     provider: "google",
+  //     redirectURI: `${window.location.origin}/callback`
+  //   })
+  // }
 
-  if (!isLoading && !loggedIn) {
+  if (isLoaded && !isSignedIn) {
     return (
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 sm:w-1/2 sm:ml-auto sm:mr-auto">
         <div className="text-center">
@@ -70,7 +67,7 @@ const EventsLayout: NextPage<Props> = ({}) => {
         <div className="mt-6">
           <a
             href="#"
-            onClick={handleLogin}
+            // onClick={handleLogin}
             className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
           >
             <span className="sr-only">Sign in with Google</span>
@@ -89,7 +86,7 @@ const EventsLayout: NextPage<Props> = ({}) => {
         </div>
       </div>
     )
-  } else if (isLoading) {
+  } else if (!isLoaded) {
     return (
       <Section>
         <img
@@ -112,10 +109,11 @@ const EventsLayout: NextPage<Props> = ({}) => {
           </Link>
         </div>
         <PopupInput
-          user={loggedIn}
+          userId={user.id}
           open={popupInputOpen}
           setOpen={setPopupInputOpen}
         />
+        {/* <UserButton /> */}
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b pb-6">
@@ -139,7 +137,7 @@ const EventsLayout: NextPage<Props> = ({}) => {
               </div>
             </div>
             <Tabs tabs={tabs} refreshData={getEvents} />
-            <EventList user={loggedIn} events={currentEvents} />
+            <EventList events={currentEvents} />
           </div>
         </div>
       </React.Fragment>

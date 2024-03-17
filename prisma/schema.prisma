@@ -29,6 +29,7 @@ model User {
 model Event {
   id             Int            @id @default(autoincrement())
   dateCreated    DateTime       @default(now())
+  clerkUserId    String?
   userId         Int?
   title          String
   dateTimeStart  DateTime?
@@ -90,6 +91,7 @@ model Guest {
   dateCreated DateTime @default(now())
   eventId     Int?
   userId      Int?
+  clerkUserId String?
   isHost      Boolean  @default(false)
   response    Int?     @default(0)
   Event       Event?   @relation(fields: [eventId], references: [id])
@@ -101,6 +103,7 @@ model Thread {
   dateCreated DateTime  @default(now())
   eventId     Int?
   userId      Int?
+  clerkUserId String?
   body        String?
   Event       Event?    @relation(fields: [eventId], references: [id])
   Author      User?     @relation(fields: [userId], references: [id])
@@ -112,6 +115,7 @@ model Comment {
   dateCreated DateTime @default(now())
   eventId     Int?
   userId      Int?
+  clerkUserId String?
   threadId    Int?
   isReply     Boolean  @default(false)
   body        String?

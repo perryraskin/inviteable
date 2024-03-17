@@ -1,21 +1,39 @@
-export interface User {
-  id: number
-  firstName: string
-  lastName: string
-  imageUrl: string
-  email: string
-  issuer?: string
-  phone?: string
-  EventsHosted?: Event[]
-  EventsInvited?: Guest[]
-  ThreadsPosted?: any[]
-  CommentsPosted?: any[]
+// export interface User {
+//   id: number
+//   firstName: string
+//   lastName: string
+//   imageUrl: string
+//   email: string
+//   issuer?: string
+//   phone?: string
+//   EventsHosted?: Event[]
+//   EventsInvited?: Guest[]
+//   ThreadsPosted?: any[]
+//   CommentsPosted?: any[]
+// }
+
+export interface ClerkUser {
+  createdAt?: Date
+  updatedAt?: Date
+  id?: string
+  hasImage?: boolean
+  imageUrl?: string
+  firstName?: string
+  lastName?: string
+  emailAddresses?: any[]
+  phoneNumbers?: any[]
+  lastSignInAt?: Date
+  passwordEnabled?: boolean
+  totpEnabled?: boolean
+  backupCodeEnabled?: boolean
+  twoFactorEnabled?: boolean
 }
 
 export interface Event {
   id: number
   dateCreated: Date
   userId: number
+  clerkUserId?: string
   title: string
   dateTimeStart: Date
   dateTimeEnd: Date
@@ -26,7 +44,7 @@ export interface Event {
   designImageUrl: string
   detailsText: string
   detailsHtml: string
-  Host: User
+  Host: ClerkUser
   Guests: Guest[]
   Settings: EventSettings
   Invites: EventInvite[]
@@ -57,7 +75,8 @@ export interface Guest {
   dateCreated: Date
   eventId?: number
   userId?: number
-  User?: User
+  clerkUserId?: string
+  User?: ClerkUser
   Event?: Event
   isHost: boolean
   response: GuestResponse

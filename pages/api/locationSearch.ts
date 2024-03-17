@@ -1,12 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import prisma from "../../middleware/prismaClient"
-import auth from "../../middleware/auth"
-import { GuestResponse, User } from "../../models/interfaces"
+import { getAuth } from "@clerk/nextjs/server"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
-  const userAuth = await auth(req, res)
-  const userUnknown = userAuth as unknown
-  const user = userUnknown as User
+  const { userId } = getAuth(req)
 
   const { method, query } = req
 

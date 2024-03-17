@@ -1,12 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../../middleware/prismaClient"
-import auth from "../../../middleware/auth"
-import { GuestResponse, User } from "../../../models/interfaces"
+import { getAuth } from "@clerk/nextjs/server"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
-  const userAuth = await auth(req, res)
-  const userUnknown = userAuth as unknown
-  const user = userUnknown as User
+  const { userId } = getAuth(req)
 
   const {
     method,
@@ -26,7 +23,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             User: true
           }
         })
-        if (user.id === guest.userId) {
+        if (userId === guest.clerkUserId) {
           res.status(200)
           res.json({ authorized: true, guest })
         }
@@ -43,7 +40,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           }
         })
 
-        if (user.id === guest.userId) {
+        if (userId === guest.clerkUserId) {
           const guestResponse = await prisma.guest.update({
             where: {
               id: parseInt(id as string)

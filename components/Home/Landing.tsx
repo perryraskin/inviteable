@@ -5,7 +5,7 @@ import { ChevronRightIcon, StarIcon } from "@heroicons/react/solid"
 
 import { spinner } from "../Elements/Icons"
 import Subscribe from "./Subscribe"
-import { RedirectToSignIn, useAuth } from "@clerk/nextjs"
+import { useAuth } from "@clerk/nextjs"
 
 const stats = [
   { label: "Founded", value: "2021" },
@@ -175,7 +175,7 @@ export default function Landing() {
               <div className="mt-10">
                 <div>
                   <Link
-                    href={userId ? "/events" : "#"}
+                    href={userId ? "/events" : "/signin"}
                     // onClick={userId ? null : handleLogin}
                     className="inline-flex space-x-4"
                   >
@@ -184,7 +184,6 @@ export default function Landing() {
                     </span>
                     <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
                       <span>{userId ? "My Events" : "Sign in"}</span>
-                      <RedirectToSignIn />
                       <ChevronRightIcon
                         style={{ marginTop: "2px" }}
                         className="h-5 w-5"

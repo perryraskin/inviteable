@@ -33,7 +33,7 @@ export default function LocationSearch({
         .then(res => res.json())
         .then(data => {
           // console.log(data)
-          setLocationResults(data.locations)
+          setLocationResults(data?.locations ?? [])
         })
     }
   }, [query])
