@@ -23,10 +23,9 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         acc[user.id] = user
         return acc
       }, {})
-      res.status(200).json(usersDict)
+      return res.status(200).json(usersDict)
     } catch (err) {
-      res.status(500)
-      res.json({ authorized: false, error: err.message })
+      return res.status(500).json({ authorized: false, error: err.message })
     }
   } else {
     return

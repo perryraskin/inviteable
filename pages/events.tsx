@@ -1,5 +1,5 @@
-import React, { use } from "react"
-import { GetServerSideProps, NextPage } from "next"
+import React from "react"
+import { NextPage } from "next"
 import EventsLayout from "../components/EventList/EventsLayout"
 import { NextSeo } from "next-seo"
 
