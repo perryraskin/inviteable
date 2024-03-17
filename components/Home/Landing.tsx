@@ -5,7 +5,7 @@ import { ChevronRightIcon, StarIcon } from "@heroicons/react/solid"
 
 import { spinner } from "../Elements/Icons"
 import Subscribe from "./Subscribe"
-import { useAuth } from "@clerk/nextjs"
+import { SignInButton, useAuth } from "@clerk/nextjs"
 
 const stats = [
   { label: "Founded", value: "2021" },
@@ -115,6 +115,7 @@ const footerNavigation = {
 
 export default function Landing() {
   const router = useRouter()
+  const origin = typeof window !== "undefined" ? window.location.origin : ""
   const [isSubmittingForm, setIsSubmittingForm] = React.useState(false)
   const [eventTitle, setEventTitle] = React.useState("")
   const { userId } = useAuth()
@@ -173,25 +174,19 @@ export default function Landing() {
                 />
               </div>
               <div className="mt-10">
-                <div>
-                  <Link
-                    href={userId ? "/events" : "/signin"}
-                    // onClick={userId ? null : handleLogin}
-                    className="inline-flex space-x-4"
-                  >
-                    <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
-                      {userId ? "Welcome back!" : "Have an account?"}
-                    </span>
-                    <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
-                      <span>{userId ? "My Events" : "Sign in"}</span>
-                      <ChevronRightIcon
-                        style={{ marginTop: "2px" }}
-                        className="h-5 w-5"
-                        aria-hidden="true"
-                      />
-                    </span>
-                  </Link>
-                </div>
+                <Link href="/events" className="inline-flex space-x-4">
+                  <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
+                    {userId ? "Welcome back!" : "Have an account?"}
+                  </span>
+                  <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
+                    <span>{userId ? "My Events" : "Sign in"}</span>
+                    <ChevronRightIcon
+                      style={{ marginTop: "2px" }}
+                      className="h-5 w-5"
+                      aria-hidden="true"
+                    />
+                  </span>
+                </Link>
                 <div className="mt-6 sm:max-w-xl md:text-left text-center">
                   <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
                     Events of any kind, with privacy in mind

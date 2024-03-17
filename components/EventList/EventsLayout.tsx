@@ -99,6 +99,11 @@ const EventsLayout: NextPage<Props> = ({}) => {
   } else
     return (
       <React.Fragment>
+        <div className="p-4">
+          <div className="w-fit ml-auto">
+            <UserButton />
+          </div>
+        </div>
         <div className="text-center mt-4">
           <Link href="/">
             <img
@@ -113,7 +118,7 @@ const EventsLayout: NextPage<Props> = ({}) => {
           open={popupInputOpen}
           setOpen={setPopupInputOpen}
         />
-        {/* <UserButton /> */}
+
         <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b pb-6">
