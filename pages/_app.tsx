@@ -55,13 +55,19 @@ function MyApp({ Component, pageProps }) {
       />
 
       {process.env.NODE_ENV == "production" ? (
-        // Analytics Script
-        <Script
-          src="https://api.pirsch.io/pirsch.js"
-          id="pirschjs"
-          data-code="j367R1dAJFBl2vlor7pXa2e3KYn3QbkR"
-          strategy="afterInteractive"
-        />
+        <>
+          // Analytics Script
+          <Script
+            src="https://api.pirsch.io/pirsch.js"
+            id="pirschjs"
+            data-code="j367R1dAJFBl2vlor7pXa2e3KYn3QbkR"
+            strategy="afterInteractive"
+          />
+          <Script
+            src={`window.COFRAME_PAGE_ID="65f77a29315a94b6a95d29d4";`}
+          ></Script>
+          <Script src="https://cdn.jsdelivr.net/npm/coframe-ai/dist/cf.min.js"></Script>
+        </>
       ) : (
         ""
       )}
