@@ -42,15 +42,6 @@ const EventsLayout: NextPage<Props> = ({}) => {
     }
   }
 
-  // async function handleLogin() {
-  //   localStorage.setItem("authRedirectUrl", `${window.location.origin}/events`)
-  //   // Start the Google OAuth 2.0 flow!
-  //   const didToken = await magic.oauth.loginWithRedirect({
-  //     provider: "google",
-  //     redirectURI: `${window.location.origin}/callback`
-  //   })
-  // }
-
   if (isLoaded && !isSignedIn) {
     return (
       <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 sm:w-1/2 sm:ml-auto sm:mr-auto">
