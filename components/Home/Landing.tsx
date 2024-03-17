@@ -2,10 +2,10 @@ import React from "react"
 import Link from "next/link"
 import { Router, useRouter } from "next/router"
 import { ChevronRightIcon, StarIcon } from "@heroicons/react/solid"
-import { MagicContext, LoggedInContext, LoadingContext } from "../Store"
 
 import { spinner } from "../Elements/Icons"
 import Subscribe from "./Subscribe"
+import { useAuth } from "@clerk/nextjs"
 
 const stats = [
   { label: "Founded", value: "2021" },
@@ -117,17 +117,15 @@ export default function Landing() {
   const router = useRouter()
   const [isSubmittingForm, setIsSubmittingForm] = React.useState(false)
   const [eventTitle, setEventTitle] = React.useState("")
-  const [loggedIn, setLoggedIn] = React.useContext(LoggedInContext)
-  const [isLoading, setIsLoading] = React.useContext(LoadingContext)
+  const { userId } = useAuth()
   const [email, setEmail] = React.useState("")
-  const [magic] = React.useContext(MagicContext)
 
   // React.useEffect(() => {
-  //   console.log(loggedIn)
-  // }, [loggedIn])
+  //   console.log(userId)
+  // }, [userId])
 
   async function createEvent() {
-    const data = { event: { userId: loggedIn?.id, title: eventTitle } }
+    const data = { event: { userId, title: eventTitle } }
     // console.log(data)
     if (!eventTitle) {
       alert("Please enter an event title")
@@ -154,14 +152,6 @@ export default function Landing() {
     }
   }
 
-  const handleLogin = async () => {
-    // Start the Google OAuth 2.0 flow!
-    const didToken = await magic.oauth.loginWithRedirect({
-      provider: "google",
-      redirectURI: `${window.location.origin}/callback`
-    })
-  }
-
   const handleKeyDown = event => {
     if (event.key === "Enter") {
       createEvent()
@@ -185,15 +175,15 @@ export default function Landing() {
               <div className="mt-10">
                 <div>
                   <Link
-                    href={loggedIn ? "/events" : "#"}
-                    onClick={loggedIn ? null : handleLogin}
+                    href={userId ? "/events" : "/signin"}
+                    // onClick={userId ? null : handleLogin}
                     className="inline-flex space-x-4"
                   >
                     <span className="rounded bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-500 tracking-wide uppercase">
-                      {loggedIn ? "Welcome back!" : "Have an account?"}
+                      {userId ? "Welcome back!" : "Have an account?"}
                     </span>
                     <span className="inline-flex items-center text-sm font-medium text-red-500 space-x-1">
-                      <span>{loggedIn ? "My Events" : "Sign in"}</span>
+                      <span>{userId ? "My Events" : "Sign in"}</span>
                       <ChevronRightIcon
                         style={{ marginTop: "2px" }}
                         className="h-5 w-5"

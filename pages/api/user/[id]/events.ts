@@ -1,26 +1,20 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import prisma from "../../../../middleware/prismaClient"
-import { User } from "@prisma/client"
-import auth from "../../../../middleware/auth"
-import { EventAccess, GuestResponse } from "../../../../models/interfaces"
-import dayjs from "dayjs"
-import e from "express"
+import { getAuth } from "@clerk/nextjs/server"
 
 export default async function(req: NextApiRequest, res: NextApiResponse) {
-  const userAuth = await auth(req, res)
-  const user = userAuth as User
+  const { userId } = getAuth(req)
 
   const {
     query: { id, tab }
   } = req
 
   // console.log("ssr:", ssr)
-  const userId = id as unknown
-  const userIdString = userId as string
+  const requestedUserId = (id as unknown) as string
   let events
   if (req.method === "GET") {
     try {
-      if (parseInt(userIdString) === user.id) {
+      if (requestedUserId === userId) {
         events = await prisma.event.findMany({
           where: {
             dateTimeStart: {
@@ -29,7 +23,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             },
             Guests: {
               some: {
-                userId: user.id
+                clerkUserId: userId
               }
             }
           },

@@ -2,16 +2,15 @@ import React from "react"
 import { NextPage } from "next"
 import Link from "next/link"
 import { CalendarIcon, ChevronRightIcon } from "@heroicons/react/solid"
-import { Event, User } from "../../models/interfaces"
+import { Event } from "../../models/interfaces"
 import dayjs from "dayjs"
 import Loader from "../Modals/Loader"
 
 interface Props {
-  user: User
   events: Event[]
 }
 
-const EventList: NextPage<Props> = ({ user, events }) => {
+const EventList: NextPage<Props> = ({ events }) => {
   const [isLoading, setIsLoading] = React.useState(false)
   const [loaderOpen, setLoaderOpen] = React.useState(false)
   return (
