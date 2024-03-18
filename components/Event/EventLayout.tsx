@@ -11,7 +11,7 @@ import Section from "../Layout/Section"
 import PendingBanner from "./PendingBanner"
 import { useUser } from "@clerk/nextjs"
 import { SignInButton } from "@clerk/clerk-react"
-import { EventAccess } from "../../models/interfaces"
+import { ClerkUser, EventAccess } from "../../models/interfaces"
 
 interface Props {
   eventId: string
@@ -28,6 +28,10 @@ const EventLayout: NextPage<Props> = ({
 }) => {
   const { isLoaded, isSignedIn, user } = useUser()
   const [currentEvent, setCurrentEvent] = React.useState(null)
+  const [clerkUserMap, setClerkUserMap] = React.useState<{
+    [clerkUserId: string]: ClerkUser
+  }>({})
+
   const [responseCompleted, setResponseCompleted] = React.useState(false)
   const [isClaiming, setIsClaiming] = React.useState(false)
   const [signInRequired, setSignInRequired] = React.useState(false)
@@ -87,6 +91,21 @@ const EventLayout: NextPage<Props> = ({
     if (authorized) {
       setResponseCompleted(true)
       setCurrentEvent(event)
+      if (event) {
+        const userIdList = event.Guests.map(guest => guest.clerkUserId)
+        fetch("/api/clerk/users", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ userIdList })
+        })
+          .then(res => res.json())
+          .then((guests: { [clerkUserId: string]: ClerkUser }) => {
+            setClerkUserMap(guests ?? {})
+            console.log("CLERK", guests)
+          })
+      }
     } else {
       setResponseCompleted(true)
     }
@@ -158,6 +177,7 @@ const EventLayout: NextPage<Props> = ({
           )}
           <EventDetail
             event={currentEvent}
+            clerkUserMap={clerkUserMap}
             inviteCode={inviteCode}
             refreshData={getEvent}
           />

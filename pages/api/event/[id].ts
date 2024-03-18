@@ -37,8 +37,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       })
 
       if (!event) {
-        res.status(404)
-        res.json({
+        return res.status(404).json({
           code: 404,
           error: "Event not found",
           event: {
@@ -74,8 +73,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       // or if invite code is valid
       else if (ssr && eventInvite) {
         // console.log("SSR & event is private")
-        res.status(200)
-        res.json({
+        return res.status(200).json({
           authorized: true,
           event: {
             id: event.id,
@@ -89,8 +87,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
       // if no userId, event has not been claimed (and has only a title)
       else if (!event.clerkUserId || event.id === 1000001) {
         console.log(event)
-        res.status(200)
-        res.json({ authorized: true, event })
+        return res.status(200).json({ authorized: true, event })
       }
       // otherwise, check for logged-in host or guest
       else {
@@ -113,8 +110,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         // console.log(event.Host, user)
         // if host or guest or event is public, return event
         if (isHost || isGuest || event.Settings.access === EventAccess.Public) {
-          res.status(200)
-          res.json({ authorized: true, event })
+          return res.status(200).json({ authorized: true, event })
         }
         // if not host or guest, check for invite code
         else if (userId && inviteCode && inviteCode === event.Invites[0].code) {
@@ -151,17 +147,16 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             }
           })
 
-          res.status(200)
-          res.json({ authorized: true, event: updatedEvent, guest })
+          return res
+            .status(200)
+            .json({ authorized: true, event: updatedEvent, guest })
         } else {
           // console.log("Not authorized to view event")
-          res.status(401)
-          res.json({ authorized: false })
+          return res.status(401).json({ authorized: false })
         }
       }
     } catch (err) {
-      res.status(500)
-      res.json({ authorized: false, error: err.message })
+      return res.status(500).json({ authorized: false, error: err.message })
     }
   }
   // UPDATE
@@ -202,8 +197,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         }
       })
 
-      res.status(200)
-      res.json({ authorized: true, guestResponse })
+      return res.status(200).json({ authorized: true, guestResponse })
     }
     // Not authorized to update event if not host
     else if (event.clerkUserId && !isHost) {
@@ -341,7 +335,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           }
         })
 
-        res.json({
+        return res.json({
           authorized: true,
           eventResponse,
           addressResponse,
@@ -349,8 +343,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         })
       } catch (err) {
         console.log(err)
-        res.status(500)
-        res.json({ error: err.message })
+        return res.status(500).json({ error: err.message })
       }
     }
   }

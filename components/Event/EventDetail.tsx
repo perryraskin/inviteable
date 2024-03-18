@@ -60,11 +60,17 @@ import { useUser } from "@clerk/nextjs"
 
 interface Props {
   event: Event
+  clerkUserMap: { [clerkUserId: string]: ClerkUser }
   inviteCode?: string
   refreshData: () => void
 }
 
-const EventDetail: NextPage<Props> = ({ event, inviteCode, refreshData }) => {
+const EventDetail: NextPage<Props> = ({
+  event,
+  clerkUserMap,
+  inviteCode,
+  refreshData
+}) => {
   const calendarAddress =
     (event?.Address[0]?.address1 ? event?.Address[0]?.address1 : "") +
     (event?.Address[0]?.address2 ? ", " + event?.Address[0]?.address2 : "") +
@@ -84,24 +90,6 @@ const EventDetail: NextPage<Props> = ({ event, inviteCode, refreshData }) => {
     "About"
     // "Comments"
   ]
-
-  const [clerkUserMap, setClerkUserMap] = useState<{
-    [clerkUserId: string]: ClerkUser
-  }>({})
-  useEffect(() => {
-    const userIdList = event.Guests.map(guest => guest.clerkUserId)
-    fetch("/api/clerk/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ userIdList })
-    })
-      .then(res => res.json())
-      .then((guests: { [clerkUserId: string]: ClerkUser }) =>
-        setClerkUserMap(guests)
-      )
-  }, [event])
 
   const { user } = useUser()
 
