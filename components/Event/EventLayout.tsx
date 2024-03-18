@@ -11,14 +11,21 @@ import Section from "../Layout/Section"
 import PendingBanner from "./PendingBanner"
 import { useUser } from "@clerk/nextjs"
 import { SignInButton } from "@clerk/clerk-react"
+import { EventAccess } from "../../models/interfaces"
 
 interface Props {
   eventId: string
   inviteCode?: string
   claim?: boolean
+  access?: EventAccess
 }
 
-const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
+const EventLayout: NextPage<Props> = ({
+  eventId,
+  inviteCode,
+  claim,
+  access
+}) => {
   const { isLoaded, isSignedIn, user } = useUser()
   const [currentEvent, setCurrentEvent] = React.useState(null)
   const [responseCompleted, setResponseCompleted] = React.useState(false)
@@ -26,7 +33,7 @@ const EventLayout: NextPage<Props> = ({ eventId, inviteCode, claim }) => {
   const [signInRequired, setSignInRequired] = React.useState(false)
 
   React.useEffect(() => {
-    if (isLoaded && !isSignedIn) {
+    if (isLoaded && !isSignedIn && access !== EventAccess.Public) {
       setSignInRequired(true)
     }
   }, [isLoaded, isSignedIn])

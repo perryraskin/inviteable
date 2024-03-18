@@ -59,7 +59,12 @@ const EventDetailPage: NextPage<Props> = ({
           cardType: "summary_large_image"
         }}
       />
-      <EventLayout eventId={eventid} inviteCode={inviteCode} claim={claim} />
+      <EventLayout
+        eventId={eventid}
+        inviteCode={inviteCode}
+        claim={claim}
+        access={event?.access}
+      />
     </>
   )
 }

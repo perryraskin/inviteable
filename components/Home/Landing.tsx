@@ -225,7 +225,7 @@ export default function Landing() {
                 <p className="text-center md:text-left mt-4 text-gray-500">
                   Alternatively, check out a{" "}
                   <a
-                    href="/events/1"
+                    href="/events/1000001"
                     target="_blank"
                     className="font-bold text-red-500 hover:underline"
                   >
