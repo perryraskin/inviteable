@@ -63,6 +63,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         res.json({
           authorized: true,
           event: {
+            id: event.id,
+            access: event.Settings.access,
             title: event.title,
             imageUrl: event.imageUrl,
             designImageUrl: event.designImageUrl
@@ -76,6 +78,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
         res.json({
           authorized: true,
           event: {
+            id: event.id,
+            access: event.Settings.access,
             title: event.title,
             imageUrl: event.imageUrl,
             designImageUrl: event.designImageUrl
