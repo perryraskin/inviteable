@@ -3,6 +3,7 @@ import { NextPage, GetServerSideProps, InferGetServerSidePropsType } from "next"
 import { NextSeo } from "next-seo"
 import absoluteUrl from "next-absolute-url"
 import { useRouter } from "next/router"
+import Section from "../../components/Layout/Section"
 
 interface Props {
   inviteCode?: string
@@ -58,11 +59,13 @@ const InviteRedirectPage: NextPage<Props> = ({
           cardType: "summary_large_image"
         }}
       />
-      <div
-        dangerouslySetInnerHTML={{
-          __html: `<lottie-player class="mx-auto" src="https://lottie.host/embed/a5f6cc39-aa31-4450-a00c-fb22ff7b4dea/Am02a0joXZ.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>`
-        }}
-      ></div>
+      <Section>
+        <iframe
+          className="mx-auto"
+          height={600}
+          src="https://lottie.host/embed/a5f6cc39-aa31-4450-a00c-fb22ff7b4dea/Am02a0joXZ.json"
+        ></iframe>
+      </Section>
     </>
   )
 }
