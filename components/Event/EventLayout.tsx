@@ -160,11 +160,11 @@ const EventLayout: NextPage<Props> = ({
   } else if (!isLoaded || !currentEvent || isClaiming) {
     return (
       <Section>
-        <div
-          dangerouslySetInnerHTML={{
-            __html: `<lottie-player class="mx-auto" src="https://lottie.host/embed/a5f6cc39-aa31-4450-a00c-fb22ff7b4dea/Am02a0joXZ.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>`
-          }}
-        ></div>
+        <iframe
+          className="mx-auto"
+          height={600}
+          src="https://lottie.host/embed/a5f6cc39-aa31-4450-a00c-fb22ff7b4dea/Am02a0joXZ.json"
+        ></iframe>
       </Section>
     )
   } else {

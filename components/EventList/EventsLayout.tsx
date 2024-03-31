@@ -80,11 +80,11 @@ const EventsLayout: NextPage<Props> = ({}) => {
   } else if (!isLoaded) {
     return (
       <Section>
-        <img
-          className="ml-auto mr-auto block text-center rounded-3xl"
-          width="350"
-          src="https://cdn.hackernoon.com/images/0*4Gzjgh9Y7Gu8KEtZ.gif"
-        ></img>
+        <iframe
+          className="mx-auto"
+          height={600}
+          src="https://lottie.host/embed/a5f6cc39-aa31-4450-a00c-fb22ff7b4dea/Am02a0joXZ.json"
+        ></iframe>
       </Section>
     )
   } else
