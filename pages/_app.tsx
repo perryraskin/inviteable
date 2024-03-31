@@ -73,6 +73,7 @@ function MyApp({ Component, pageProps }) {
       ) : (
         ""
       )}
+      <Script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></Script>
       <ClerkProvider {...pageProps}>
         <Component {...pageProps} />
       </ClerkProvider>

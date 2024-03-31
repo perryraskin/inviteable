@@ -103,7 +103,6 @@ const EventLayout: NextPage<Props> = ({
           .then(res => res.json())
           .then((guests: { [clerkUserId: string]: ClerkUser }) => {
             setClerkUserMap(guests ?? {})
-            console.log("CLERK", guests)
           })
       }
     } else {
@@ -161,11 +160,11 @@ const EventLayout: NextPage<Props> = ({
   } else if (!isLoaded || !currentEvent || isClaiming) {
     return (
       <Section>
-        <img
-          className="ml-auto mr-auto block text-center rounded-3xl"
-          width="350"
-          src="https://cdn.hackernoon.com/images/0*4Gzjgh9Y7Gu8KEtZ.gif"
-        ></img>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `<lottie-player class="mx-auto" src="https://lottie.host/embed/a5f6cc39-aa31-4450-a00c-fb22ff7b4dea/Am02a0joXZ.json" background="transparent" speed="1" style="width: 300px; height: 300px;" loop autoplay></lottie-player>`
+          }}
+        ></div>
       </Section>
     )
   } else {

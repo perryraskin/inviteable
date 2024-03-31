@@ -10,7 +10,7 @@
   },
   "main": "index.tsx",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3111",
     "build": "next build",
     "start": "next start -p $PORT",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --fix .",
