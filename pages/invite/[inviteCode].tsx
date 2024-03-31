@@ -25,11 +25,11 @@ const InviteRedirectPage: NextPage<Props> = ({
   return (
     <>
       <NextSeo
-        title={event?.title}
+        title={`RSVP to ${event?.title}`}
         description={"You're invited to an event on inviteable.app"}
         openGraph={{
-          site_name: event?.title,
-          title: event?.title,
+          site_name: `RSVP to ${event?.title}`,
+          title: `RSVP to ${event?.title}`,
           description: "You're invited to an event on inviteable.app",
           images: [
             {
