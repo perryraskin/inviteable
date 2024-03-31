@@ -200,6 +200,7 @@ const EventDetail: NextPage<Props> = ({
       .then(data => {
         if (!data.error) {
           console.log(data)
+          refreshData()
         }
       })
   }
@@ -562,7 +563,8 @@ const EventDetail: NextPage<Props> = ({
             open={isShareSheetOpen}
             setOpen={setIsShareSheetOpen}
             eventTitle={event.title}
-            inviteUrl={`${window.location.origin}/events/${event.id}?inviteCode=${event.Invites[0]?.code}`}
+            // inviteUrl={`${window.location.origin}/events/${event.id}?inviteCode=${event.Invites[0]?.code}`}
+            inviteUrl={`${window.location.origin}/invite/${event.Invites[0]?.code}`}
           />
           {/* Tabs */}
           <div className="mt-6 sm:mt-2 2xl:mt-5">
