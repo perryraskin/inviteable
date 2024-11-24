@@ -1,62 +1,60 @@
-import React, { useState, useEffect } from "react"
-import { NextPage } from "next"
-import Link from "next/link"
-import Router from "next/router"
-import { useEditor, EditorContent } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-import dayjs from "dayjs"
-import utc from "dayjs/plugin/utc"
-import timezone from "dayjs/plugin/timezone"
-import advancedFormat from "dayjs/plugin/advancedFormat"
-dayjs.extend(utc)
-dayjs.extend(timezone)
-dayjs.extend(advancedFormat)
 import {
-  CheckCircleIcon,
-  XCircleIcon,
-  UsersIcon,
   CalendarIcon,
-  StarIcon,
+  CheckCircleIcon,
+  CheckIcon,
   ClockIcon,
+  CogIcon,
   GlobeIcon,
   LocationMarkerIcon,
   LockClosedIcon,
-  UserAddIcon,
-  QuestionMarkCircleIcon,
-  PencilAltIcon,
-  CheckIcon,
-  OfficeBuildingIcon,
   LockOpenIcon,
-  XIcon,
-  CogIcon,
-  MailIcon,
-  ChatIcon,
-  VideoCameraIcon,
   MapIcon,
-  PaperClipIcon
+  OfficeBuildingIcon,
+  PaperClipIcon,
+  PencilAltIcon,
+  QuestionMarkCircleIcon,
+  StarIcon,
+  UserAddIcon,
+  UsersIcon,
+  VideoCameraIcon,
+  XCircleIcon,
+  XIcon
 } from "@heroicons/react/solid"
+import { EditorContent, useEditor } from "@tiptap/react"
+import StarterKit from "@tiptap/starter-kit"
+import dayjs from "dayjs"
+import advancedFormat from "dayjs/plugin/advancedFormat"
+import timezone from "dayjs/plugin/timezone"
+import utc from "dayjs/plugin/utc"
+import { NextPage } from "next"
+import Link from "next/link"
+import React, { useEffect, useState } from "react"
 import S3 from "react-s3-uploader"
 import { CalendarEvent } from "../../utilities/calendarUrls"
 import AddToCalendar from "../Elements/AddToCalendar"
+dayjs.extend(utc)
+dayjs.extend(timezone)
+dayjs.extend(advancedFormat)
 
-import DropdownWithIcons from "../DropdownWithIcons"
-import ShareSheet from "../Modals/ShareSheet"
-import MapBox from "../MapBox"
-import LocationSearch from "../Elements/LocationSearch"
+import { SignInButton, useUser } from "@clerk/nextjs"
+import { ExclamationCircleIcon, PhotographIcon } from "@heroicons/react/outline"
 import {
+  ClerkUser,
   Event,
-  GuestResponse,
-  Guest,
   EventAccess,
-  ClerkUser
+  Guest,
+  GuestResponse
 } from "../../models/interfaces"
-import { spinner } from "../Elements/Icons"
-import { CameraIcon, PhotographIcon } from "@heroicons/react/outline"
-import AvatarGroupStack from "../AvatarGroupStack"
-import EventSettings from "../Modals/EventSettings"
-import { ClickableImage } from "../Elements/CickableImage"
 import { classNames } from "../../utilities"
-import { useUser } from "@clerk/nextjs"
+import AvatarGroupStack from "../AvatarGroupStack"
+import DropdownWithIcons from "../DropdownWithIcons"
+import { ClickableImage } from "../Elements/CickableImage"
+import { spinner } from "../Elements/Icons"
+import LocationSearch from "../Elements/LocationSearch"
+import MapBox from "../MapBox"
+import EventSettings from "../Modals/EventSettings"
+import ShareSheet from "../Modals/ShareSheet"
+import { claimEvent } from "./event.util"
 
 interface Props {
   event: Event
@@ -91,7 +89,7 @@ const EventDetail: NextPage<Props> = ({
     // "Comments"
   ]
 
-  const { user } = useUser()
+  const { user, isSignedIn } = useUser()
 
   const [currentTab, setCurrentTab] = useState("About")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -472,7 +470,7 @@ const EventDetail: NextPage<Props> = ({
                         <span>Respond</span>
                       </Link>
                     )}
-                    {!isEditMode && (
+                    {event.clerkUserId && !isEditMode ? (
                       <button
                         type="button"
                         className="inline-flex justify-center px-4 py-2 border border-gray-300 
@@ -484,7 +482,47 @@ const EventDetail: NextPage<Props> = ({
                         {/* {shareIcon("-ml-1 mr-2 h-5 w-5 text-gray-400")} */}
                         <span>Invite</span>
                       </button>
-                    )}
+                    ) : !event.clerkUserId ? (
+                      <>
+                        {isSignedIn ? (
+                          <a
+                            role="button"
+                            onClick={() => {
+                              setIsSubmitting(true)
+                              claimEvent(user.id, event.id)
+                            }}
+                            className="flex items-center justify-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700"
+                          >
+                            {spinner(isSubmitting)}
+                            {!isSubmitting && (
+                              <ExclamationCircleIcon
+                                className="h-5 w-5 text-white mr-1"
+                                aria-hidden="true"
+                              />
+                            )}
+                            Claim this event to invite guests
+                          </a>
+                        ) : (
+                          <SignInButton
+                            redirectUrl={`${window.location.origin}/events/${event.id}?claim=true`}
+                          >
+                            <button
+                              type="button"
+                              className="flex items-center justify-center px-4 py-1.5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700"
+                            >
+                              {spinner(isSubmitting)}
+                              {!isSubmitting && (
+                                <ExclamationCircleIcon
+                                  className="h-5 w-5 text-white mr-1"
+                                  aria-hidden="true"
+                                />
+                              )}
+                              Claim this event to invite guests
+                            </button>
+                          </SignInButton>
+                        )}
+                      </>
+                    ) : null}
                     {!isEditMode && currentGuest?.isHost && (
                       <button
                         type="button"
@@ -805,7 +843,9 @@ const EventDetail: NextPage<Props> = ({
                             {(Intl as any)
                               .supportedValuesOf("timeZone")
                               .map(tz => (
-                                <option value={tz}>{tz}</option>
+                                <option key={tz} value={tz}>
+                                  {tz}
+                                </option>
                               ))}
                           </select>
                           <span className="absolute bottom-2 flex-col items-center hidden mb-6 group-hover:flex">

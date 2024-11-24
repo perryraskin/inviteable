@@ -3,38 +3,17 @@ import { ExclamationCircleIcon, XIcon } from "@heroicons/react/outline"
 import { spinner } from "../Elements/Icons"
 import { useUser } from "@clerk/nextjs"
 import { SignInButton } from "@clerk/clerk-react"
+import { claimEvent } from "./event.util"
 
 export default function PendingBanner({ eventId }) {
   const { isSignedIn, user } = useUser()
   const [isSubmitting, setIsSubmitting] = React.useState(false)
 
-  async function claimEvent() {
+  async function handleClaimEvent() {
     setIsSubmitting(true)
-    // if (user) {
-    fetch(`/api/event/${eventId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        event: {
-          userId: user.id
-        }
-      })
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (!data.error) {
-          window.location.reload()
-        }
-      })
-    // } else {
-    //   localStorage.setItem(
-    //     "authRedirectUrl",
-    //     `${window.location.origin}/events/${eventId}?claim=true`
-    //   )
-    // }
+    await claimEvent(user.id, eventId)
   }
+
   return (
     <div className="fixed bottom-0 inset-x-0 pb-2 sm:pb-5 z-10">
       <div className="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8">
@@ -57,7 +36,7 @@ export default function PendingBanner({ eventId }) {
               {isSignedIn ? (
                 <a
                   role="button"
-                  onClick={claimEvent}
+                  onClick={handleClaimEvent}
                   className="flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-orange-600 bg-white hover:bg-orange-50"
                 >
                   {spinner(isSubmitting, "text-orange-600")}Claim now
