@@ -10,7 +10,7 @@ import EventDetail from "./EventDetail"
 import Section from "../Layout/Section"
 import PendingBanner from "./PendingBanner"
 import { useUser } from "@clerk/nextjs"
-import { SignInButton } from "@clerk/clerk-react"
+import { SignInButton, SignUpButton } from "@clerk/clerk-react"
 import { ClerkUser, EventAccess } from "../../models/interfaces"
 import {
   BellIcon,
@@ -154,13 +154,13 @@ const EventLayout: NextPage<Props> = ({
             </div>
           </div>
           <div className="px-8 pb-8">
-            <SignInButton
+            <SignUpButton
               redirectUrl={`${window.location.origin}/events/${eventId}?inviteCode=${inviteCode}`}
             >
               <button className="w-full bg-red-600 text-white text-lg font-semibold py-3 px-4 rounded-lg hover:bg-red-700 transition duration-300">
                 Create Your Account
               </button>
-            </SignInButton>
+            </SignUpButton>
             <p className="text-sm text-gray-600 text-center mt-4">
               Already have an account?{" "}
               <SignInButton
