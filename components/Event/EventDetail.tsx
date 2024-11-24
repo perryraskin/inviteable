@@ -423,7 +423,7 @@ const EventDetail: NextPage<Props> = ({
                       </h1>
                     )}
                   </div>
-                  <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
+                  <div className="mt-6 flex flex-col justify-stretch space-y-3 sm:flex-row sm:space-y-0 sm:space-x-2">
                     {user &&
                       !isEditMode &&
                       (event.id === 1 ||
@@ -854,35 +854,40 @@ const EventDetail: NextPage<Props> = ({
                         <span className="align-middle">Public </span>
                       </p>
                     )}
+                    <S3
+                      accept="image/*"
+                      multiple={false}
+                      signingUrl={`/api/event/${event.id}/upload/design/s3`}
+                      signingUrlWithCredentials={true}
+                      className="hidden"
+                      id="s3-design"
+                      scrubFilename={name =>
+                        Date.now() + "-" + name.replace(/[^\w\d_\-.]+/gi, "")
+                      }
+                      onFinish={e => handleUpdateDesignImage(e["uploadUrl"])}
+                      onError={e => alert(e)}
+                    />
                     {designImageUrl ? (
                       <div className="mt-2 relative">
                         <PaperClipIcon className="hidden sm:inline mr-2 h-5 w-5 text-gray-400" />
-                        <ClickableImage
-                          className="mt-2 sm:-mt-4 sm:w-96 sm:px-6 lg:px-8"
-                          src={designImageUrl}
-                          title={event.title + " (Design)"}
-                        />
+                        {isEditMode ? (
+                          <img
+                            className="mt-2 sm:-mt-4 sm:w-96 sm:px-6 lg:px-8 cursor-pointer"
+                            src={designImageUrl}
+                            title={event.title + " (Design)"}
+                            onClick={() => handleClickFileInput("s3-design")}
+                          />
+                        ) : (
+                          <ClickableImage
+                            className="mt-2 sm:-mt-4 sm:w-96 sm:px-6 lg:px-8"
+                            src={designImageUrl}
+                            title={event.title + " (Design)"}
+                          />
+                        )}
                       </div>
                     ) : currentGuest?.isHost ? (
                       <div className="mt-2 relative">
                         <PaperClipIcon className="hidden sm:inline mr-2 h-5 w-5 text-gray-400" />
-                        <S3
-                          accept="image/*"
-                          multiple={false}
-                          signingUrl={`/api/event/${event.id}/upload/design/s3`}
-                          signingUrlWithCredentials={true}
-                          className="hidden"
-                          id="s3-design"
-                          scrubFilename={name =>
-                            Date.now() +
-                            "-" +
-                            name.replace(/[^\w\d_\-.]+/gi, "")
-                          }
-                          onFinish={e =>
-                            handleUpdateDesignImage(e["uploadUrl"])
-                          }
-                          onError={e => alert(e)}
-                        />
                         <label htmlFor="s3-design">
                           <button
                             type="button"
