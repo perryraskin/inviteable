@@ -273,7 +273,10 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           data: {
             title: title ?? undefined,
             dateTimeStart: dateTimeStart
-              ? dayjs(dateTimeStart).toISOString()
+              ? dayjs
+                  .tz(dateTimeStart, timeZone)
+                  .utc()
+                  .toISOString()
               : undefined,
             // dateTimeEnd: dateTimeEnd ? new Date(dateTimeEnd) : undefined,
             dateTimeEnd: dateTimeStart
