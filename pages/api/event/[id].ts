@@ -280,8 +280,10 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
               : undefined,
             // dateTimeEnd: dateTimeEnd ? new Date(dateTimeEnd) : undefined,
             dateTimeEnd: dateTimeStart
-              ? dayjs(dateTimeStart)
+              ? dayjs
+                  .tz(dateTimeStart, timeZone)
                   .add(2, "hour")
+                  .utc()
                   .toISOString()
               : undefined,
             price: price ? parseFloat(price) : undefined,
