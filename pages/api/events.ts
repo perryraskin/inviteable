@@ -41,7 +41,7 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
           data: {
             clerkUserId: userIdString,
             title,
-            imageUrl: `https://source.unsplash.com/1600x900/?${title}`,
+            imageUrl: `https://picsum.photos/1600/900`,
             detailsText: "Join us for a celebration!",
             detailsHtml: "<p>Join us for a celebration!</p>",
             dateTimeStart: new Date(
@@ -63,7 +63,8 @@ export default async function(req: NextApiRequest, res: NextApiResponse) {
             data: {
               clerkUserId: undefined,
               title,
-              imageUrl: "https://source.unsplash.com/1600x900/?celebration",
+              imageUrl:
+                "https://fastly.picsum.photos/id/56/2880/1920.jpg?hmac=BIplhYgNZ9bsjPXYhD0xx6M1yPgmg4HtthKkCeJp6Fk",
               detailsText: "Join us for a celebration!",
               detailsHtml: "<p>Join us for a celebration!</p>",
               dateTimeStart: new Date(
