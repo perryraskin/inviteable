@@ -460,7 +460,7 @@ const EventDetail: NextPage<Props> = ({
                           ]}
                         />
                       )}
-                    {!user && (
+                    {!user && event.clerkUserId && (
                       <Link
                         href={"/signin"}
                         className="inline-flex justify-center px-4 py-2 border border-gray-300 

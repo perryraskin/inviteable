@@ -95,10 +95,10 @@ const EventsLayout: NextPage<Props> = ({}) => {
             <UserButton />
           </div>
         </div>
-        <div className="text-center mt-4">
+        <div className="text-center -mt-12">
           <Link href="/">
             <img
-              className="mb-6 h-16 inline"
+              className="h-10 inline"
               src="https://res.cloudinary.com/raskin-me/image/upload/v1622141056/inviteable/inviteable-logo-2-alt-1_cpqw0x.png"
               alt="Inviteable"
             />
@@ -110,7 +110,7 @@ const EventsLayout: NextPage<Props> = ({}) => {
           setOpen={setPopupInputOpen}
         />
 
-        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="mt-4 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="md:flex md:items-center md:justify-between md:space-x-4 xl:border-b pb-6">
               <div>
